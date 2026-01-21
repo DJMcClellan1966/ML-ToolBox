@@ -29,8 +29,14 @@ def example_1_simple_generation():
         temperature=0.7
     )
     
+    # LLM returns 'generated' not 'text'
+    generated = result.get('generated') or result.get('text') or str(result)
+    
     print(f"\nPrompt: {prompt}")
-    print(f"\nGenerated:\n{result['text']}\n")
+    print(f"\nGenerated:\n{generated}")
+    if 'confidence' in result:
+        print(f"\nConfidence: {result['confidence']:.2f}")
+    print()
 
 
 def example_2_code_documentation():
@@ -50,10 +56,13 @@ def calculate_total(items):
     prompt = f"Write clear documentation for this Python function:\n{code}"
     try:
         result = llm.generate_grounded(prompt, max_length=200)
-        text = result.get('text') or result.get('generated_text') or str(result)
+        text = result.get('generated') or result.get('text') or result.get('generated_text') or str(result)
         
         print(f"\nCode:\n{code}")
-        print(f"\nDocumentation:\n{text}\n")
+        print(f"\nDocumentation:\n{text}")
+        if 'confidence' in result:
+            print(f"\nConfidence: {result['confidence']:.2f}")
+        print()
     except Exception as e:
         print(f"Error: {e}")
 
