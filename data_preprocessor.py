@@ -1,6 +1,7 @@
 """
 Advanced Data Preprocessor
 Combines Quantum Kernel + PocketFence Kernel for superior data preprocessing
+Includes dimensionality reduction for data compression
 """
 import sys
 from pathlib import Path
@@ -16,6 +17,15 @@ from quantum_kernel import get_kernel, KernelConfig
 import requests
 import numpy as np
 
+# Try to import sklearn for PCA
+try:
+    from sklearn.decomposition import PCA, TruncatedSVD
+    from sklearn.preprocessing import StandardScaler
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+    print("Warning: sklearn not available. Dimensionality reduction will use basic methods.")
+
 
 class AdvancedDataPreprocessor:
     """
@@ -27,16 +37,28 @@ class AdvancedDataPreprocessor:
     - Intelligent categorization (Quantum)
     - Quality scoring (Quantum)
     - Standardization (Quantum)
+    - Dimensionality reduction (PCA/SVD) for data compression
     """
     
     def __init__(self, pocketfence_url: str = "http://localhost:5000", 
                  dedup_threshold: float = 0.9,
-                 use_quantum: bool = True):
+                 use_quantum: bool = True,
+                 enable_compression: bool = True,
+                 compression_ratio: float = 0.5,
+                 compression_method: str = 'pca'):
         self.quantum_kernel = get_kernel(KernelConfig(use_sentence_transformers=True)) if use_quantum else None
         self.pocketfence_url = pocketfence_url
         self.dedup_threshold = dedup_threshold
         self.use_quantum = use_quantum
+        self.enable_compression = enable_compression
+        self.compression_ratio = compression_ratio  # 0.5 = 50% of original dimensions
+        self.compression_method = compression_method  # 'pca', 'svd', 'autoencoder'
         self.pocketfence_available = self._check_pocketfence()
+        
+        # Compression models (fitted on data)
+        self.pca_model = None
+        self.svd_model = None
+        self.scaler = None
         
         # Statistics
         self.stats = {
@@ -44,7 +66,11 @@ class AdvancedDataPreprocessor:
             'unsafe_filtered': 0,
             'duplicates_removed': 0,
             'categories_created': 0,
-            'processing_times': []
+            'processing_times': [],
+            'compression_applied': False,
+            'original_dim': 0,
+            'compressed_dim': 0,
+            'compression_ratio_achieved': 0.0
         }
     
     def _check_pocketfence(self) -> bool:
@@ -113,6 +139,18 @@ class AdvancedDataPreprocessor:
         quality_scores = self._quality_score(unique_data)
         results['quality_scores'] = quality_scores
         
+        # Stage 5: Dimensionality reduction (compression)
+        if self.enable_compression and self.use_quantum and self.quantum_kernel:
+            if verbose:
+                print("[Stage 5] Dimensionality Reduction (Compression)")
+            compressed_embeddings, compression_info = self._compress_embeddings(unique_data, verbose)
+            results['compressed_embeddings'] = compressed_embeddings
+            results['compression_info'] = compression_info
+            self.stats['compression_applied'] = True
+            self.stats['original_dim'] = compression_info.get('original_dim', 0)
+            self.stats['compressed_dim'] = compression_info.get('compressed_dim', 0)
+            self.stats['compression_ratio_achieved'] = compression_info.get('compression_ratio', 0.0)
+        
         # Final results
         results['final_count'] = len(unique_data)
         results['processing_time'] = time.time() - start_time
@@ -120,7 +158,9 @@ class AdvancedDataPreprocessor:
             'unsafe_filtered': len(unsafe_data),
             'duplicates_removed': len(duplicates),
             'categories': len(categorized),
-            'avg_quality': sum(s['score'] for s in quality_scores) / len(quality_scores) if quality_scores else 0.0
+            'avg_quality': sum(s['score'] for s in quality_scores) / len(quality_scores) if quality_scores else 0.0,
+            'compression_applied': self.stats.get('compression_applied', False),
+            'compression_ratio': self.stats.get('compression_ratio_achieved', 0.0)
         }
         
         self.stats['total_processed'] += len(raw_data)
@@ -312,16 +352,162 @@ class AdvancedDataPreprocessor:
         
         return scored
     
+    def _compress_embeddings(self, data: List[str], verbose: bool = False) -> Tuple[Optional[np.ndarray], Dict[str, Any]]:
+        """
+        Stage 5: Compress embeddings using dimensionality reduction
+        
+        Args:
+            data: List of text items
+            verbose: Print detailed progress
+            
+        Returns:
+            Tuple of (compressed_embeddings, compression_info)
+        """
+        if not self.use_quantum or not self.quantum_kernel:
+            return None, {}
+        
+        if len(data) < 2:
+            return None, {'error': 'Need at least 2 items for compression'}
+        
+        # Get original embeddings
+        original_embeddings = np.array([self.quantum_kernel.embed(item) for item in data])
+        original_dim = original_embeddings.shape[1]
+        num_items = len(data)
+        
+        # PCA/SVD constraint: n_components <= min(n_samples, n_features)
+        max_components = min(num_items, original_dim)
+        target_dim = max(1, min(int(original_dim * self.compression_ratio), max_components))
+        
+        compression_info = {
+            'original_dim': original_dim,
+            'target_dim': target_dim,
+            'compression_ratio': self.compression_ratio,
+            'method': self.compression_method,
+            'num_items': num_items,
+            'max_components': max_components
+        }
+        
+        if verbose:
+            print(f"  Original dimensions: {original_dim}")
+            print(f"  Target dimensions: {target_dim}")
+            print(f"  Compression ratio: {self.compression_ratio:.1%}")
+            print(f"  Method: {self.compression_method.upper()}")
+        
+        try:
+            if self.compression_method == 'pca' and SKLEARN_AVAILABLE:
+                compressed_embeddings, compression_info = self._compress_pca(
+                    original_embeddings, target_dim, compression_info, verbose
+                )
+            elif self.compression_method == 'svd' and SKLEARN_AVAILABLE:
+                compressed_embeddings, compression_info = self._compress_svd(
+                    original_embeddings, target_dim, compression_info, verbose
+                )
+            else:
+                # Fallback: Simple truncation (not ideal but works)
+                compressed_embeddings = original_embeddings[:, :target_dim]
+                compression_info['method'] = 'truncation'
+                compression_info['variance_retained'] = 0.0
+                if verbose:
+                    print("  Using truncation (sklearn not available)")
+            
+            compression_info['compressed_dim'] = compressed_embeddings.shape[1]
+            compression_info['compression_ratio_achieved'] = compression_info['compressed_dim'] / original_dim
+            compression_info['memory_reduction'] = 1.0 - compression_info['compression_ratio_achieved']
+            
+            if verbose:
+                print(f"  Compressed dimensions: {compression_info['compressed_dim']}")
+                if 'variance_retained' in compression_info:
+                    print(f"  Variance retained: {compression_info['variance_retained']:.2%}")
+                print(f"  Memory reduction: {compression_info['memory_reduction']:.1%}")
+            
+            return compressed_embeddings, compression_info
+            
+        except Exception as e:
+            if verbose:
+                print(f"  Compression failed: {e}")
+            return None, {'error': str(e)}
+    
+    def _compress_pca(self, embeddings: np.ndarray, target_dim: int, 
+                     compression_info: Dict, verbose: bool = False) -> Tuple[np.ndarray, Dict]:
+        """Compress using PCA"""
+        # Standardize embeddings
+        if self.scaler is None:
+            self.scaler = StandardScaler()
+            embeddings_scaled = self.scaler.fit_transform(embeddings)
+        else:
+            embeddings_scaled = self.scaler.transform(embeddings)
+        
+        # Apply PCA
+        if self.pca_model is None:
+            self.pca_model = PCA(n_components=target_dim)
+            compressed = self.pca_model.fit_transform(embeddings_scaled)
+        else:
+            compressed = self.pca_model.transform(embeddings_scaled)
+        
+        # Calculate variance retained
+        if hasattr(self.pca_model, 'explained_variance_ratio_'):
+            variance_retained = float(np.sum(self.pca_model.explained_variance_ratio_))
+            compression_info['variance_retained'] = variance_retained
+        
+        return compressed, compression_info
+    
+    def _compress_svd(self, embeddings: np.ndarray, target_dim: int,
+                     compression_info: Dict, verbose: bool = False) -> Tuple[np.ndarray, Dict]:
+        """Compress using Truncated SVD"""
+        if self.svd_model is None:
+            self.svd_model = TruncatedSVD(n_components=target_dim)
+            compressed = self.svd_model.fit_transform(embeddings)
+        else:
+            compressed = self.svd_model.transform(embeddings)
+        
+        # Calculate variance retained
+        if hasattr(self.svd_model, 'explained_variance_ratio_'):
+            variance_retained = float(np.sum(self.svd_model.explained_variance_ratio_))
+            compression_info['variance_retained'] = variance_retained
+        
+        return compressed, compression_info
+    
+    def decompress_embeddings(self, compressed_embeddings: np.ndarray) -> Optional[np.ndarray]:
+        """
+        Decompress embeddings back to original space (approximate)
+        
+        Note: This is approximate - some information is lost during compression
+        """
+        if not self.enable_compression:
+            return None
+        
+        if self.compression_method == 'pca' and self.pca_model is not None:
+            # Inverse transform
+            decompressed_scaled = self.pca_model.inverse_transform(compressed_embeddings)
+            if self.scaler is not None:
+                decompressed = self.scaler.inverse_transform(decompressed_scaled)
+            else:
+                decompressed = decompressed_scaled
+            return decompressed
+        elif self.compression_method == 'svd' and self.svd_model is not None:
+            # SVD inverse transform
+            return self.svd_model.inverse_transform(compressed_embeddings)
+        else:
+            # Cannot decompress truncation
+            return None
+    
     def get_stats(self) -> Dict[str, Any]:
         """Get preprocessing statistics"""
         avg_time = sum(self.stats['processing_times']) / len(self.stats['processing_times']) if self.stats['processing_times'] else 0.0
-        return {
+        stats = {
             'total_processed': self.stats['total_processed'],
             'unsafe_filtered': self.stats['unsafe_filtered'],
             'duplicates_removed': self.stats['duplicates_removed'],
             'categories_created': self.stats['categories_created'],
             'avg_processing_time': avg_time
         }
+        if self.stats.get('compression_applied'):
+            stats['compression'] = {
+                'original_dim': self.stats.get('original_dim', 0),
+                'compressed_dim': self.stats.get('compressed_dim', 0),
+                'compression_ratio': self.stats.get('compression_ratio_achieved', 0.0)
+            }
+        return stats
 
 
 class ConventionalPreprocessor:
