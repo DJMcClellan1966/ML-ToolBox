@@ -260,6 +260,21 @@ Do NOT use this for actual clinical decision-making without extensive modificati
 
 ---
 
+## Making It HIPAA-Compliant
+
+See [`HIPAA_COMPLIANCE_GUIDE.md`](HIPAA_COMPLIANCE_GUIDE.md) for detailed implementation guide covering:
+
+- **Technical Safeguards** - Access control, encryption, audit logging
+- **Administrative Safeguards** - Policies, risk management, workforce security
+- **Physical Safeguards** - Facility security, workstation controls
+- **PHI Handling** - De-identification, minimum necessary rule
+- **Implementation Checklist** - Step-by-step compliance roadmap
+- **Estimated Costs** - $300K-$500K+ first year, $150K-$300K+ annually
+
+**⚠️ Critical:** HIPAA compliance requires legal expertise, compliance specialists, security professionals, and significant investment. Do NOT attempt without proper resources.
+
+---
+
 ## Conclusion
 
 This is a **proof-of-concept demonstration** of how semantic AI systems might work in healthcare contexts. It is **NOT** production-ready healthcare software and should **NOT** be used for actual clinical purposes.
@@ -270,4 +285,5 @@ For real healthcare applications, use established biomedical LLMs, clinical NLP 
 
 **Last Updated:** 2025-01-20  
 **Status:** Experimental Demonstration Only  
-**Recommendation:** Use established healthcare AI tools for production applications
+**Recommendation:** Use established healthcare AI tools for production applications  
+**HIPAA Compliance Guide:** See [`HIPAA_COMPLIANCE_GUIDE.md`](HIPAA_COMPLIANCE_GUIDE.md)
