@@ -1,0 +1,127 @@
+"""
+Compartment 1: Data
+Preprocessing, validation, transformation, and data management
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+
+class DataCompartment:
+    """
+    Compartment 1: Data
+    
+    Components for data preprocessing, validation, and transformation:
+    - AdvancedDataPreprocessor: Quantum + PocketFence preprocessing
+    - ConventionalPreprocessor: Basic preprocessing
+    - Data validation and quality checks
+    - Data transformation utilities
+    """
+    
+    def __init__(self):
+        self.components = {}
+        self._initialize_components()
+    
+    def _initialize_components(self):
+        """Initialize all data compartment components"""
+        
+        # AdvancedDataPreprocessor (main preprocessing tool)
+        try:
+            from data_preprocessor import AdvancedDataPreprocessor, ConventionalPreprocessor
+            self.components['AdvancedDataPreprocessor'] = AdvancedDataPreprocessor
+            self.components['ConventionalPreprocessor'] = ConventionalPreprocessor
+        except ImportError as e:
+            print(f"Warning: Could not import preprocessors: {e}")
+        
+        # Add component descriptions
+        self.component_descriptions = {
+            'AdvancedDataPreprocessor': {
+                'description': 'Advanced preprocessing with Quantum Kernel + PocketFence Kernel',
+                'features': [
+                    'Safety filtering (PocketFence)',
+                    'Semantic deduplication (Quantum)',
+                    'Intelligent categorization (Quantum)',
+                    'Quality scoring (Quantum)',
+                    'Dimensionality reduction (PCA/SVD)',
+                    'Automatic feature creation'
+                ],
+                'location': 'data_preprocessor.py',
+                'category': 'Preprocessing'
+            },
+            'ConventionalPreprocessor': {
+                'description': 'Basic preprocessing with exact matching',
+                'features': [
+                    'Basic safety filtering',
+                    'Exact duplicate removal',
+                    'Keyword-based categorization',
+                    'Simple quality scoring'
+                ],
+                'location': 'data_preprocessor.py',
+                'category': 'Preprocessing'
+            }
+        }
+    
+    def get_preprocessor(self, advanced: bool = True, **kwargs):
+        """
+        Get a preprocessor instance
+        
+        Args:
+            advanced: If True, use AdvancedDataPreprocessor, else ConventionalPreprocessor
+            **kwargs: Arguments to pass to preprocessor constructor
+            
+        Returns:
+            Preprocessor instance
+        """
+        if advanced:
+            return self.components['AdvancedDataPreprocessor'](**kwargs)
+        else:
+            return self.components['ConventionalPreprocessor']()
+    
+    def preprocess(self, data, advanced: bool = True, verbose: bool = False, **kwargs):
+        """
+        Preprocess data using appropriate preprocessor
+        
+        Args:
+            data: List of text strings to preprocess
+            advanced: If True, use AdvancedDataPreprocessor
+            verbose: Print detailed progress
+            **kwargs: Arguments for preprocessor constructor (not preprocess method)
+            
+        Returns:
+            Preprocessing results dictionary
+        """
+        # Separate constructor args from preprocess args
+        preprocessor_kwargs = {k: v for k, v in kwargs.items() 
+                              if k in ['pocketfence_url', 'dedup_threshold', 'use_quantum', 
+                                      'enable_compression', 'compression_ratio', 'compression_method']}
+        
+        preprocessor = self.get_preprocessor(advanced=advanced, **preprocessor_kwargs)
+        return preprocessor.preprocess(data, verbose=verbose)
+    
+    def list_components(self):
+        """List all available components in this compartment"""
+        print("="*80)
+        print("COMPARTMENT 1: DATA")
+        print("="*80)
+        print("\nComponents:")
+        for name, component in self.components.items():
+            desc = self.component_descriptions.get(name, {})
+            print(f"\n{name}:")
+            print(f"  Description: {desc.get('description', 'N/A')}")
+            print(f"  Location: {desc.get('location', 'N/A')}")
+            print(f"  Category: {desc.get('category', 'N/A')}")
+            if 'features' in desc:
+                print(f"  Features:")
+                for feature in desc['features']:
+                    print(f"    - {feature}")
+        print("\n" + "="*80)
+    
+    def get_info(self):
+        """Get information about this compartment"""
+        return {
+            'name': 'Data Compartment',
+            'description': 'Preprocessing, validation, and data transformation',
+            'components': list(self.components.keys()),
+            'component_count': len(self.components)
+        }
