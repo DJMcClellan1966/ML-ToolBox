@@ -21,6 +21,7 @@ from .components import (
     LearningSystem,
     ConversationalAI
 )
+from .adaptive_neuron import AdaptiveNeuron, AdaptiveNeuralNetwork
 
 __version__ = "1.0.0"
 __all__ = [
