@@ -76,6 +76,25 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import statistical learning: {e}")
         
+        # Andrew Ng ML Strategy
+        try:
+            from andrew_ng_ml_strategy import (
+                AndrewNgMLStrategy,
+                ErrorAnalyzer,
+                BiasVarianceDiagnostic,
+                LearningCurvesAnalyzer,
+                ModelDebugger,
+                SystematicModelSelector
+            )
+            self.components['AndrewNgMLStrategy'] = AndrewNgMLStrategy
+            self.components['ErrorAnalyzer'] = ErrorAnalyzer
+            self.components['BiasVarianceDiagnostic'] = BiasVarianceDiagnostic
+            self.components['LearningCurvesAnalyzer'] = LearningCurvesAnalyzer
+            self.components['ModelDebugger'] = ModelDebugger
+            self.components['SystematicModelSelector'] = SystematicModelSelector
+        except ImportError as e:
+            print(f"Warning: Could not import Andrew Ng ML Strategy: {e}")
+        
         # Add component descriptions
         self.component_descriptions = {
             'MLEvaluator': {
@@ -166,6 +185,74 @@ class AlgorithmsCompartment:
                 ],
                 'location': 'statistical_learning.py',
                 'category': 'Statistical Learning'
+            },
+            'AndrewNgMLStrategy': {
+                'description': 'Complete Andrew Ng ML Technical Strategy',
+                'features': [
+                    'Systematic error analysis',
+                    'Bias/variance diagnosis',
+                    'Learning curves analysis',
+                    'Model debugging framework',
+                    'Systematic model selection',
+                    'Prioritized recommendations'
+                ],
+                'location': 'andrew_ng_ml_strategy.py',
+                'category': 'ML Strategy'
+            },
+            'ErrorAnalyzer': {
+                'description': 'Systematic error analysis',
+                'features': [
+                    'Confusion matrix analysis',
+                    'Error patterns identification',
+                    'Feature importance in errors',
+                    'Actionable recommendations'
+                ],
+                'location': 'andrew_ng_ml_strategy.py',
+                'category': 'ML Strategy'
+            },
+            'BiasVarianceDiagnostic': {
+                'description': 'Bias/variance diagnosis',
+                'features': [
+                    'Underfitting detection',
+                    'Overfitting detection',
+                    'Diagnosis and recommendations',
+                    'Performance gap analysis'
+                ],
+                'location': 'andrew_ng_ml_strategy.py',
+                'category': 'ML Strategy'
+            },
+            'LearningCurvesAnalyzer': {
+                'description': 'Learning curves analysis',
+                'features': [
+                    'Performance vs training size',
+                    'Data collection recommendations',
+                    'Overfitting detection',
+                    'Training efficiency analysis'
+                ],
+                'location': 'andrew_ng_ml_strategy.py',
+                'category': 'ML Strategy'
+            },
+            'ModelDebugger': {
+                'description': 'Systematic model debugging',
+                'features': [
+                    'Data quality checks',
+                    'Feature analysis',
+                    'Model performance issues',
+                    'Training process checks'
+                ],
+                'location': 'andrew_ng_ml_strategy.py',
+                'category': 'ML Strategy'
+            },
+            'SystematicModelSelector': {
+                'description': 'Systematic model selection',
+                'features': [
+                    'Multi-model comparison',
+                    'Cross-validation evaluation',
+                    'Best model identification',
+                    'Model complexity analysis'
+                ],
+                'location': 'andrew_ng_ml_strategy.py',
+                'category': 'ML Strategy'
             }
         }
     
@@ -258,6 +345,53 @@ class AlgorithmsCompartment:
             return self.components['StatisticalFeatureSelector']()
         else:
             raise ImportError("StatisticalFeatureSelector not available")
+    
+    def get_andrew_ng_strategy(self):
+        """
+        Get Andrew Ng ML Strategy instance
+        
+        Returns:
+            AndrewNgMLStrategy instance
+        """
+        if 'AndrewNgMLStrategy' in self.components:
+            return self.components['AndrewNgMLStrategy']()
+        else:
+            raise ImportError("AndrewNgMLStrategy not available. Ensure andrew_ng_ml_strategy.py is available")
+    
+    def get_error_analyzer(self):
+        """Get error analyzer instance"""
+        if 'ErrorAnalyzer' in self.components:
+            return self.components['ErrorAnalyzer']()
+        else:
+            raise ImportError("ErrorAnalyzer not available")
+    
+    def get_bias_variance_diagnostic(self):
+        """Get bias/variance diagnostic instance"""
+        if 'BiasVarianceDiagnostic' in self.components:
+            return self.components['BiasVarianceDiagnostic']()
+        else:
+            raise ImportError("BiasVarianceDiagnostic not available")
+    
+    def get_learning_curves_analyzer(self):
+        """Get learning curves analyzer instance"""
+        if 'LearningCurvesAnalyzer' in self.components:
+            return self.components['LearningCurvesAnalyzer']()
+        else:
+            raise ImportError("LearningCurvesAnalyzer not available")
+    
+    def get_model_debugger(self):
+        """Get model debugger instance"""
+        if 'ModelDebugger' in self.components:
+            return self.components['ModelDebugger']()
+        else:
+            raise ImportError("ModelDebugger not available")
+    
+    def get_systematic_model_selector(self):
+        """Get systematic model selector instance"""
+        if 'SystematicModelSelector' in self.components:
+            return self.components['SystematicModelSelector']()
+        else:
+            raise ImportError("SystematicModelSelector not available")
     
     def list_components(self):
         """List all available components in this compartment"""
