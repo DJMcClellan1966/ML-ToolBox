@@ -247,6 +247,23 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import causal discovery: {e}")
         
+        # Three Books Methods (ESL, Bishop, Deep Learning)
+        try:
+            from three_books_methods import (
+                ESLMethods,
+                BishopMethods,
+                DeepLearningMethods,
+                ThreeBooksMethods,
+                get_all_dependencies
+            )
+            self.components['ESLMethods'] = ESLMethods
+            self.components['BishopMethods'] = BishopMethods
+            self.components['DeepLearningMethods'] = DeepLearningMethods
+            self.components['ThreeBooksMethods'] = ThreeBooksMethods
+            self.components['get_all_dependencies'] = get_all_dependencies
+        except ImportError as e:
+            print(f"Warning: Could not import three books methods: {e}")
+        
         # Add component descriptions
         self.component_descriptions = {
             'MLEvaluator': {
@@ -661,6 +678,58 @@ class AlgorithmsCompartment:
                 ],
                 'location': 'causal_discovery.py',
                 'category': 'Causal Inference'
+            },
+            'ESLMethods': {
+                'description': 'Methods from Elements of Statistical Learning (Hastie, Tibshirani, Friedman)',
+                'features': [
+                    'Support Vector Machines (SVM)',
+                    'AdaBoost',
+                    'Generalized Additive Models (GAM)',
+                    'Lasso, Ridge, Elastic Net',
+                    'Random Forests, Gradient Boosting'
+                ],
+                'location': 'three_books_methods.py',
+                'category': 'Classical ML',
+                'dependencies': ['scikit-learn>=1.5.0', 'scipy>=1.11.0', 'numpy>=1.26.0']
+            },
+            'BishopMethods': {
+                'description': 'Methods from Pattern Recognition and Machine Learning (Bishop)',
+                'features': [
+                    'Gaussian Processes',
+                    'Gaussian Mixture Models (GMM)',
+                    'Expectation-Maximization (EM)',
+                    'Probabilistic PCA',
+                    'Bayesian methods'
+                ],
+                'location': 'three_books_methods.py',
+                'category': 'Probabilistic ML',
+                'dependencies': ['scikit-learn>=1.5.0', 'scipy>=1.11.0', 'numpy>=1.26.0']
+            },
+            'DeepLearningMethods': {
+                'description': 'Methods from Deep Learning (Goodfellow, Bengio, Courville)',
+                'features': [
+                    'Neural Networks (MLP)',
+                    'Dropout Regularization',
+                    'Batch Normalization',
+                    'Optimization algorithms (Adam, RMSprop)',
+                    'PyTorch integration'
+                ],
+                'location': 'three_books_methods.py',
+                'category': 'Deep Learning',
+                'dependencies': ['torch>=2.3.0', 'numpy>=1.26.0']
+            },
+            'ThreeBooksMethods': {
+                'description': 'Unified interface for all three books methods',
+                'features': [
+                    'ESL methods (SVM, AdaBoost, GAM)',
+                    'Bishop methods (GP, GMM, EM)',
+                    'Deep Learning methods (NN, Dropout, BatchNorm)',
+                    'Dependency tracking',
+                    'Unified API'
+                ],
+                'location': 'three_books_methods.py',
+                'category': 'Classical ML',
+                'dependencies': ['scikit-learn>=1.5.0', 'scipy>=1.11.0', 'numpy>=1.26.0', 'torch>=2.3.0']
             }
         }
     
@@ -947,6 +1016,41 @@ class AlgorithmsCompartment:
             return self.components['CausalDiscovery'](method=method, **kwargs)
         else:
             raise ImportError("CausalDiscovery not available")
+    
+    def get_esl_methods(self):
+        """Get ESL methods instance (Elements of Statistical Learning)"""
+        if 'ESLMethods' in self.components:
+            return self.components['ESLMethods']()
+        else:
+            raise ImportError("ESLMethods not available")
+    
+    def get_bishop_methods(self):
+        """Get Bishop methods instance (Pattern Recognition and Machine Learning)"""
+        if 'BishopMethods' in self.components:
+            return self.components['BishopMethods']()
+        else:
+            raise ImportError("BishopMethods not available")
+    
+    def get_deep_learning_methods(self):
+        """Get Deep Learning methods instance"""
+        if 'DeepLearningMethods' in self.components:
+            return self.components['DeepLearningMethods']()
+        else:
+            raise ImportError("DeepLearningMethods not available")
+    
+    def get_three_books_methods(self):
+        """Get unified three books methods instance"""
+        if 'ThreeBooksMethods' in self.components:
+            return self.components['ThreeBooksMethods']()
+        else:
+            raise ImportError("ThreeBooksMethods not available")
+    
+    def get_all_dependencies(self):
+        """Get all dependencies for three books methods"""
+        if 'get_all_dependencies' in self.components:
+            return self.components['get_all_dependencies']()
+        else:
+            return {}
     
     def list_components(self):
         """List all available components in this compartment"""

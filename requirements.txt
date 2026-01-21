@@ -4,7 +4,7 @@ numpy>=1.26.0
 # Scientific computing (required for statistical methods and quantum kernel)
 scipy>=1.11.0
 
-# Deep learning (required by LLM)
+# Deep learning (required by LLM and Deep Learning book methods)
 torch>=2.3.0
 
 # Required for improved embeddings and quantum methods to work effectively
@@ -16,6 +16,27 @@ scikit-learn>=1.5.0
 # Statistical learning (required for Bayesian optimization)
 scikit-optimize>=0.9.0
 
+# Data manipulation
+pandas>=2.0.0
+
+# Time series analysis (ARIMA, time series features)
+statsmodels>=0.14.0
+
+# Interpretability (SHAP, LIME)
+shap>=0.42.0
+lime>=0.2.0
+
+# Probabilistic models (Bayesian Networks, HMM)
+pgmpy>=0.1.19
+hmmlearn>=0.2.7
+
+# Imbalanced learning (SMOTE, etc.)
+imbalanced-learn>=0.11.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
 # Optional: Quantum computing frameworks (for quantum kernel methods)
 # Choose one based on your preference:
 # qiskit>=1.2.0
@@ -26,13 +47,15 @@ scikit-optimize>=0.9.0
 # Optional: LLM libraries (if extending LLM functionality)
 # transformers>=4.45.0
 
-# Optional: Visualization and development
-# matplotlib>=3.8.0
-# seaborn>=0.13.0
+# Optional: Development
 # jupyter>=1.0.0
 
 # Optional: Testing
 # pytest>=7.4.0
 
-# Statistical learning (optional but recommended)
-scikit-optimize>=0.9.0  # Bayesian optimization
+# Optional: Full GAM support
+# pygam>=0.9.0
+
+# Optional: Advanced probabilistic methods
+# pymc3>=5.0.0
+# pyro-ppl>=1.8.0
