@@ -56,12 +56,16 @@ def benchmark_methods(texts1, texts2, method_name):
     print(f"\nResults ({len(texts1)} pairs):")
     print(f"  Classical Cosine:")
     print(f"    Mean: {classical_mean:.4f} ± {classical_std:.4f}")
-    print(f"    Time: {classical_time:.4f}s")
+    print(f"    Time: {classical_time:.6f}s")
     print(f"  Quantum Interference:")
     print(f"    Mean: {quantum_mean:.4f} ± {quantum_std:.4f}")
-    print(f"    Time: {quantum_time:.4f}s")
+    print(f"    Time: {quantum_time:.6f}s")
     print(f"  Improvement: {improvement:+.1f}%")
-    print(f"  Speed ratio: {classical_time/quantum_time:.2f}x")
+    # Avoid division by zero
+    if quantum_time > 0 and classical_time > 0:
+        print(f"  Speed ratio: {classical_time/quantum_time:.2f}x {'(classical slower)' if classical_time > quantum_time else '(quantum slower)'}")
+    else:
+        print(f"  Speed ratio: Too fast to measure accurately")
     
     return {
         'classical_mean': classical_mean,
