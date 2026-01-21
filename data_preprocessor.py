@@ -17,14 +17,23 @@ from quantum_kernel import get_kernel, KernelConfig
 import requests
 import numpy as np
 
-# Try to import sklearn for PCA
+# Try to import sklearn for PCA and ML evaluation
 try:
     from sklearn.decomposition import PCA, TruncatedSVD
     from sklearn.preprocessing import StandardScaler
+    from sklearn.model_selection import (
+        train_test_split, cross_val_score, KFold, StratifiedKFold,
+        GridSearchCV, RandomizedSearchCV, learning_curve, validation_curve
+    )
+    from sklearn.metrics import (
+        accuracy_score, precision_score, recall_score, f1_score,
+        classification_report, confusion_matrix, roc_auc_score,
+        mean_squared_error, mean_absolute_error, r2_score
+    )
     SKLEARN_AVAILABLE = True
 except ImportError:
     SKLEARN_AVAILABLE = False
-    print("Warning: sklearn not available. Dimensionality reduction will use basic methods.")
+    print("Warning: sklearn not available. Dimensionality reduction and ML evaluation will use basic methods.")
 
 
 class AdvancedDataPreprocessor:
