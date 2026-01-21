@@ -28,3 +28,6 @@ scikit-learn>=1.5.0
 
 # Optional: Testing
 # pytest>=7.4.0
+
+# Statistical learning (optional but recommended)
+scikit-optimize>=0.9.0  # Bayesian optimization

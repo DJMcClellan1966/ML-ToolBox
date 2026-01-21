@@ -122,6 +122,50 @@ class AlgorithmsCompartment:
                 ],
                 'location': 'ensemble_learning.py',
                 'category': 'Ensemble'
+            },
+            'StatisticalEvaluator': {
+                'description': 'Statistical evaluation with uncertainty quantification',
+                'features': [
+                    'Confidence intervals for predictions',
+                    'Prediction intervals',
+                    'Bootstrap-based uncertainty',
+                    'Uncertainty scores'
+                ],
+                'location': 'statistical_learning.py',
+                'category': 'Statistical Learning'
+            },
+            'StatisticalValidator': {
+                'description': 'Statistical validation methods',
+                'features': [
+                    'Permutation tests for model comparison',
+                    'Bootstrap validation',
+                    'Hypothesis testing',
+                    'Statistical significance'
+                ],
+                'location': 'statistical_learning.py',
+                'category': 'Statistical Learning'
+            },
+            'BayesianOptimizer': {
+                'description': 'Bayesian hyperparameter optimization',
+                'features': [
+                    'Gaussian Process-based optimization',
+                    'More efficient than grid/random search',
+                    'Handles uncertainty',
+                    'Better exploration/exploitation'
+                ],
+                'location': 'statistical_learning.py',
+                'category': 'Statistical Learning'
+            },
+            'StatisticalFeatureSelector': {
+                'description': 'Statistical feature selection methods',
+                'features': [
+                    'Mutual information selection',
+                    'Chi-square tests',
+                    'F-tests',
+                    'Statistical significance'
+                ],
+                'location': 'statistical_learning.py',
+                'category': 'Statistical Learning'
             }
         }
     
@@ -160,6 +204,60 @@ class AlgorithmsCompartment:
             return self.components['EnsembleLearner']()
         else:
             raise ImportError("Ensemble Learner not available")
+    
+    def get_statistical_evaluator(self, n_bootstrap: int = 1000):
+        """
+        Get statistical evaluator instance
+        
+        Args:
+            n_bootstrap: Number of bootstrap samples for uncertainty quantification
+            
+        Returns:
+            StatisticalEvaluator instance
+        """
+        if 'StatisticalEvaluator' in self.components:
+            return self.components['StatisticalEvaluator'](n_bootstrap=n_bootstrap)
+        else:
+            raise ImportError("StatisticalEvaluator not available. Install scipy: pip install scipy")
+    
+    def get_statistical_validator(self):
+        """
+        Get statistical validator instance
+        
+        Returns:
+            StatisticalValidator instance
+        """
+        if 'StatisticalValidator' in self.components:
+            return self.components['StatisticalValidator']()
+        else:
+            raise ImportError("StatisticalValidator not available. Install scipy: pip install scipy")
+    
+    def get_bayesian_optimizer(self, n_calls: int = 50):
+        """
+        Get Bayesian optimizer instance
+        
+        Args:
+            n_calls: Number of optimization iterations
+            
+        Returns:
+            BayesianOptimizer instance
+        """
+        if 'BayesianOptimizer' in self.components:
+            return self.components['BayesianOptimizer'](n_calls=n_calls)
+        else:
+            raise ImportError("BayesianOptimizer not available. Install scikit-optimize: pip install scikit-optimize")
+    
+    def get_statistical_feature_selector(self):
+        """
+        Get statistical feature selector instance
+        
+        Returns:
+            StatisticalFeatureSelector instance
+        """
+        if 'StatisticalFeatureSelector' in self.components:
+            return self.components['StatisticalFeatureSelector']()
+        else:
+            raise ImportError("StatisticalFeatureSelector not available")
     
     def list_components(self):
         """List all available components in this compartment"""
