@@ -33,13 +33,17 @@ try:
         confusion_matrix, classification_report,
         mean_squared_error, mean_absolute_error, r2_score
     )
-    import matplotlib.pyplot as plt
     SKLEARN_AVAILABLE = True
+except ImportError as e:
+    SKLEARN_AVAILABLE = False
+    print(f"Warning: sklearn not available: {e}")
+
+try:
+    import matplotlib.pyplot as plt
     MATPLOTLIB_AVAILABLE = True
 except ImportError:
-    SKLEARN_AVAILABLE = False
     MATPLOTLIB_AVAILABLE = False
-    print("Warning: sklearn or matplotlib not available")
+    # matplotlib is optional, don't print warning
 
 
 class ErrorAnalyzer:
@@ -753,46 +757,116 @@ class AndrewNgMLStrategy:
         
         print("[Andrew Ng ML Strategy] Running complete analysis...")
         
+        # Initialize results dictionary
+        results = {}
+        
         # 1. Bias/Variance Diagnosis
-        print("  [1/5] Bias/Variance Diagnosis...")
-        bias_variance = self.bias_variance.diagnose(model, X_train, y_train, X_val, y_val, task_type)
+        try:
+            print("  [1/5] Bias/Variance Diagnosis...")
+            bias_variance = self.bias_variance.diagnose(model, X_train, y_train, X_val, y_val, task_type)
+            if 'error' not in bias_variance:
+                results['bias_variance_diagnosis'] = bias_variance
+            else:
+                results['bias_variance_diagnosis'] = {'error': bias_variance.get('error', 'Unknown error')}
+        except Exception as e:
+            print(f"    Warning: Bias/Variance diagnosis failed: {e}")
+            results['bias_variance_diagnosis'] = {'error': str(e)}
         
         # 2. Learning Curves
-        print("  [2/5] Learning Curves Analysis...")
-        X_all = np.vstack([X_train, X_val])
-        y_all = np.hstack([y_train, y_val])
-        learning_curves = self.learning_curves.analyze(model, X_all, y_all, task_type=task_type)
+        try:
+            print("  [2/5] Learning Curves Analysis...")
+            X_all = np.vstack([X_train, X_val])
+            y_all = np.hstack([y_train, y_val])
+            learning_curves = self.learning_curves.analyze(model, X_all, y_all, task_type=task_type)
+            if 'error' not in learning_curves:
+                results['learning_curves'] = learning_curves
+            else:
+                results['learning_curves'] = {'error': learning_curves.get('error', 'Unknown error')}
+        except Exception as e:
+            print(f"    Warning: Learning curves analysis failed: {e}")
+            results['learning_curves'] = {'error': str(e)}
         
         # 3. Error Analysis
-        print("  [3/5] Error Analysis...")
-        model.fit(X_train, y_train)
-        error_analysis = self.error_analyzer.analyze_classification_errors(
-            model, X_val, y_val
-        ) if task_type == 'classification' else {}
+        try:
+            print("  [3/5] Error Analysis...")
+            # Create fresh model instance for error analysis
+            if hasattr(model, 'get_params'):
+                model_params = model.get_params()
+                model_for_analysis = type(model)(**model_params)
+            else:
+                model_for_analysis = type(model)()
+            model_for_analysis.fit(X_train, y_train)
+            
+            if task_type == 'classification':
+                error_analysis = self.error_analyzer.analyze_classification_errors(
+                    model_for_analysis, X_val, y_val
+                )
+            else:
+                error_analysis = {}
+            
+            if error_analysis and 'error' not in error_analysis:
+                results['error_analysis'] = error_analysis
+            elif error_analysis:
+                results['error_analysis'] = {'error': error_analysis.get('error', 'Unknown error')}
+            else:
+                results['error_analysis'] = {}
+        except Exception as e:
+            print(f"    Warning: Error analysis failed: {e}")
+            results['error_analysis'] = {'error': str(e)}
         
         # 4. Model Debugging
-        print("  [4/5] Model Debugging...")
-        debug_report = self.model_debugger.debug(model, X_train, y_train, X_val, y_val, task_type)
+        try:
+            print("  [4/5] Model Debugging...")
+            # Use same model instance
+            if 'model_for_analysis' not in locals():
+                if hasattr(model, 'get_params'):
+                    model_params = model.get_params()
+                    model_for_analysis = type(model)(**model_params)
+                else:
+                    model_for_analysis = type(model)()
+            
+            debug_report = self.model_debugger.debug(model_for_analysis, X_train, y_train, X_val, y_val, task_type)
+            if 'error' not in debug_report:
+                results['debug_report'] = debug_report
+            else:
+                results['debug_report'] = {'error': debug_report.get('error', 'Unknown error')}
+        except Exception as e:
+            print(f"    Warning: Model debugging failed: {e}")
+            results['debug_report'] = {'error': str(e)}
         
         # 5. Recommendations
         print("  [5/5] Generating Recommendations...")
         all_recommendations = []
-        all_recommendations.extend(bias_variance.get('recommendations', []))
-        all_recommendations.extend(learning_curves['analysis'].get('recommendations', []))
-        all_recommendations.extend(error_analysis.get('recommendations', []))
-        all_recommendations.extend(debug_report.get('recommendations', []))
+        
+        if 'bias_variance_diagnosis' in results and 'error' not in results['bias_variance_diagnosis']:
+            all_recommendations.extend(results['bias_variance_diagnosis'].get('recommendations', []))
+        
+        if 'learning_curves' in results and 'error' not in results['learning_curves']:
+            all_recommendations.extend(results['learning_curves'].get('analysis', {}).get('recommendations', []))
+        
+        if 'error_analysis' in results and 'error' not in results['error_analysis']:
+            all_recommendations.extend(results['error_analysis'].get('recommendations', []))
+        
+        if 'debug_report' in results and 'error' not in results['debug_report']:
+            all_recommendations.extend(results['debug_report'].get('recommendations', []))
         
         # Remove duplicates
         unique_recommendations = list(set(all_recommendations))
+        results['prioritized_recommendations'] = unique_recommendations
         
-        return {
-            'bias_variance_diagnosis': bias_variance,
-            'learning_curves': learning_curves,
-            'error_analysis': error_analysis,
-            'debug_report': debug_report,
-            'prioritized_recommendations': unique_recommendations,
-            'summary': self._generate_summary(bias_variance, learning_curves, error_analysis, debug_report)
-        }
+        # Generate summary
+        try:
+            results['summary'] = self._generate_summary(
+                results.get('bias_variance_diagnosis', {}),
+                results.get('learning_curves', {}),
+                results.get('error_analysis', {}),
+                results.get('debug_report', {})
+            )
+        except Exception as e:
+            print(f"    Warning: Summary generation failed: {e}")
+            results['summary'] = {'error': str(e)}
+        
+        return results
     
     def _generate_summary(
         self,
@@ -802,12 +876,26 @@ class AndrewNgMLStrategy:
         debug_report: Dict
     ) -> Dict[str, Any]:
         """Generate executive summary"""
+        # Handle error cases gracefully
+        bv_diagnosis = bias_variance.get('diagnosis', 'unknown') if 'error' not in bias_variance else 'error'
+        bv_train = bias_variance.get('train_score', 0) if 'error' not in bias_variance else 0
+        bv_val = bias_variance.get('val_score', 0) if 'error' not in bias_variance else 0
+        bv_gap = bias_variance.get('gap', 0) if 'error' not in bias_variance else 0
+        
+        error_rate = error_analysis.get('error_rate', 0) if error_analysis and 'error' not in error_analysis else 0
+        
+        data_issues = 0
+        feature_issues = 0
+        if debug_report and 'error' not in debug_report:
+            data_issues = len(debug_report.get('data_quality', {}).get('issues', []))
+            feature_issues = len(debug_report.get('feature_analysis', {}).get('issues', []))
+        
         return {
-            'diagnosis': bias_variance.get('diagnosis', 'unknown'),
-            'train_score': bias_variance.get('train_score', 0),
-            'val_score': bias_variance.get('val_score', 0),
-            'gap': bias_variance.get('gap', 0),
-            'error_rate': error_analysis.get('error_rate', 0),
-            'data_quality_issues': len(debug_report.get('data_quality', {}).get('issues', [])),
-            'feature_issues': len(debug_report.get('feature_analysis', {}).get('issues', []))
+            'diagnosis': bv_diagnosis,
+            'train_score': bv_train,
+            'val_score': bv_val,
+            'gap': bv_gap,
+            'error_rate': error_rate,
+            'data_quality_issues': data_issues,
+            'feature_issues': feature_issues
         }

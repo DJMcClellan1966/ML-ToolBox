@@ -62,45 +62,68 @@ print("\n" + "="*80)
 print("ANALYSIS RESULTS")
 print("="*80)
 
+# Check for errors
+if 'error' in results:
+    print(f"\n[ERROR] {results['error']}")
+    print("="*80)
+    print("DEMO COMPLETE")
+    print("="*80)
+    exit(0)
+
 # Bias/Variance Diagnosis
-print("\n[BIAS/VARIANCE DIAGNOSIS]")
-bv = results['bias_variance_diagnosis']
-print(f"  Diagnosis: {bv['diagnosis']}")
-print(f"  Training Score: {bv['train_score']:.4f}")
-print(f"  Validation Score: {bv['val_score']:.4f}")
-print(f"  Gap: {bv['gap']:.4f}")
-print(f"  Explanation: {bv['explanation']}")
-print(f"\n  Recommendations:")
-for rec in bv['recommendations']:
-    print(f"    - {rec}")
+if 'bias_variance_diagnosis' in results:
+    print("\n[BIAS/VARIANCE DIAGNOSIS]")
+    bv = results['bias_variance_diagnosis']
+    if 'error' not in bv:
+        print(f"  Diagnosis: {bv.get('diagnosis', 'unknown')}")
+        print(f"  Training Score: {bv.get('train_score', 0):.4f}")
+        print(f"  Validation Score: {bv.get('val_score', 0):.4f}")
+        print(f"  Gap: {bv.get('gap', 0):.4f}")
+        print(f"  Explanation: {bv.get('explanation', 'N/A')}")
+        print(f"\n  Recommendations:")
+        for rec in bv.get('recommendations', []):
+            print(f"    - {rec}")
+    else:
+        print(f"  Error: {bv.get('error', 'Unknown error')}")
 
 # Learning Curves
-print("\n[LEARNING CURVES]")
-lc = results['learning_curves']
-print(f"  Would more data help: {lc['analysis']['would_more_data_help']}")
-print(f"  Final gap: {lc['analysis']['final_gap']:.4f}")
-print(f"  Validation trend: {lc['analysis']['val_trend']:.4f}")
-print(f"\n  Recommendations:")
-for rec in lc['analysis']['recommendations']:
-    print(f"    - {rec}")
+if 'learning_curves' in results:
+    print("\n[LEARNING CURVES]")
+    lc = results['learning_curves']
+    if 'error' not in lc and 'analysis' in lc:
+        analysis = lc['analysis']
+        print(f"  Would more data help: {analysis.get('would_more_data_help', False)}")
+        print(f"  Final gap: {analysis.get('final_gap', 0):.4f}")
+        print(f"  Validation trend: {analysis.get('val_trend', 0):.4f}")
+        print(f"\n  Recommendations:")
+        for rec in analysis.get('recommendations', []):
+            print(f"    - {rec}")
+    else:
+        print(f"  Error: {lc.get('error', 'Unknown error')}")
 
 # Error Analysis (if classification)
 if 'error_analysis' in results and results['error_analysis']:
     print("\n[ERROR ANALYSIS]")
     ea = results['error_analysis']
     if 'error' not in ea:
-        print(f"  Error Rate: {ea['error_rate']:.4f}")
-        print(f"  Error Count: {ea['error_count']}")
+        print(f"  Error Rate: {ea.get('error_rate', 0):.4f}")
+        print(f"  Error Count: {ea.get('error_count', 0)}")
         print(f"\n  Recommendations:")
         for rec in ea.get('recommendations', [])[:5]:  # Top 5
             print(f"    - {rec}")
+    else:
+        print(f"  Error: {ea.get('error', 'Unknown error')}")
 
 # Debug Report
-print("\n[DEBUG REPORT]")
-dr = results['debug_report']
-print(f"  Data Quality Issues: {len(dr['data_quality']['issues'])}")
-print(f"  Feature Issues: {len(dr['feature_analysis']['issues'])}")
-print(f"  Model Performance Issues: {len(dr['model_performance']['issues'])}")
+if 'debug_report' in results:
+    print("\n[DEBUG REPORT]")
+    dr = results['debug_report']
+    if 'error' not in dr:
+        print(f"  Data Quality Issues: {len(dr.get('data_quality', {}).get('issues', []))}")
+        print(f"  Feature Issues: {len(dr.get('feature_analysis', {}).get('issues', []))}")
+        print(f"  Model Performance Issues: {len(dr.get('model_performance', {}).get('issues', []))}")
+    else:
+        print(f"  Error: {dr.get('error', 'Unknown error')}")
 
 # Summary
 print("\n[SUMMARY]")
