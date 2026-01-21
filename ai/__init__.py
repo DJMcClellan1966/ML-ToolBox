@@ -24,6 +24,8 @@ from .components import (
 from .adaptive_neuron import AdaptiveNeuron, AdaptiveNeuralNetwork
 
 __version__ = "1.0.0"
+from .adaptive_neuron import AdaptiveNeuron, AdaptiveNeuralNetwork
+
 __all__ = [
     "CompleteAISystem",
     "SemanticUnderstandingEngine",
@@ -31,5 +33,7 @@ __all__ = [
     "IntelligentSearch",
     "ReasoningEngine",
     "LearningSystem",
-    "ConversationalAI"
+    "ConversationalAI",
+    "AdaptiveNeuron",
+    "AdaptiveNeuralNetwork"
 ]
