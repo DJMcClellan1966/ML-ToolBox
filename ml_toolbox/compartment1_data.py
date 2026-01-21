@@ -53,6 +53,44 @@ class DataCompartment:
         except ImportError as e:
             print(f"Warning: Could not import preprocessors: {e}")
         
+        # Kuhn/Johnson Preprocessing Methods
+        try:
+            from kuhn_johnson_preprocessing import ModelSpecificPreprocessor, create_preprocessing_pipeline
+            self.components['ModelSpecificPreprocessor'] = ModelSpecificPreprocessor
+            self.components['create_preprocessing_pipeline'] = create_preprocessing_pipeline
+        except ImportError as e:
+            print(f"Warning: Could not import Kuhn/Johnson preprocessing: {e}")
+        
+        # Missing Data Handling
+        try:
+            from missing_data import MissingDataHandler, CVAwareImputation
+            self.components['MissingDataHandler'] = MissingDataHandler
+            self.components['CVAwareImputation'] = CVAwareImputation
+        except ImportError as e:
+            print(f"Warning: Could not import missing data handlers: {e}")
+        
+        # Class Imbalance Handling
+        try:
+            from class_imbalance import ClassImbalanceHandler, ThresholdTuner
+            self.components['ClassImbalanceHandler'] = ClassImbalanceHandler
+            self.components['ThresholdTuner'] = ThresholdTuner
+        except ImportError as e:
+            print(f"Warning: Could not import class imbalance handlers: {e}")
+        
+        # High-Cardinality Categorical Handling
+        try:
+            from high_cardinality_categorical import HighCardinalityHandler
+            self.components['HighCardinalityHandler'] = HighCardinalityHandler
+        except ImportError as e:
+            print(f"Warning: Could not import high-cardinality handler: {e}")
+        
+        # Variance & Correlation Filtering
+        try:
+            from variance_correlation_filter import VarianceCorrelationFilter
+            self.components['VarianceCorrelationFilter'] = VarianceCorrelationFilter
+        except ImportError as e:
+            print(f"Warning: Could not import variance/correlation filter: {e}")
+        
         # Add component descriptions
         self.component_descriptions = {
             'AdvancedDataPreprocessor': {
@@ -77,6 +115,62 @@ class DataCompartment:
                     'Simple quality scoring'
                 ],
                 'location': 'data_preprocessor.py',
+                'category': 'Preprocessing'
+            },
+            'ModelSpecificPreprocessor': {
+                'description': 'Kuhn/Johnson model-specific preprocessing',
+                'features': [
+                    'Different preprocessing per model type',
+                    'Spatial sign for distance-based models',
+                    'Centering/scaling for linear models',
+                    'Box-Cox/Yeo-Johnson transformations'
+                ],
+                'location': 'kuhn_johnson_preprocessing.py',
+                'category': 'Preprocessing'
+            },
+            'MissingDataHandler': {
+                'description': 'Systematic missing data handling',
+                'features': [
+                    'Multiple imputation strategies (mean, median, KNN, iterative)',
+                    'Missing indicator variables',
+                    'Pattern detection (MCAR, MAR, MNAR)',
+                    'CV-aware imputation'
+                ],
+                'location': 'missing_data.py',
+                'category': 'Preprocessing'
+            },
+            'ClassImbalanceHandler': {
+                'description': 'Handle class imbalance',
+                'features': [
+                    'SMOTE (Synthetic Minority Oversampling)',
+                    'ADASYN, BorderlineSMOTE',
+                    'Random undersampling',
+                    'Cost-sensitive learning',
+                    'Threshold tuning'
+                ],
+                'location': 'class_imbalance.py',
+                'category': 'Preprocessing'
+            },
+            'HighCardinalityHandler': {
+                'description': 'Handle high-cardinality categorical variables',
+                'features': [
+                    'Target encoding (mean encoding)',
+                    'Feature hashing',
+                    'Frequency encoding',
+                    'Rare category grouping'
+                ],
+                'location': 'high_cardinality_categorical.py',
+                'category': 'Preprocessing'
+            },
+            'VarianceCorrelationFilter': {
+                'description': 'Filter uninformative and correlated features',
+                'features': [
+                    'Near-zero variance detection',
+                    'High correlation filtering',
+                    'Percent unique values',
+                    'Frequency ratio analysis'
+                ],
+                'location': 'variance_correlation_filter.py',
                 'category': 'Preprocessing'
             }
         }
@@ -149,6 +243,44 @@ class DataCompartment:
                 for feature in desc['features']:
                     print(f"    - {feature}")
         print("\n" + "="*80)
+    
+    def get_model_specific_preprocessor(self, model_type: str = 'auto', **kwargs):
+        """Get model-specific preprocessor instance (Kuhn/Johnson)"""
+        if 'ModelSpecificPreprocessor' in self.components:
+            return self.components['ModelSpecificPreprocessor'](model_type=model_type, **kwargs)
+        else:
+            raise ImportError("ModelSpecificPreprocessor not available")
+    
+    def get_missing_data_handler(self, strategy: str = 'knn', add_indicator: bool = True):
+        """Get missing data handler instance (Kuhn/Johnson)"""
+        if 'MissingDataHandler' in self.components:
+            return self.components['MissingDataHandler'](strategy=strategy, add_indicator=add_indicator)
+        else:
+            raise ImportError("MissingDataHandler not available")
+    
+    def get_class_imbalance_handler(self, method: str = 'smote'):
+        """Get class imbalance handler instance (Kuhn/Johnson)"""
+        if 'ClassImbalanceHandler' in self.components:
+            return self.components['ClassImbalanceHandler'](method=method)
+        else:
+            raise ImportError("ClassImbalanceHandler not available")
+    
+    def get_high_cardinality_handler(self, method: str = 'target_encoding', min_frequency: float = 0.01):
+        """Get high-cardinality categorical handler instance (Kuhn/Johnson)"""
+        if 'HighCardinalityHandler' in self.components:
+            return self.components['HighCardinalityHandler'](method=method, min_frequency=min_frequency)
+        else:
+            raise ImportError("HighCardinalityHandler not available")
+    
+    def get_variance_correlation_filter(self, remove_nzv: bool = True, remove_high_correlation: bool = True):
+        """Get variance/correlation filter instance (Kuhn/Johnson)"""
+        if 'VarianceCorrelationFilter' in self.components:
+            return self.components['VarianceCorrelationFilter'](
+                remove_nzv=remove_nzv,
+                remove_high_correlation=remove_high_correlation
+            )
+        else:
+            raise ImportError("VarianceCorrelationFilter not available")
     
     def get_info(self):
         """Get information about this compartment"""

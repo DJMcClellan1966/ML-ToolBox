@@ -95,6 +95,50 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import Andrew Ng ML Strategy: {e}")
         
+        # Kuhn/Johnson Resampling Methods
+        try:
+            from kuhn_johnson_resampling import (
+                AdvancedResampler,
+                RepeatedKFold,
+                BootstrapResampler,
+                TimeSeriesCV,
+                GroupKFoldCV,
+                NestedCV
+            )
+            self.components['AdvancedResampler'] = AdvancedResampler
+            self.components['RepeatedKFold'] = RepeatedKFold
+            self.components['BootstrapResampler'] = BootstrapResampler
+        except ImportError as e:
+            print(f"Warning: Could not import Kuhn/Johnson resampling: {e}")
+        
+        # Variable Importance Analysis
+        try:
+            from variable_importance import VariableImportanceAnalyzer
+            self.components['VariableImportanceAnalyzer'] = VariableImportanceAnalyzer
+        except ImportError as e:
+            print(f"Warning: Could not import variable importance analyzer: {e}")
+        
+        # Performance Profiles
+        try:
+            from performance_profiles import PerformanceProfile
+            self.components['PerformanceProfile'] = PerformanceProfile
+        except ImportError as e:
+            print(f"Warning: Could not import performance profiles: {e}")
+        
+        # Advanced Feature Selection
+        try:
+            from advanced_feature_selection import AdvancedFeatureSelector
+            self.components['AdvancedFeatureSelector'] = AdvancedFeatureSelector
+        except ImportError as e:
+            print(f"Warning: Could not import advanced feature selection: {e}")
+        
+        # Model Calibration
+        try:
+            from model_calibration import ModelCalibrator
+            self.components['ModelCalibrator'] = ModelCalibrator
+        except ImportError as e:
+            print(f"Warning: Could not import model calibrator: {e}")
+        
         # Add component descriptions
         self.component_descriptions = {
             'MLEvaluator': {
@@ -253,6 +297,70 @@ class AlgorithmsCompartment:
                 ],
                 'location': 'andrew_ng_ml_strategy.py',
                 'category': 'ML Strategy'
+            },
+            'AdvancedResampler': {
+                'description': 'Kuhn/Johnson advanced resampling methods',
+                'features': [
+                    'Repeated K-Fold CV (reduce variance)',
+                    'Bootstrap resampling with CI',
+                    'Leave-One-Out CV',
+                    'Time series CV',
+                    'Group K-Fold CV',
+                    'Nested CV'
+                ],
+                'location': 'kuhn_johnson_resampling.py',
+                'category': 'Resampling'
+            },
+            'VariableImportanceAnalyzer': {
+                'description': 'Kuhn/Johnson variable importance analysis',
+                'features': [
+                    'Permutation importance (model-agnostic)',
+                    'Built-in importance (model-specific)',
+                    'SHAP values (if available)',
+                    'Stability analysis across CV folds',
+                    'Multiple importance methods',
+                    'Combined rankings'
+                ],
+                'location': 'variable_importance.py',
+                'category': 'Analysis'
+            },
+            'PerformanceProfile': {
+                'description': 'Kuhn/Johnson performance profiles',
+                'features': [
+                    'Visual model comparison',
+                    'Boxplots of CV scores',
+                    'Statistical significance testing',
+                    'Model rankings',
+                    'Publication-quality plots'
+                ],
+                'location': 'performance_profiles.py',
+                'category': 'Evaluation'
+            },
+            'AdvancedFeatureSelector': {
+                'description': 'Kuhn/Johnson advanced feature selection',
+                'features': [
+                    'Forward selection (wrapper)',
+                    'Backward elimination (wrapper)',
+                    'Recursive Feature Elimination (RFE)',
+                    'Stability selection',
+                    'Embedded methods (L1 regularization)',
+                    'CV-aware selection'
+                ],
+                'location': 'advanced_feature_selection.py',
+                'category': 'Feature Selection'
+            },
+            'ModelCalibrator': {
+                'description': 'Kuhn/Johnson model calibration',
+                'features': [
+                    'Platt scaling (logistic regression)',
+                    'Isotonic regression',
+                    'Calibration plots',
+                    'Brier score evaluation',
+                    'Probability calibration',
+                    'Expected calibration error'
+                ],
+                'location': 'model_calibration.py',
+                'category': 'Calibration'
             }
         }
     
@@ -392,6 +500,41 @@ class AlgorithmsCompartment:
             return self.components['SystematicModelSelector']()
         else:
             raise ImportError("SystematicModelSelector not available")
+    
+    def get_advanced_resampler(self):
+        """Get advanced resampler instance (Kuhn/Johnson)"""
+        if 'AdvancedResampler' in self.components:
+            return self.components['AdvancedResampler']()
+        else:
+            raise ImportError("AdvancedResampler not available")
+    
+    def get_variable_importance_analyzer(self):
+        """Get variable importance analyzer instance (Kuhn/Johnson)"""
+        if 'VariableImportanceAnalyzer' in self.components:
+            return self.components['VariableImportanceAnalyzer']()
+        else:
+            raise ImportError("VariableImportanceAnalyzer not available")
+    
+    def get_performance_profile(self):
+        """Get performance profile instance (Kuhn/Johnson)"""
+        if 'PerformanceProfile' in self.components:
+            return self.components['PerformanceProfile']()
+        else:
+            raise ImportError("PerformanceProfile not available")
+    
+    def get_advanced_feature_selector(self, method: str = 'rfe', **kwargs):
+        """Get advanced feature selector instance (Kuhn/Johnson)"""
+        if 'AdvancedFeatureSelector' in self.components:
+            return self.components['AdvancedFeatureSelector'](method=method, **kwargs)
+        else:
+            raise ImportError("AdvancedFeatureSelector not available")
+    
+    def get_model_calibrator(self, method: str = 'isotonic', cv: int = 5):
+        """Get model calibrator instance (Kuhn/Johnson)"""
+        if 'ModelCalibrator' in self.components:
+            return self.components['ModelCalibrator'](method=method, cv=cv)
+        else:
+            raise ImportError("ModelCalibrator not available")
     
     def list_components(self):
         """List all available components in this compartment"""

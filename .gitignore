@@ -129,3 +129,12 @@ logs/
 build/
 dist/
 *.egg-info/
+
+# .NET / C# build artifacts
+PocketFenceKernel/bin/
+PocketFenceKernel/obj/
+*.csproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
