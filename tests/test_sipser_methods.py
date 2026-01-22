@@ -56,7 +56,7 @@ class TestFiniteAutomaton:
             ('q0', 'a'): 'q1',
             ('q0', 'b'): 'q0',
             ('q1', 'a'): 'q1',
-            ('q1', 'b'): 'q0'
+            ('q1', 'b'): 'q1'  # Stay in q1 on 'b' so 'ab' ends in accepting state
         }
         start = 'q0'
         accept = {'q1'}
@@ -64,8 +64,9 @@ class TestFiniteAutomaton:
         dfa = FiniteAutomaton(states, alphabet, transitions, start, accept)
         accepted, sequence = dfa.process('ab')
         
-        assert accepted
-        assert len(sequence) == 3  # q0 -> q1 -> q0
+        assert accepted  # q0 -> q1 (on 'a') -> q1 (on 'b'), ends in q1 (accepting)
+        assert len(sequence) == 3  # q0 -> q1 -> q1
+        assert sequence[-1] == 'q1'  # Ends in accepting state
 
 
 class TestNondeterministicFiniteAutomaton:
