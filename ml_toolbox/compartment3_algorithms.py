@@ -321,6 +321,21 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import foundational algorithms: {e}")
         
+        # CLRS Complete (Missing Algorithms)
+        try:
+            from clrs_complete_algorithms import (
+                CLRSDynamicProgramming,
+                CLRSGraphAlgorithms,
+                CLRSGreedyAlgorithms,
+                CLRSComplete
+            )
+            self.components['CLRSDynamicProgramming'] = CLRSDynamicProgramming
+            self.components['CLRSGraphAlgorithms'] = CLRSGraphAlgorithms
+            self.components['CLRSGreedyAlgorithms'] = CLRSGreedyAlgorithms
+            self.components['CLRSComplete'] = CLRSComplete
+        except ImportError as e:
+            print(f"Warning: Could not import CLRS complete algorithms: {e}")
+        
         # Three Books Methods (ESL, Bishop, Deep Learning)
         try:
             from three_books_methods import (
@@ -1008,6 +1023,18 @@ class AlgorithmsCompartment:
                 'location': 'foundational_algorithms.py',
                 'category': 'Algorithms',
                 'dependencies': ['numpy>=1.26.0']
+            },
+            'CLRSComplete': {
+                'description': 'Complete CLRS implementation (missing algorithms)',
+                'features': [
+                    'Additional DP: Optimal BST, LIS, Coin Change, Rod Cutting',
+                    'Additional Graphs: Bellman-Ford, Johnson\'s, Bipartite Matching',
+                    'Additional Greedy: Prim\'s MST, Activity Selection, Set Cover',
+                    'Complete CLRS algorithm coverage'
+                ],
+                'location': 'clrs_complete_algorithms.py',
+                'category': 'Algorithms',
+                'dependencies': ['numpy>=1.26.0']
             }
         }
     
@@ -1414,6 +1441,13 @@ class AlgorithmsCompartment:
             return self.components['FoundationalAlgorithms']()
         else:
             raise ImportError("FoundationalAlgorithms not available")
+    
+    def get_clrs_complete(self):
+        """Get complete CLRS algorithms (missing algorithms)"""
+        if 'CLRSComplete' in self.components:
+            return self.components['CLRSComplete']()
+        else:
+            raise ImportError("CLRSComplete not available")
     
     def list_components(self):
         """List all available components in this compartment"""
