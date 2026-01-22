@@ -404,12 +404,41 @@ This document compares the ML Toolbox to popular ML frameworks, platforms, and t
 - ✅ Functional programming and advanced methods
 
 ### **Other Tools are Better For:**
-- ❌ Deep learning (TensorFlow/PyTorch)
-- ❌ Experiment tracking UI (MLflow, W&B)
-- ❌ AutoML (H2O.ai, AutoML tools)
-- ❌ Cloud scalability (AWS, Google, Azure)
-- ❌ Simple ML tasks (scikit-learn)
-- ❌ Large community support (scikit-learn, TensorFlow)
+- ❌ **Deep learning** (TensorFlow/PyTorch)
+  - Advanced neural architectures (CNN, RNN, Transformer)
+  - Native GPU support and optimization
+  - Large-scale deep learning training
+  - Pre-trained models and transfer learning
+  
+- ❌ **Experiment tracking UI** (MLflow, W&B)
+  - Rich visualizations and dashboards
+  - Interactive experiment comparison
+  - Model performance visualization
+  - Team collaboration features
+  
+- ❌ **AutoML** (H2O.ai, AutoML tools)
+  - Automated model selection
+  - Automated hyperparameter tuning
+  - Automated feature engineering
+  - Minimal ML expertise required
+  
+- ❌ **Cloud scalability** (AWS, Google, Azure)
+  - Managed infrastructure and auto-scaling
+  - Distributed training at scale
+  - Cloud-native integrations
+  - Enterprise support and SLAs
+  
+- ❌ **Simple ML tasks** (scikit-learn)
+  - Simple, intuitive API
+  - Large community and extensive documentation
+  - Battle-tested, widely-used library
+  - Quick prototyping and experimentation
+  
+- ❌ **Large community support** (scikit-learn, TensorFlow)
+  - Extensive Stack Overflow answers
+  - Large number of tutorials and examples
+  - Active development and updates
+  - Industry adoption and job market relevance
 
 ---
 
