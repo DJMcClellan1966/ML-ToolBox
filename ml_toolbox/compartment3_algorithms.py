@@ -406,6 +406,29 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import Sipser methods: {e}")
         
+        # Sedgewick & Wayne Algorithms
+        try:
+            from sedgewick_wayne_algorithms import (
+                IndexedPriorityQueue,
+                OrderedSymbolTable,
+                AStarSearch,
+                BidirectionalSearch,
+                ThreeWayQuicksort,
+                Trie,
+                BloomFilter,
+                SedgewickWayneAlgorithms
+            )
+            self.components['IndexedPriorityQueue'] = IndexedPriorityQueue
+            self.components['OrderedSymbolTable'] = OrderedSymbolTable
+            self.components['AStarSearch'] = AStarSearch
+            self.components['BidirectionalSearch'] = BidirectionalSearch
+            self.components['ThreeWayQuicksort'] = ThreeWayQuicksort
+            self.components['Trie'] = Trie
+            self.components['BloomFilter'] = BloomFilter
+            self.components['SedgewickWayneAlgorithms'] = SedgewickWayneAlgorithms
+        except ImportError as e:
+            print(f"Warning: Could not import Sedgewick & Wayne algorithms: {e}")
+        
         # Three Books Methods (ESL, Bishop, Deep Learning)
         try:
             from three_books_methods import (
@@ -1159,6 +1182,22 @@ class AlgorithmsCompartment:
                 'location': 'sipser_methods.py',
                 'category': 'Automata Theory',
                 'dependencies': []
+            },
+            'SedgewickWayneAlgorithms': {
+                'description': 'Sedgewick & Wayne practical algorithms',
+                'features': [
+                    'Indexed Priority Queue (efficient updates)',
+                    'Ordered Symbol Table (range queries, ordered operations)',
+                    'A* Search (heuristic pathfinding)',
+                    'Bidirectional Search (faster pathfinding)',
+                    '3-Way Quicksort (efficient duplicate handling)',
+                    'Trie (prefix tree for string matching)',
+                    'Bloom Filter (probabilistic membership testing)',
+                    'Production-ready algorithm implementations'
+                ],
+                'location': 'sedgewick_wayne_algorithms.py',
+                'category': 'Algorithms',
+                'dependencies': []
             }
         }
     
@@ -1600,6 +1639,13 @@ class AlgorithmsCompartment:
             return self.components['SipserMethods']()
         else:
             raise ImportError("SipserMethods not available")
+    
+    def get_sedgewick_wayne_algorithms(self):
+        """Get Sedgewick & Wayne algorithms"""
+        if 'SedgewickWayneAlgorithms' in self.components:
+            return self.components['SedgewickWayneAlgorithms']()
+        else:
+            raise ImportError("SedgewickWayneAlgorithms not available")
     
     def list_components(self):
         """List all available components in this compartment"""
