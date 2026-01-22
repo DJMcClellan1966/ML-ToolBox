@@ -495,6 +495,47 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import simple ML tasks: {e}")
         
+        # Optimized ML Tasks
+        try:
+            from optimized_ml_tasks import OptimizedMLTasks
+            self.components['OptimizedMLTasks'] = OptimizedMLTasks
+        except ImportError as e:
+            print(f"Warning: Could not import optimized ML tasks: {e}")
+        
+        # Optimized Preprocessing
+        try:
+            from optimized_preprocessing import OptimizedPreprocessor
+            self.components['OptimizedPreprocessor'] = OptimizedPreprocessor
+        except ImportError as e:
+            print(f"Warning: Could not import optimized preprocessing: {e}")
+        
+        # ML Security Framework
+        try:
+            from ml_security_framework import (
+                InputValidator, ModelEncryption, AdversarialDefender,
+                ThreatDetectionSystem, MLSecurityFramework
+            )
+            self.components['InputValidator'] = InputValidator
+            self.components['ModelEncryption'] = ModelEncryption
+            self.components['AdversarialDefender'] = AdversarialDefender
+            self.components['ThreatDetectionSystem'] = ThreatDetectionSystem
+            self.components['MLSecurityFramework'] = MLSecurityFramework
+        except ImportError as e:
+            print(f"Warning: Could not import ML security framework: {e}")
+        
+        # Data Learning Framework
+        try:
+            from data_learning_framework import (
+                FederatedLearningFramework, OnlineLearningWrapper,
+                DifferentialPrivacyWrapper, ContinuousLearningPipeline
+            )
+            self.components['FederatedLearningFramework'] = FederatedLearningFramework
+            self.components['OnlineLearningWrapper'] = OnlineLearningWrapper
+            self.components['DifferentialPrivacyWrapper'] = DifferentialPrivacyWrapper
+            self.components['ContinuousLearningPipeline'] = ContinuousLearningPipeline
+        except ImportError as e:
+            print(f"Warning: Could not import data learning framework: {e}")
+        
         # Interactive Dashboard
         try:
             from interactive_dashboard import InteractiveDashboard
@@ -1424,6 +1465,69 @@ class AlgorithmsCompartment:
                 'location': 'pretrained_model_hub.py',
                 'category': 'ML',
                 'dependencies': ['torch>=2.0.0', 'transformers>=4.0.0']
+            },
+            'MLSecurityFramework': {
+                'description': 'ML security framework with input validation, encryption, adversarial defense',
+                'features': [
+                    'Input validation framework',
+                    'Model encryption at rest',
+                    'Adversarial defense and training',
+                    'Threat detection system',
+                    'Secure prediction pipeline',
+                    'Production-ready security'
+                ],
+                'location': 'ml_security_framework.py',
+                'category': 'Security',
+                'dependencies': ['cryptography>=41.0.0']
+            },
+            'FederatedLearningFramework': {
+                'description': 'Federated learning for privacy-preserving distributed ML',
+                'features': [
+                    'Federated training rounds',
+                    'Model aggregation (FedAvg)',
+                    'Privacy-preserving ML',
+                    'Distributed training',
+                    'Multi-client support'
+                ],
+                'location': 'data_learning_framework.py',
+                'category': 'Data Learning',
+                'dependencies': []
+            },
+            'OnlineLearningWrapper': {
+                'description': 'Online/incremental learning for streaming data',
+                'features': [
+                    'Incremental model updates',
+                    'Streaming data support',
+                    'Continuous learning',
+                    'No full retraining required'
+                ],
+                'location': 'data_learning_framework.py',
+                'category': 'Data Learning',
+                'dependencies': []
+            },
+            'DifferentialPrivacyWrapper': {
+                'description': 'Differential privacy for private ML',
+                'features': [
+                    'Differential privacy guarantees',
+                    'Laplace mechanism',
+                    'Privacy budget management',
+                    'Private predictions'
+                ],
+                'location': 'data_learning_framework.py',
+                'category': 'Data Learning',
+                'dependencies': []
+            },
+            'ContinuousLearningPipeline': {
+                'description': 'Continuous learning pipeline for adaptive models',
+                'features': [
+                    'Initial training',
+                    'Incremental updates',
+                    'Streaming data support',
+                    'Adaptive learning'
+                ],
+                'location': 'data_learning_framework.py',
+                'category': 'Data Learning',
+                'dependencies': []
             }
         }
     
@@ -1914,6 +2018,84 @@ class AlgorithmsCompartment:
             return self.components['SimpleMLTasks']()
         else:
             raise ImportError("SimpleMLTasks not available")
+    
+    def get_optimized_ml_tasks(self, cache_dir: str = ".ml_cache"):
+        """Get Optimized ML Tasks (speed and accuracy optimized)"""
+        if 'OptimizedMLTasks' in self.components:
+            return self.components['OptimizedMLTasks'](cache_dir)
+        else:
+            raise ImportError("OptimizedMLTasks not available")
+    
+    def get_optimized_preprocessor(self, cache_dir: str = ".preprocessing_cache"):
+        """Get Optimized Preprocessor"""
+        if 'OptimizedPreprocessor' in self.components:
+            return self.components['OptimizedPreprocessor'](cache_dir)
+        else:
+            raise ImportError("OptimizedPreprocessor not available")
+    
+    def get_input_validator(self, max_features: Optional[int] = None,
+                           feature_ranges: Optional[Dict[int, Tuple[float, float]]] = None):
+        """Get Input Validator"""
+        if 'InputValidator' in self.components:
+            return self.components['InputValidator'](max_features, feature_ranges)
+        else:
+            raise ImportError("InputValidator not available")
+    
+    def get_model_encryption(self, key: Optional[bytes] = None):
+        """Get Model Encryption"""
+        if 'ModelEncryption' in self.components:
+            return self.components['ModelEncryption'](key)
+        else:
+            raise ImportError("ModelEncryption not available")
+    
+    def get_adversarial_defender(self, model: Any, epsilon: float = 0.01):
+        """Get Adversarial Defender"""
+        if 'AdversarialDefender' in self.components:
+            return self.components['AdversarialDefender'](model, epsilon)
+        else:
+            raise ImportError("AdversarialDefender not available")
+    
+    def get_threat_detection_system(self):
+        """Get Threat Detection System"""
+        if 'ThreatDetectionSystem' in self.components:
+            return self.components['ThreatDetectionSystem']()
+        else:
+            raise ImportError("ThreatDetectionSystem not available")
+    
+    def get_ml_security_framework(self, model: Any, validator: Optional[Any] = None):
+        """Get ML Security Framework"""
+        if 'MLSecurityFramework' in self.components:
+            return self.components['MLSecurityFramework'](model, validator)
+        else:
+            raise ImportError("MLSecurityFramework not available")
+    
+    def get_federated_learning_framework(self, aggregation_method: str = 'fedavg'):
+        """Get Federated Learning Framework"""
+        if 'FederatedLearningFramework' in self.components:
+            return self.components['FederatedLearningFramework'](aggregation_method)
+        else:
+            raise ImportError("FederatedLearningFramework not available")
+    
+    def get_online_learning_wrapper(self, base_model: Any, learning_rate: float = 0.01):
+        """Get Online Learning Wrapper"""
+        if 'OnlineLearningWrapper' in self.components:
+            return self.components['OnlineLearningWrapper'](base_model, learning_rate)
+        else:
+            raise ImportError("OnlineLearningWrapper not available")
+    
+    def get_differential_privacy_wrapper(self, model: Any, epsilon: float = 1.0, delta: float = 1e-5):
+        """Get Differential Privacy Wrapper"""
+        if 'DifferentialPrivacyWrapper' in self.components:
+            return self.components['DifferentialPrivacyWrapper'](model, epsilon, delta)
+        else:
+            raise ImportError("DifferentialPrivacyWrapper not available")
+    
+    def get_continuous_learning_pipeline(self, base_model: Optional[Any] = None, use_ml_toolbox: bool = True):
+        """Get Continuous Learning Pipeline"""
+        if 'ContinuousLearningPipeline' in self.components:
+            return self.components['ContinuousLearningPipeline'](base_model, use_ml_toolbox)
+        else:
+            raise ImportError("ContinuousLearningPipeline not available")
     
     def get_interactive_dashboard(self, storage_path: str = "experiments.json"):
         """Get Interactive Dashboard"""
