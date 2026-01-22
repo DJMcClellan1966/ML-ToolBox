@@ -467,6 +467,13 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import algorithm design patterns: {e}")
         
+        # Deep Learning Framework
+        try:
+            from deep_learning_framework import DeepLearningFramework
+            self.components['DeepLearningFramework'] = DeepLearningFramework
+        except ImportError as e:
+            print(f"Warning: Could not import deep learning framework: {e}")
+        
         # Three Books Methods (ESL, Bishop, Deep Learning)
         try:
             from three_books_methods import (
@@ -1266,6 +1273,22 @@ class AlgorithmsCompartment:
                 'location': 'algorithm_design_patterns.py',
                 'category': 'Algorithms',
                 'dependencies': ['numpy>=1.26.0']
+            },
+            'DeepLearningFramework': {
+                'description': 'Comprehensive deep learning framework',
+                'features': [
+                    'CNN architectures (Simple, VGG-like, ResNet-like)',
+                    'RNN architectures (RNN, LSTM, GRU)',
+                    'Transformer model',
+                    'Advanced optimizers (Adam, SGD, RMSprop, AdamW, AdaGrad)',
+                    'Learning rate schedulers (StepLR, CosineAnnealing, ReduceLROnPlateau)',
+                    'Training utilities with callbacks',
+                    'Model evaluation',
+                    'Production-ready deep learning'
+                ],
+                'location': 'deep_learning_framework.py',
+                'category': 'Deep Learning',
+                'dependencies': ['torch>=2.0.0', 'torchvision>=0.15.0']
             }
         }
     
@@ -1728,6 +1751,13 @@ class AlgorithmsCompartment:
             return self.components['AlgorithmDesignFramework']()
         else:
             raise ImportError("AlgorithmDesignFramework not available")
+    
+    def get_deep_learning_framework(self):
+        """Get Deep Learning Framework"""
+        if 'DeepLearningFramework' in self.components:
+            return self.components['DeepLearningFramework']()
+        else:
+            raise ImportError("DeepLearningFramework not available")
     
     def list_components(self):
         """List all available components in this compartment"""
