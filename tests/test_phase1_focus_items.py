@@ -83,12 +83,12 @@ class TestModelRegistry:
         """Test model registration"""
         registry = ModelRegistry(registry_path="test_registry")
         
-        # Create dummy model
-        class DummyModel:
-            def __init__(self):
-                self.weights = [1, 2, 3]
-        
+        # Use a simple object that can be pickled
+        import types
+        DummyModel = types.SimpleNamespace
         model = DummyModel()
+        model.weights = [1, 2, 3]
+        
         version = registry.register_model(
             model,
             {'accuracy': 0.95, 'loss': 0.05},
@@ -108,8 +108,9 @@ class TestModelRegistry:
         """Test model promotion"""
         registry = ModelRegistry(registry_path="test_registry")
         
-        class DummyModel:
-            pass
+        # Use a simple object that can be pickled
+        import types
+        DummyModel = types.SimpleNamespace
         
         version = registry.register_model(
             DummyModel(),
@@ -133,8 +134,9 @@ class TestModelRegistry:
         """Test listing versions"""
         registry = ModelRegistry(registry_path="test_registry")
         
-        class DummyModel:
-            pass
+        # Use a simple object that can be pickled
+        import types
+        DummyModel = types.SimpleNamespace
         
         registry.register_model(DummyModel(), {}, version='1.0.0', stage=ModelStage.DEV)
         registry.register_model(DummyModel(), {}, version='1.0.1', stage=ModelStage.STAGING)
@@ -154,18 +156,30 @@ class TestModelRegistry:
         """Test production rollback"""
         registry = ModelRegistry(registry_path="test_registry")
         
-        class DummyModel:
-            pass
+        # Use a simple object that can be pickled
+        import types
+        DummyModel = types.SimpleNamespace
         
         v1 = registry.register_model(DummyModel(), {}, version='1.0.0', stage=ModelStage.PRODUCTION)
         v2 = registry.register_model(DummyModel(), {}, version='1.0.1', stage=ModelStage.STAGING)
         
-        # Promote v2 to production (simulating rollback)
-        registry.promote_model(v2, ModelStage.PRODUCTION)
+        # Use rollback_production method
+        success = registry.rollback_production(v1)
+        assert success
         
-        # v1 should be archived
+        # v1 should still be in production (rollback to itself)
         model1 = registry.get_model(v1)
+        assert model1.stage == ModelStage.PRODUCTION
+        
+        # Now rollback to v2
+        success = registry.rollback_production(v2)
+        assert success
+        
+        # v1 should be archived, v2 should be production
+        model1 = registry.get_model(v1)
+        model2 = registry.get_model(v2)
         assert model1.stage == ModelStage.ARCHIVED
+        assert model2.stage == ModelStage.PRODUCTION
         
         # Cleanup
         import shutil
@@ -205,8 +219,9 @@ class TestPretrainedModelHub:
         """Test registering model"""
         hub = PretrainedModelHub(hub_path="test_hub")
         
-        class DummyModel:
-            pass
+        # Use a simple object that can be pickled
+        import types
+        DummyModel = types.SimpleNamespace
         
         success = hub.register_model(
             'test-model',
