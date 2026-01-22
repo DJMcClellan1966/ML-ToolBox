@@ -144,6 +144,7 @@ class MonitoringDashboard:
                         }
                     
                     await websocket.send_json(metrics)
+                    import asyncio
                     await asyncio.sleep(5)
             except WebSocketDisconnect:
                 pass
