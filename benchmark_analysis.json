@@ -1,0 +1,148 @@
+{
+  "overall_performance": {
+    "success_rate": 100.0,
+    "total_tests": 9,
+    "successful": 9,
+    "failed": 0,
+    "speed": {
+      "avg_time": 6.071600066290961,
+      "min_time": 0.13219976425170898,
+      "max_time": 31.80141282081604,
+      "median_time": 1.2559733390808105
+    },
+    "accuracy": {
+      "avg_accuracy": 0.9611666666666667,
+      "min_accuracy": 0.9105,
+      "max_accuracy": 1.0,
+      "median_accuracy": 0.9675
+    },
+    "regression": {
+      "avg_r2": 0.8317764314800539,
+      "min_r2": 0.7970811227044026,
+      "max_r2": 0.8931251124200225
+    }
+  },
+  "detailed_analysis": [
+    {
+      "name": "Iris Classification",
+      "difficulty": "Simple",
+      "performance": {
+        "toolbox": {
+          "status": "success",
+          "metrics": {
+            "accuracy": 1.0,
+            "training_time": 0.3413050174713135
+          }
+        }
+      },
+      "issues": [
+        "Training time significantly slower than baseline"
+      ],
+      "recommendations": [
+        "Optimize training pipeline and add caching"
+      ],
+      "comparison": {
+        "accuracy_diff": 0.0,
+        "speed_ratio": 1.6963328636889872
+      }
+    },
+    {
+      "name": "Housing Regression",
+      "difficulty": "Simple",
+      "performance": {
+        "toolbox": {
+          "status": "success",
+          "metrics": {
+            "r2_score": 0.7970811227044026,
+            "mse": 0.26590671866271426,
+            "training_time": 7.090711355209351
+          }
+        }
+      },
+      "issues": [],
+      "recommendations": [],
+      "comparison": {
+        "speed_ratio": 0.8062568555189976
+      }
+    },
+    {
+      "name": "Text Classification",
+      "difficulty": "Medium",
+      "performance": {
+        "toolbox": {
+          "status": "success",
+          "metrics": {
+            "accuracy": 1.0,
+            "training_time": 0.13219976425170898
+          }
+        }
+      },
+      "issues": [],
+      "recommendations": []
+    },
+    {
+      "name": "MNIST Classification",
+      "difficulty": "Medium-Hard",
+      "performance": {},
+      "issues": [],
+      "recommendations": []
+    },
+    {
+      "name": "Time Series Forecasting",
+      "difficulty": "Medium",
+      "performance": {
+        "toolbox": {
+          "status": "success",
+          "metrics": {
+            "mse": 6.629448081826842,
+            "r2_score": 0.8931251124200225,
+            "training_time": 0.18274784088134766
+          }
+        }
+      },
+      "issues": [],
+      "recommendations": []
+    },
+    {
+      "name": "Large-scale Dataset",
+      "difficulty": "Hard",
+      "performance": {
+        "toolbox": {
+          "status": "success",
+          "metrics": {
+            "accuracy": 0.9215,
+            "training_time": 31.80141282081604
+          }
+        }
+      },
+      "issues": [],
+      "recommendations": []
+    }
+  ],
+  "improvements": [
+    {
+      "category": "Performance - Speed",
+      "priority": "High",
+      "issue": "Average training time is 6.07s (high)",
+      "recommendations": [
+        "Add model caching for repeated training",
+        "Optimize data preprocessing pipeline",
+        "Add parallel processing where possible",
+        "Use more efficient data structures"
+      ]
+    },
+    {
+      "category": "Features",
+      "priority": "Medium",
+      "issue": "Some advanced features not tested",
+      "recommendations": [
+        "Add deep learning benchmarks",
+        "Test advanced preprocessing features",
+        "Benchmark AutoML capabilities",
+        "Test model registry and versioning",
+        "Test pre-trained model hub"
+      ]
+    }
+  ],
+  "comparisons": []
+}

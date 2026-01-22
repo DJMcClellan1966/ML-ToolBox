@@ -1,0 +1,131 @@
+{
+  "timestamp": "2026-01-22T16:33:19.850933",
+  "benchmarks": [
+    {
+      "name": "Iris Classification",
+      "difficulty": "Simple",
+      "dataset_size": 150,
+      "features": 4,
+      "classes": 3,
+      "models": [
+        {
+          "name": "ML Toolbox - Simple ML",
+          "accuracy": 1.0,
+          "training_time": 0.3413050174713135,
+          "status": "success"
+        },
+        {
+          "name": "scikit-learn (baseline)",
+          "accuracy": 1.0,
+          "training_time": 0.2012016773223877,
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "name": "Housing Regression",
+      "difficulty": "Simple",
+      "dataset_size": 20640,
+      "features": 8,
+      "models": [
+        {
+          "name": "ML Toolbox - Simple ML",
+          "r2_score": 0.7970811227044026,
+          "mse": 0.26590671866271426,
+          "training_time": 7.090711355209351,
+          "status": "success"
+        },
+        {
+          "name": "scikit-learn (baseline)",
+          "r2_score": 0.8051230593157366,
+          "mse": 0.2553684927247781,
+          "training_time": 8.79460597038269,
+          "status": "success"
+        }
+      ]
+    },
+    {
+      "name": "Text Classification",
+      "difficulty": "Medium",
+      "models": [
+        {
+          "name": "ML Toolbox - Simple ML",
+          "accuracy": 1.0,
+          "training_time": 0.13219976425170898,
+          "status": "success"
+        }
+      ],
+      "dataset_size": 400,
+      "features": 21
+    },
+    {
+      "name": "MNIST Classification",
+      "difficulty": "Medium-Hard",
+      "models": [
+        {
+          "name": "ML Toolbox - Simple ML",
+          "accuracy": 0.935,
+          "training_time": 1.2559733390808105,
+          "status": "success"
+        },
+        {
+          "name": "ML Toolbox - Deep Learning",
+          "note": "Requires data loaders - not tested in this benchmark",
+          "status": "skipped"
+        }
+      ],
+      "dataset_size": 5000,
+      "features": 784,
+      "classes": 10
+    },
+    {
+      "name": "Time Series Forecasting",
+      "difficulty": "Medium",
+      "models": [
+        {
+          "name": "ML Toolbox - Simple ML",
+          "mse": 6.629448081826842,
+          "r2_score": 0.8931251124200225,
+          "training_time": 0.18274784088134766,
+          "status": "success"
+        }
+      ],
+      "dataset_size": 997,
+      "features": 4
+    },
+    {
+      "name": "Large-scale Dataset",
+      "difficulty": "Hard",
+      "models": [
+        {
+          "name": "ML Toolbox - Simple ML",
+          "accuracy": 0.9105,
+          "training_time": 4.844242811203003,
+          "status": "success"
+        },
+        {
+          "name": "ML Toolbox - AutoML",
+          "accuracy": 0.9215,
+          "training_time": 31.80141282081604,
+          "status": "success"
+        }
+      ],
+      "dataset_size": 10000,
+      "features": 100
+    }
+  ],
+  "summary": {
+    "total_benchmarks": 6,
+    "successful_tests": 9,
+    "failed_tests": 0,
+    "performance_stats": {
+      "avg_training_time": 6.071600066290961,
+      "min_training_time": 0.13219976425170898,
+      "max_training_time": 31.80141282081604,
+      "avg_accuracy": 0.9611666666666667,
+      "min_accuracy": 0.9105,
+      "max_accuracy": 1.0
+    },
+    "improvements": []
+  }
+}
