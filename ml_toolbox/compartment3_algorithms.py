@@ -429,6 +429,29 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import Sedgewick & Wayne algorithms: {e}")
         
+        # Pragmatic Programmer & Clean Code (Hunt & Thomas, Robert Martin)
+        try:
+            from pragmatic_clean_code_framework import (
+                DRYFramework,
+                OrthogonalityChecker,
+                DesignByContract,
+                AssertionsFramework,
+                SOLIDPrinciplesChecker,
+                CleanArchitecture,
+                FunctionQualityMetrics,
+                PragmaticCleanCodeFramework
+            )
+            self.components['DRYFramework'] = DRYFramework
+            self.components['OrthogonalityChecker'] = OrthogonalityChecker
+            self.components['DesignByContract'] = DesignByContract
+            self.components['AssertionsFramework'] = AssertionsFramework
+            self.components['SOLIDPrinciplesChecker'] = SOLIDPrinciplesChecker
+            self.components['CleanArchitecture'] = CleanArchitecture
+            self.components['FunctionQualityMetrics'] = FunctionQualityMetrics
+            self.components['PragmaticCleanCodeFramework'] = PragmaticCleanCodeFramework
+        except ImportError as e:
+            print(f"Warning: Could not import Pragmatic & Clean Code framework: {e}")
+        
         # Three Books Methods (ESL, Bishop, Deep Learning)
         try:
             from three_books_methods import (
@@ -1198,6 +1221,22 @@ class AlgorithmsCompartment:
                 'location': 'sedgewick_wayne_algorithms.py',
                 'category': 'Algorithms',
                 'dependencies': []
+            },
+            'PragmaticCleanCodeFramework': {
+                'description': 'Pragmatic Programmer & Clean Code practices',
+                'features': [
+                    'DRY Framework (detect and eliminate duplication)',
+                    'Orthogonality Checker (measure component independence)',
+                    'Design by Contract (preconditions, postconditions, invariants)',
+                    'Assertions Framework (defensive programming)',
+                    'SOLID Principles Checker (enforce SOLID principles)',
+                    'Clean Architecture (layered architecture with dependency inversion)',
+                    'Function Quality Metrics (small, focused, single purpose)',
+                    'Professional development practices'
+                ],
+                'location': 'pragmatic_clean_code_framework.py',
+                'category': 'Code Quality',
+                'dependencies': []
             }
         }
     
@@ -1646,6 +1685,13 @@ class AlgorithmsCompartment:
             return self.components['SedgewickWayneAlgorithms']()
         else:
             raise ImportError("SedgewickWayneAlgorithms not available")
+    
+    def get_pragmatic_clean_code_framework(self):
+        """Get Pragmatic Programmer & Clean Code framework"""
+        if 'PragmaticCleanCodeFramework' in self.components:
+            return self.components['PragmaticCleanCodeFramework']()
+        else:
+            raise ImportError("PragmaticCleanCodeFramework not available")
     
     def list_components(self):
         """List all available components in this compartment"""
