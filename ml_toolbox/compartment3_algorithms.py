@@ -495,6 +495,28 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import simple ML tasks: {e}")
         
+        # Interactive Dashboard
+        try:
+            from interactive_dashboard import InteractiveDashboard
+            self.components['InteractiveDashboard'] = InteractiveDashboard
+        except ImportError as e:
+            print(f"Warning: Could not import interactive dashboard: {e}")
+        
+        # Model Registry
+        try:
+            from model_registry import ModelRegistry, ModelStage
+            self.components['ModelRegistry'] = ModelRegistry
+            self.components['ModelStage'] = ModelStage
+        except ImportError as e:
+            print(f"Warning: Could not import model registry: {e}")
+        
+        # Pre-trained Model Hub
+        try:
+            from pretrained_model_hub import PretrainedModelHub
+            self.components['PretrainedModelHub'] = PretrainedModelHub
+        except ImportError as e:
+            print(f"Warning: Could not import pre-trained model hub: {e}")
+        
         # Three Books Methods (ESL, Bishop, Deep Learning)
         try:
             from three_books_methods import (
@@ -1354,6 +1376,54 @@ class AlgorithmsCompartment:
                 'location': 'simple_ml_tasks.py',
                 'category': 'ML',
                 'dependencies': ['scikit-learn>=1.3.0']
+            },
+            'InteractiveDashboard': {
+                'description': 'Interactive visualization dashboard with Plotly',
+                'features': [
+                    'Interactive Plotly charts',
+                    'Training curves visualization',
+                    'Metrics comparison',
+                    'Hyperparameter sensitivity analysis',
+                    'Real-time updates (auto-refresh)',
+                    'Summary metrics cards',
+                    'Experiment list with details',
+                    'Modern responsive design'
+                ],
+                'location': 'interactive_dashboard.py',
+                'category': 'Visualization',
+                'dependencies': ['plotly>=5.0.0']
+            },
+            'ModelRegistry': {
+                'description': 'Model registry with versioning and staging',
+                'features': [
+                    'Semantic versioning (MAJOR.MINOR.PATCH)',
+                    'Model staging (dev, staging, production, archived)',
+                    'Model lineage tracking',
+                    'Deployment workflows',
+                    'Model comparison',
+                    'Rollback capabilities',
+                    'Model export',
+                    'Production-ready model management'
+                ],
+                'location': 'model_registry.py',
+                'category': 'MLOps',
+                'dependencies': []
+            },
+            'PretrainedModelHub': {
+                'description': 'Pre-trained model repository with transfer learning',
+                'features': [
+                    'Model repository with metadata',
+                    'Hugging Face integration',
+                    'PyTorch vision models support',
+                    'Transfer learning utilities',
+                    'Fine-tuning pipelines',
+                    'Model search and discovery',
+                    'Download and caching',
+                    'Model sharing'
+                ],
+                'location': 'pretrained_model_hub.py',
+                'category': 'ML',
+                'dependencies': ['torch>=2.0.0', 'transformers>=4.0.0']
             }
         }
     
@@ -1844,6 +1914,27 @@ class AlgorithmsCompartment:
             return self.components['SimpleMLTasks']()
         else:
             raise ImportError("SimpleMLTasks not available")
+    
+    def get_interactive_dashboard(self, storage_path: str = "experiments.json"):
+        """Get Interactive Dashboard"""
+        if 'InteractiveDashboard' in self.components:
+            return self.components['InteractiveDashboard'](storage_path)
+        else:
+            raise ImportError("InteractiveDashboard not available")
+    
+    def get_model_registry(self, registry_path: str = "model_registry"):
+        """Get Model Registry"""
+        if 'ModelRegistry' in self.components:
+            return self.components['ModelRegistry'](registry_path)
+        else:
+            raise ImportError("ModelRegistry not available")
+    
+    def get_pretrained_model_hub(self, hub_path: str = "model_hub"):
+        """Get Pre-trained Model Hub"""
+        if 'PretrainedModelHub' in self.components:
+            return self.components['PretrainedModelHub'](hub_path)
+        else:
+            raise ImportError("PretrainedModelHub not available")
     
     def list_components(self):
         """List all available components in this compartment"""

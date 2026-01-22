@@ -100,8 +100,8 @@ class ModelRegistry:
         try:
             if self.metadata_file.exists():
                 with open(self.metadata_file, 'r') as f:
-                data = json.load(f)
-                for version_str, version_data in data.items():
+                    data = json.load(f)
+                    for version_str, version_data in data.items():
                     # Load model from disk
                     model_path = self.registry_path / version_str / "model.pkl"
                     if model_path.exists():
