@@ -370,6 +370,23 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import code quality framework: {e}")
         
+        # SICP Methods (Abelson, Sussman, Sussman)
+        try:
+            from sicp_methods import (
+                FunctionalMLPipeline,
+                Stream,
+                DataAbstraction,
+                SymbolicComputation,
+                SICPMethods
+            )
+            self.components['FunctionalMLPipeline'] = FunctionalMLPipeline
+            self.components['Stream'] = Stream
+            self.components['DataAbstraction'] = DataAbstraction
+            self.components['SymbolicComputation'] = SymbolicComputation
+            self.components['SICPMethods'] = SICPMethods
+        except ImportError as e:
+            print(f"Warning: Could not import SICP methods: {e}")
+        
         # Three Books Methods (ESL, Bishop, Deep Learning)
         try:
             from three_books_methods import (
@@ -1095,6 +1112,20 @@ class AlgorithmsCompartment:
                 'location': 'code_quality_framework.py',
                 'category': 'Code Quality',
                 'dependencies': []
+            },
+            'SICPMethods': {
+                'description': 'SICP methods for functional programming and streams',
+                'features': [
+                    'Functional ML pipelines (map, filter, reduce, compose, pipe)',
+                    'Stream processing (lazy evaluation, infinite streams)',
+                    'Data abstraction (pairs, lists, trees)',
+                    'Symbolic computation (expression evaluation)',
+                    'Higher-order functions for ML',
+                    'Memory-efficient data processing'
+                ],
+                'location': 'sicp_methods.py',
+                'category': 'Functional Programming',
+                'dependencies': []
             }
         }
     
@@ -1522,6 +1553,13 @@ class AlgorithmsCompartment:
             return self.components['CodeCompleteFramework']()
         else:
             raise ImportError("CodeCompleteFramework not available")
+    
+    def get_sicp_methods(self):
+        """Get SICP methods (Abelson, Sussman, Sussman)"""
+        if 'SICPMethods' in self.components:
+            return self.components['SICPMethods']()
+        else:
+            raise ImportError("SICPMethods not available")
     
     def list_components(self):
         """List all available components in this compartment"""
