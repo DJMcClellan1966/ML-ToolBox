@@ -293,33 +293,50 @@ class Stream:
     
     def map(self, func: Callable) -> 'Stream':
         """Map function over stream"""
-        if self is Stream.empty():
+        if self is Stream.empty() or self is None:
             return Stream.empty()
-        return Stream(func(self.first), lambda: self.rest.map(func))
+        rest = self.rest
+        if rest is Stream.empty() or rest is None:
+            return Stream(func(self.first), lambda: Stream.empty())
+        return Stream(func(self.first), lambda: rest.map(func))
     
     def filter(self, predicate: Callable) -> 'Stream':
         """Filter stream by predicate"""
-        if self is Stream.empty():
+        if self is Stream.empty() or self is None:
             return Stream.empty()
+        rest = self.rest
         if predicate(self.first):
-            return Stream(self.first, lambda: self.rest.filter(predicate))
-        return self.rest.filter(predicate)
+            if rest is Stream.empty() or rest is None:
+                return Stream(self.first, lambda: Stream.empty())
+            return Stream(self.first, lambda: rest.filter(predicate))
+        if rest is Stream.empty() or rest is None:
+            return Stream.empty()
+        return rest.filter(predicate)
     
     def reduce(self, func: Callable, initial: Any = None) -> Any:
         """Reduce stream"""
-        if self is Stream.empty():
+        if self is Stream.empty() or self is None:
             return initial
+        rest = self.rest
         if initial is None:
-            return self.rest.reduce(func, self.first)
-        return self.rest.reduce(func, func(initial, self.first))
+            if rest is Stream.empty() or rest is None:
+                return self.first
+            return rest.reduce(func, self.first)
+        if rest is Stream.empty() or rest is None:
+            return func(initial, self.first)
+        return rest.reduce(func, func(initial, self.first))
     
     def zip(self, other: 'Stream') -> 'Stream':
         """Zip two streams"""
-        if self is Stream.empty() or other is Stream.empty():
+        if self is Stream.empty() or self is None or other is Stream.empty() or other is None:
             return Stream.empty()
+        rest_self = self.rest
+        rest_other = other.rest
+        if rest_self is Stream.empty() or rest_self is None or rest_other is Stream.empty() or rest_other is None:
+            return Stream((self.first, other.first), lambda: Stream.empty())
         return Stream(
             (self.first, other.first),
-            lambda: self.rest.zip(other.rest)
+            lambda: rest_self.zip(rest_other)
         )
 
 
