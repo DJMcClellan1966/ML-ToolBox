@@ -452,6 +452,21 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import Pragmatic & Clean Code framework: {e}")
         
+        # Algorithm Design Patterns (Skiena, Bentley)
+        try:
+            from algorithm_design_patterns import (
+                AlgorithmDesignPatterns,
+                ProblemSolutionMapper,
+                BackOfEnvelopeCalculator,
+                AlgorithmDesignFramework
+            )
+            self.components['AlgorithmDesignPatterns'] = AlgorithmDesignPatterns
+            self.components['ProblemSolutionMapper'] = ProblemSolutionMapper
+            self.components['BackOfEnvelopeCalculator'] = BackOfEnvelopeCalculator
+            self.components['AlgorithmDesignFramework'] = AlgorithmDesignFramework
+        except ImportError as e:
+            print(f"Warning: Could not import algorithm design patterns: {e}")
+        
         # Three Books Methods (ESL, Bishop, Deep Learning)
         try:
             from three_books_methods import (
@@ -1237,6 +1252,20 @@ class AlgorithmsCompartment:
                 'location': 'pragmatic_clean_code_framework.py',
                 'category': 'Code Quality',
                 'dependencies': []
+            },
+            'AlgorithmDesignFramework': {
+                'description': 'Algorithm design patterns and problem-solution mapping',
+                'features': [
+                    'Algorithm Design Patterns (greedy, divide-and-conquer, DP, backtracking)',
+                    'Problem-Solution Mapper (map problems to algorithms)',
+                    'Back-of-Envelope Calculator (quick performance estimates)',
+                    'Algorithm Selection Guide (choose right algorithm)',
+                    'Complexity Analysis (time and space complexity)',
+                    'Practical algorithm templates for ML'
+                ],
+                'location': 'algorithm_design_patterns.py',
+                'category': 'Algorithms',
+                'dependencies': ['numpy>=1.26.0']
             }
         }
     
@@ -1692,6 +1721,13 @@ class AlgorithmsCompartment:
             return self.components['PragmaticCleanCodeFramework']()
         else:
             raise ImportError("PragmaticCleanCodeFramework not available")
+    
+    def get_algorithm_design_framework(self):
+        """Get Algorithm Design Framework (Skiena, Bentley)"""
+        if 'AlgorithmDesignFramework' in self.components:
+            return self.components['AlgorithmDesignFramework']()
+        else:
+            raise ImportError("AlgorithmDesignFramework not available")
     
     def list_components(self):
         """List all available components in this compartment"""
