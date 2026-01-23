@@ -208,10 +208,22 @@ class VirtualQuantumComputer:
         zero_mask = (indices & mask) == 0
         one_mask = ~zero_mask
         
+        # Get indices for swapping
+        zero_indices = indices[zero_mask]
+        one_indices = indices[one_mask]
+        
         # Apply Hadamard transformation
         self.quantum_state = np.zeros_like(temp)
-        self.quantum_state[zero_mask] = (temp[zero_mask] + temp[zero_mask ^ mask]) / np.sqrt(2)
-        self.quantum_state[one_mask] = (temp[one_mask ^ mask] - temp[one_mask]) / np.sqrt(2)
+        
+        # For |0> states: (|0> + |1>) / sqrt(2)
+        for idx in zero_indices:
+            flipped_idx = idx ^ mask
+            self.quantum_state[idx] = (temp[idx] + temp[flipped_idx]) / np.sqrt(2)
+        
+        # For |1> states: (|0> - |1>) / sqrt(2)
+        for idx in one_indices:
+            flipped_idx = idx ^ mask
+            self.quantum_state[idx] = (temp[flipped_idx] - temp[idx]) / np.sqrt(2)
     
     def measure(self, qubit: int) -> int:
         """Measure a qubit (returns 0 or 1)"""
