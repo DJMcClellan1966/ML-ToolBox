@@ -79,8 +79,8 @@ def integrate_ml_math_features():
         print("  - Practical performance improvements")
         print("\n[RECOMMENDATION] Use ML Math Features instead of quantum simulation")
         print("  - Better performance for ML tasks")
-        - More practical for regular laptops
-        - No quantum hardware required")
+        print("  - More practical for regular laptops")
+        print("  - No quantum hardware required")
         
         return True
         
