@@ -21,53 +21,53 @@ def integrate_optimizations():
     print("1. Data Preprocessor Optimizations:")
     try:
         from data_preprocessor import AdvancedDataPreprocessor
-        print("   ✅ AdvancedDataPreprocessor - Vectorized deduplication integrated")
-        print("   ✅ AdvancedDataPreprocessor - Vectorized categorization integrated")
+        print("   [OK] AdvancedDataPreprocessor - Vectorized deduplication integrated")
+        print("   [OK] AdvancedDataPreprocessor - Vectorized categorization integrated")
         optimizations_applied.append("Data Preprocessor")
     except Exception as e:
-        print(f"   ⚠️  Error: {e}")
+        print(f"   [WARNING] Error: {e}")
     
     # 2. Quantum Kernel optimizations
     print("\n2. Quantum Kernel Optimizations:")
     try:
         from quantum_kernel.kernel import QuantumKernel
-        print("   ✅ QuantumKernel - Vectorized similarity computation integrated")
+        print("   [OK] QuantumKernel - Vectorized similarity computation integrated")
         optimizations_applied.append("Quantum Kernel")
     except Exception as e:
-        print(f"   ⚠️  Error: {e}")
+        print(f"   [WARNING] Error: {e}")
     
     # 3. Check if optimized operations are available
     print("\n3. Optimized Operations Availability:")
     try:
         from optimized_ml_operations import OptimizedMLOperations
-        print("   ✅ OptimizedMLOperations available")
-        print("   ✅ Vectorized similarity computation")
-        print("   ✅ Vectorized deduplication")
-        print("   ✅ Vectorized feature selection")
-        print("   ✅ Parallel embedding computation")
+        print("   [OK] OptimizedMLOperations available")
+        print("   [OK] Vectorized similarity computation")
+        print("   [OK] Vectorized deduplication")
+        print("   [OK] Vectorized feature selection")
+        print("   [OK] Parallel embedding computation")
         optimizations_applied.append("Optimized Operations")
     except ImportError:
-        print("   ⚠️  OptimizedMLOperations not available")
-        print("   💡 Install with: pip install numba (optional)")
+        print("   [WARNING] OptimizedMLOperations not available")
+        print("   [TIP] Install with: pip install numba (optional)")
     
     # 4. Check for Numba
     print("\n4. Numba JIT Compilation:")
     try:
         from numba import jit
-        print("   ✅ Numba available - JIT compilation enabled")
+        print("   [OK] Numba available - JIT compilation enabled")
         optimizations_applied.append("Numba JIT")
     except ImportError:
-        print("   ⚠️  Numba not available (optional)")
-        print("   💡 Install with: pip install numba")
+        print("   [WARNING] Numba not available (optional)")
+        print("   [TIP] Install with: pip install numba")
     
     # 5. Check for multiprocessing
     print("\n5. Parallel Processing:")
     try:
         from multiprocessing import Pool, cpu_count
-        print(f"   ✅ Multiprocessing available - {cpu_count()} CPU cores")
+        print(f"   [OK] Multiprocessing available - {cpu_count()} CPU cores")
         optimizations_applied.append("Parallel Processing")
     except ImportError:
-        print("   ⚠️  Multiprocessing not available")
+        print("   [WARNING] Multiprocessing not available")
     
     # Summary
     print("\n" + "="*80)
@@ -75,7 +75,7 @@ def integrate_optimizations():
     print("="*80)
     print(f"Optimizations Applied: {len(optimizations_applied)}")
     for opt in optimizations_applied:
-        print(f"  ✅ {opt}")
+        print(f"  [OK] {opt}")
     
     print("\nExpected Improvements:")
     print("  - Vectorized operations: 10-100x speedup")
@@ -92,4 +92,4 @@ def integrate_optimizations():
 
 if __name__ == '__main__':
     optimizations = integrate_optimizations()
-    print(f"\n✅ {len(optimizations)} optimization modules integrated")
+    print(f"\n[OK] {len(optimizations)} optimization modules integrated")
