@@ -158,11 +158,24 @@ class MLToolbox:
             return self.optimizer.get_optimization_stats()
         return {"status": "optimizer_not_available"}
     
+    def get_ml_math_optimizer(self):
+        """Get ML Math Optimizer for optimized mathematical operations"""
+        try:
+            from ml_math_optimizer import get_ml_math_optimizer
+            return get_ml_math_optimizer()
+        except ImportError:
+            raise ImportError("ML Math Optimizer not available. Install required dependencies.")
+    
     def get_quantum_computer(self, num_qubits: int = 8, use_architecture_optimizations: bool = True):
-        """Get a Virtual Quantum Computer instance (optional feature)"""
+        """
+        Get a Virtual Quantum Computer instance (optional/experimental feature)
+        
+        Note: Quantum simulation is resource-intensive and provides no quantum advantage
+        on regular laptops. Consider using ML Math Optimizer instead for better performance.
+        """
         try:
             from virtual_quantum_computer import VirtualQuantumComputer
-            # Quantum computer doesn't need optimizer, it's optional
+            # Quantum computer is optional - don't allocate resources by default
             return VirtualQuantumComputer(
                 num_qubits=num_qubits,
                 medulla=None,  # Don't allocate resources for quantum by default
