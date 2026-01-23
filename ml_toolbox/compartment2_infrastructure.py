@@ -79,14 +79,23 @@ class InfrastructureCompartment:
         except ImportError as e:
             print(f"Warning: Could not import Adaptive Neuron: {e}")
         
-        # Medulla Oblongata System (resource regulation)
+        # Medulla Toolbox Optimizer (ML operation optimization)
+        try:
+            from medulla_toolbox_optimizer import MedullaToolboxOptimizer, MLTaskType
+            self.components['MedullaToolboxOptimizer'] = MedullaToolboxOptimizer
+            self.components['MLTaskType'] = MLTaskType
+            if self.medulla:  # Legacy reference, now points to optimizer
+                self.components['optimizer'] = self.medulla  # Instance if available
+                self.components['medulla'] = self.medulla  # Backward compatibility
+        except ImportError as e:
+            print(f"Warning: Could not import Medulla Toolbox Optimizer: {e}")
+        
+        # Legacy: Medulla Oblongata System (for backward compatibility)
         try:
             from medulla_oblongata_system import MedullaOblongataSystem
             self.components['MedullaOblongataSystem'] = MedullaOblongataSystem
-            if self.medulla:
-                self.components['medulla'] = self.medulla  # Instance if available
-        except ImportError as e:
-            print(f"Warning: Could not import Medulla Oblongata System: {e}")
+        except ImportError:
+            pass  # Not required
         
         # Virtual Quantum Computer
         try:

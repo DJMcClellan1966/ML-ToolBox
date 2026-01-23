@@ -54,31 +54,37 @@ class MLToolbox:
     - Virtual Quantum Computer: CPU-based quantum simulation (optional)
     """
     
-    def __init__(self, include_mlops: bool = True, auto_start_medulla: bool = True):
+    def __init__(self, include_mlops: bool = True, auto_start_optimizer: bool = True):
         """
         Initialize ML Toolbox
         
         Args:
             include_mlops: Include MLOps compartment
-            auto_start_medulla: Automatically start Medulla resource regulation system
+            auto_start_optimizer: Automatically start Medulla Toolbox Optimizer
         """
-        # Initialize Medulla system (automatic resource regulation)
-        self.medulla = None
-        if auto_start_medulla:
+        # Initialize Medulla Toolbox Optimizer (automatic ML operation optimization)
+        self.optimizer = None
+        if auto_start_optimizer:
             try:
-                from medulla_oblongata_system import MedullaOblongataSystem
-                self.medulla = MedullaOblongataSystem(
-                    max_cpu_percent=80.0,
-                    max_memory_percent=75.0,
-                    min_cpu_reserve=20.0,
-                    min_memory_reserve_mb=1024.0
+                from medulla_toolbox_optimizer import MedullaToolboxOptimizer, MLTaskType
+                self.optimizer = MedullaToolboxOptimizer(
+                    max_cpu_percent=85.0,
+                    max_memory_percent=80.0,
+                    min_cpu_reserve=15.0,
+                    min_memory_reserve_mb=1024.0,
+                    enable_caching=True,
+                    enable_adaptive_allocation=True
                 )
-                self.medulla.start_regulation()
-                print("[MLToolbox] Medulla Oblongata System started (automatic resource regulation)")
+                self.optimizer.start_regulation()
+                self.MLTaskType = MLTaskType  # Expose for use
+                print("[MLToolbox] Medulla Toolbox Optimizer started (automatic ML operation optimization)")
             except ImportError as e:
-                print(f"[MLToolbox] Warning: Medulla system not available: {e}")
+                print(f"[MLToolbox] Warning: Medulla optimizer not available: {e}")
             except Exception as e:
-                print(f"[MLToolbox] Warning: Could not start Medulla system: {e}")
+                print(f"[MLToolbox] Warning: Could not start Medulla optimizer: {e}")
+        
+        # Keep legacy medulla reference for backward compatibility
+        self.medulla = self.optimizer
         
         # Initialize compartments (pass medulla to infrastructure)
         self.data = DataCompartment()
@@ -93,31 +99,73 @@ class MLToolbox:
     
     def __repr__(self):
         mlops_info = f", mlops={len(self.mlops.components)}" if self.mlops else ""
-        medulla_info = ", medulla=active" if self.medulla and self.medulla.regulation_running else ""
-        return f"MLToolbox(data={len(self.data.components)}, infrastructure={len(self.infrastructure.components)}, algorithms={len(self.algorithms.components)}{mlops_info}{medulla_info})"
+        optimizer_info = ", optimizer=active" if self.optimizer and self.optimizer.regulation_running else ""
+        return f"MLToolbox(data={len(self.data.components)}, infrastructure={len(self.infrastructure.components)}, algorithms={len(self.algorithms.components)}{mlops_info}{optimizer_info})"
     
     def __enter__(self):
         """Context manager entry - Medulla already started"""
         return self
     
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Context manager exit - Stop Medulla if running"""
-        if self.medulla and self.medulla.regulation_running:
-            self.medulla.stop_regulation()
+        """Context manager exit - Stop optimizer if running"""
+        if self.optimizer and self.optimizer.regulation_running:
+            self.optimizer.stop_regulation()
     
     def get_system_status(self):
-        """Get Medulla system status"""
-        if self.medulla:
-            return self.medulla.get_system_status()
-        return {"status": "medulla_not_available"}
+        """Get optimizer system status"""
+        if self.optimizer:
+            return self.optimizer.get_system_status()
+        return {"status": "optimizer_not_available"}
+    
+    def optimize_operation(self, operation_name: str, operation_func, task_type=None, use_cache: bool = True, *args, **kwargs):
+        """
+        Optimize an ML operation using Medulla optimizer
+        
+        Args:
+            operation_name: Name of the operation (for caching)
+            operation_func: Function to execute
+            task_type: MLTaskType (DATA_PREPROCESSING, MODEL_TRAINING, etc.)
+            use_cache: Whether to use result caching
+            *args, **kwargs: Arguments to pass to operation_func
+        
+        Returns:
+            Result of operation_func
+        """
+        if self.optimizer:
+            if task_type is None:
+                # Default to MODEL_TRAINING
+                task_type = self.MLTaskType.MODEL_TRAINING if hasattr(self, 'MLTaskType') else None
+            
+            if task_type:
+                return self.optimizer.optimize_operation(
+                    operation_name,
+                    operation_func,
+                    task_type=task_type,
+                    use_cache=use_cache,
+                    *args,
+                    **kwargs
+                )
+            else:
+                # Fallback if optimizer not available
+                return operation_func(*args, **kwargs)
+        else:
+            # No optimizer, just execute
+            return operation_func(*args, **kwargs)
+    
+    def get_optimization_stats(self):
+        """Get optimization statistics"""
+        if self.optimizer:
+            return self.optimizer.get_optimization_stats()
+        return {"status": "optimizer_not_available"}
     
     def get_quantum_computer(self, num_qubits: int = 8, use_architecture_optimizations: bool = True):
-        """Get a Virtual Quantum Computer instance (uses Medulla if available)"""
+        """Get a Virtual Quantum Computer instance (optional feature)"""
         try:
             from virtual_quantum_computer import VirtualQuantumComputer
+            # Quantum computer doesn't need optimizer, it's optional
             return VirtualQuantumComputer(
                 num_qubits=num_qubits,
-                medulla=self.medulla,
+                medulla=None,  # Don't allocate resources for quantum by default
                 use_architecture_optimizations=use_architecture_optimizations
             )
         except ImportError:
