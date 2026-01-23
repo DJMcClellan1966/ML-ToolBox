@@ -9,6 +9,11 @@ from .natural_language_pipeline import NaturalLanguagePipeline, get_natural_lang
 from .collaborative_intelligence import CollaborativeIntelligence, get_collaborative_intelligence
 from .auto_optimizer import AutoOptimizer, get_auto_optimizer
 from .third_eye import ThirdEye, get_third_eye
+from .code_personality import CodePersonality, get_code_personality
+from .code_dreams import CodeDreams, get_code_dreams
+from .parallel_universe_testing import ParallelUniverseTesting, get_parallel_universe_testing
+from .code_alchemy import CodeAlchemy, get_code_alchemy
+from .telepathic_code import TelepathicCode, get_telepathic_code
 
 __all__ = [
     'PredictiveIntelligence',
@@ -22,5 +27,15 @@ __all__ = [
     'AutoOptimizer',
     'get_auto_optimizer',
     'ThirdEye',
-    'get_third_eye'
+    'get_third_eye',
+    'CodePersonality',
+    'get_code_personality',
+    'CodeDreams',
+    'get_code_dreams',
+    'ParallelUniverseTesting',
+    'get_parallel_universe_testing',
+    'CodeAlchemy',
+    'get_code_alchemy',
+    'TelepathicCode',
+    'get_telepathic_code'
 ]
