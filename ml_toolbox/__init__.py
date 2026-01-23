@@ -9,6 +9,20 @@ Organized into four compartments:
 Also includes Advanced ML Toolbox for big data and advanced features
 """
 from typing import Any, Optional, Dict
+import sys
+from pathlib import Path
+
+# Add parent directory to path for improvements
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# Import improvements
+try:
+    from dependency_manager import get_dependency_manager
+    from error_handler import get_error_handler
+    IMPROVEMENTS_AVAILABLE = True
+except ImportError:
+    IMPROVEMENTS_AVAILABLE = False
+
 from .compartment1_data import DataCompartment
 from .compartment2_infrastructure import InfrastructureCompartment
 from .compartment3_algorithms import AlgorithmsCompartment
