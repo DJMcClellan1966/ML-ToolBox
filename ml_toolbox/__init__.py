@@ -165,19 +165,22 @@ class MLToolbox:
                 get_self_healing_code,
                 get_natural_language_pipeline,
                 get_collaborative_intelligence,
-                get_auto_optimizer
+                get_auto_optimizer,
+                get_third_eye
             )
             self.predictive_intelligence = get_predictive_intelligence()
             self.self_healing_code = get_self_healing_code()
             self.natural_language_pipeline = get_natural_language_pipeline()
             self.collaborative_intelligence = get_collaborative_intelligence()
             self.auto_optimizer = get_auto_optimizer()
+            self.third_eye = get_third_eye()
             print("[MLToolbox] Revolutionary Features enabled:")
             print("  - Predictive Intelligence (anticipates your needs)")
             print("  - Self-Healing Code (fixes itself automatically)")
             print("  - Natural Language Pipeline (describe, get ML solution)")
             print("  - Collaborative Intelligence (learns from community)")
             print("  - Auto-Optimizer (gets faster automatically)")
+            print("  - Third Eye (sees into the future of code)")
         except Exception as e:
             print(f"[MLToolbox] Warning: Revolutionary Features not available: {e}")
             self.predictive_intelligence = None
@@ -185,6 +188,7 @@ class MLToolbox:
             self.natural_language_pipeline = None
             self.collaborative_intelligence = None
             self.auto_optimizer = None
+            self.third_eye = None
     
     def __repr__(self):
         mlops_info = f", mlops={len(self.mlops.components)}" if self.mlops else ""
