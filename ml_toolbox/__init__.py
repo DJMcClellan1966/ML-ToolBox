@@ -157,6 +157,34 @@ class MLToolbox:
             print("[MLToolbox] AI Ensemble Feature Selector available (unified feature selection)")
         except Exception as e:
             self.ai_feature_selector = None
+        
+        # Revolutionary Features (mindblowing upgrades)
+        try:
+            from revolutionary_features import (
+                get_predictive_intelligence,
+                get_self_healing_code,
+                get_natural_language_pipeline,
+                get_collaborative_intelligence,
+                get_auto_optimizer
+            )
+            self.predictive_intelligence = get_predictive_intelligence()
+            self.self_healing_code = get_self_healing_code()
+            self.natural_language_pipeline = get_natural_language_pipeline()
+            self.collaborative_intelligence = get_collaborative_intelligence()
+            self.auto_optimizer = get_auto_optimizer()
+            print("[MLToolbox] Revolutionary Features enabled:")
+            print("  - Predictive Intelligence (anticipates your needs)")
+            print("  - Self-Healing Code (fixes itself automatically)")
+            print("  - Natural Language Pipeline (describe, get ML solution)")
+            print("  - Collaborative Intelligence (learns from community)")
+            print("  - Auto-Optimizer (gets faster automatically)")
+        except Exception as e:
+            print(f"[MLToolbox] Warning: Revolutionary Features not available: {e}")
+            self.predictive_intelligence = None
+            self.self_healing_code = None
+            self.natural_language_pipeline = None
+            self.collaborative_intelligence = None
+            self.auto_optimizer = None
     
     def __repr__(self):
         mlops_info = f", mlops={len(self.mlops.components)}" if self.mlops else ""
