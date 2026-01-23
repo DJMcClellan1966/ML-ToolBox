@@ -1,0 +1,93 @@
+{
+  "baseline": {
+    "duration": 0.0,
+    "avg_cpu": 0.0,
+    "max_cpu": 0.0,
+    "avg_memory": 0.0,
+    "max_memory": 0.0,
+    "min_memory_available_mb": 0.0
+  },
+  "without_medulla": {
+    "system_performance": {
+      "duration": 0.0,
+      "avg_cpu": 0.0,
+      "max_cpu": 0.0,
+      "avg_memory": 0.0,
+      "max_memory": 0.0,
+      "min_memory_available_mb": 0.0
+    },
+    "test_results": {
+      "tests": {
+        "binary_classification": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "simple_regression": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "high_dim_classification": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "very_high_dim": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "quantum_operations": {
+          "operations": 9,
+          "time": 0.0022041797637939453,
+          "avg_time_per_op": 0.0,
+          "status": "success"
+        }
+      },
+      "total_time": 0.05830121040344238,
+      "errors": 0,
+      "successes": 1
+    }
+  },
+  "with_medulla": {
+    "system_performance": {
+      "duration": 0.0,
+      "avg_cpu": 0.0,
+      "max_cpu": 0.0,
+      "avg_memory": 0.0,
+      "max_memory": 0.0,
+      "min_memory_available_mb": 0.0
+    },
+    "test_results": {
+      "tests": {
+        "binary_classification": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "simple_regression": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "high_dim_classification": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "very_high_dim": {
+          "status": "skipped",
+          "reason": "model_not_available"
+        },
+        "quantum_operations": {
+          "operations": 9,
+          "time": 0.0026369094848632812,
+          "avg_time_per_op": 0.0,
+          "status": "success"
+        }
+      },
+      "total_time": 0.07979512214660645,
+      "errors": 0,
+      "successes": 1
+    }
+  },
+  "comparison": {
+    "cpu_diff_percent": 0,
+    "memory_diff_percent": 0,
+    "time_diff_percent": 19.6322336398053
+  }
+}

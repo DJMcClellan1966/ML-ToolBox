@@ -1,0 +1,10 @@
+#!/bin/sh
+# Pre-commit hook for ML Toolbox
+
+echo 'Running linter...'
+pylint --errors-only ml_toolbox/ || exit 1
+
+echo 'Checking code formatting...'
+black --check ml_toolbox/ || exit 1
+
+echo 'All checks passed!'

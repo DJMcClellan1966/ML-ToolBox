@@ -8,8 +8,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
-    from .model_compression import ModelCompression
-    from .model_calibration import ModelCalibration
+    from ml_toolbox.optimization.model_compression import ModelCompressor as ModelCompression
+    from ml_toolbox.optimization.model_calibration import ModelCalibrator as ModelCalibration
     __all__ = ['ModelCompression', 'ModelCalibration']
 except ImportError as e:
     __all__ = []

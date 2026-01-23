@@ -8,7 +8,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
-    from .model_persistence import ModelPersistence
+    from ml_toolbox.deployment.model_persistence import ModelPersistence
     __all__ = ['ModelPersistence']
 except ImportError as e:
     __all__ = []

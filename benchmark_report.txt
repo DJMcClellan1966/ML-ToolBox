@@ -1,0 +1,77 @@
+================================================================================
+ML Toolbox Benchmark Report
+================================================================================
+Timestamp: 2026-01-22T16:33:19.850933
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Benchmarks: 6
+Successful Tests: 9
+Failed Tests: 0
+
+PERFORMANCE STATISTICS
+--------------------------------------------------------------------------------
+Average Training Time: 6.0716s
+Min Training Time: 0.1322s
+Max Training Time: 31.8014s
+Average Accuracy: 0.9612
+Min Accuracy: 0.9105
+Max Accuracy: 1.0000
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+
+Iris Classification (Simple)
+  Dataset Size: 150
+  Features: 4
+  ML Toolbox - Simple ML:
+    Accuracy: 1.0000
+    Training Time: 0.3413s
+  scikit-learn (baseline):
+    Accuracy: 1.0000
+    Training Time: 0.2012s
+
+Housing Regression (Simple)
+  Dataset Size: 20640
+  Features: 8
+  ML Toolbox - Simple ML:
+    R² Score: 0.7971
+    MSE: 0.2659
+    Training Time: 7.0907s
+  scikit-learn (baseline):
+    R² Score: 0.8051
+    MSE: 0.2554
+    Training Time: 8.7946s
+
+Text Classification (Medium)
+  Dataset Size: 400
+  Features: 21
+  ML Toolbox - Simple ML:
+    Accuracy: 1.0000
+    Training Time: 0.1322s
+
+MNIST Classification (Medium-Hard)
+  Dataset Size: 5000
+  Features: 784
+  ML Toolbox - Simple ML:
+    Accuracy: 0.9350
+    Training Time: 1.2560s
+  ML Toolbox - Deep Learning:
+
+Time Series Forecasting (Medium)
+  Dataset Size: 997
+  Features: 4
+  ML Toolbox - Simple ML:
+    R² Score: 0.8931
+    MSE: 6.6294
+    Training Time: 0.1827s
+
+Large-scale Dataset (Hard)
+  Dataset Size: 10000
+  Features: 100
+  ML Toolbox - Simple ML:
+    Accuracy: 0.9105
+    Training Time: 4.8442s
+  ML Toolbox - AutoML:
+    Accuracy: 0.9215
+    Training Time: 31.8014s

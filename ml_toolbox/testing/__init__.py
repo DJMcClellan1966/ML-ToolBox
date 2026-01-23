@@ -8,8 +8,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
-    from .comprehensive_test_suite import ComprehensiveMLTestSuite
-    from .benchmark_suite import MLBenchmarkSuite
+    from ml_toolbox.testing.comprehensive_test_suite import ComprehensiveMLTestSuite
+    from ml_toolbox.testing.benchmark_suite import MLBenchmarkSuite
     __all__ = ['ComprehensiveMLTestSuite', 'MLBenchmarkSuite']
 except ImportError as e:
     __all__ = []
