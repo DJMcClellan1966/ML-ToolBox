@@ -1,0 +1,128 @@
+{
+  "name": "ml-toolbox-ai-agent",
+  "displayName": "ML Toolbox & AI Agent",
+  "description": "Integrated ML Toolbox and AI Agent for VS Code",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "AI",
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:mlToolbox.trainModel",
+    "onCommand:mlToolbox.aiGenerate",
+    "onLanguage:python"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "mlToolbox.trainModel",
+        "title": "Train ML Model",
+        "category": "ML Toolbox"
+      },
+      {
+        "command": "mlToolbox.aiGenerate",
+        "title": "AI: Generate Code",
+        "category": "ML Toolbox"
+      },
+      {
+        "command": "mlToolbox.aiFix",
+        "title": "AI: Fix Error",
+        "category": "ML Toolbox"
+      },
+      {
+        "command": "mlToolbox.showPanel",
+        "title": "Show ML Toolbox Panel",
+        "category": "ML Toolbox"
+      },
+      {
+        "command": "mlToolbox.quickTrain",
+        "title": "Quick Train Model",
+        "category": "ML Toolbox"
+      }
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "mlToolboxPanel",
+          "name": "ML Toolbox",
+          "when": "true"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "mlToolbox",
+          "title": "ML Toolbox",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "command": "mlToolbox.aiGenerate",
+          "when": "editorLangId == python",
+          "group": "mlToolbox"
+        },
+        {
+          "command": "mlToolbox.aiFix",
+          "when": "editorLangId == python",
+          "group": "mlToolbox"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "mlToolbox.trainModel",
+          "when": "true"
+        },
+        {
+          "command": "mlToolbox.aiGenerate",
+          "when": "true"
+        },
+        {
+          "command": "mlToolbox.aiFix",
+          "when": "true"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "ML Toolbox",
+      "properties": {
+        "mlToolbox.enableAI": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI Agent features"
+        },
+        "mlToolbox.autoSuggest": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI-powered code suggestions"
+        },
+        "mlToolbox.modelCache": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable model caching"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "python-shell": "^5.0.0"
+  }
+}
