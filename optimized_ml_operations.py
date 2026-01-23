@@ -20,6 +20,14 @@ except ImportError:
     NUMBA_AVAILABLE = False
     warnings.warn("Numba not available. Install with: pip install numba")
 
+# Try to import architecture optimizer
+try:
+    from architecture_optimizer import get_architecture_optimizer
+    ARCHITECTURE_OPTIMIZER_AVAILABLE = True
+except ImportError:
+    ARCHITECTURE_OPTIMIZER_AVAILABLE = False
+    warnings.warn("Architecture optimizer not available")
+
 try:
     from multiprocessing import Pool, cpu_count
     from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
@@ -36,14 +44,26 @@ class OptimizedMLOperations:
     2. Parallel processing
     3. Numba JIT compilation
     4. Efficient data structures
+    5. Architecture-specific optimizations
     """
     
-    @staticmethod
-    def vectorized_similarity_computation(embeddings: np.ndarray, metric: str = 'cosine') -> np.ndarray:
+    def __init__(self):
+        """Initialize with architecture-specific optimizations"""
+        if ARCHITECTURE_OPTIMIZER_AVAILABLE:
+            self.arch_optimizer = get_architecture_optimizer()
+            self.arch_optimizer.optimize_numpy_config()
+        else:
+            self.arch_optimizer = None
+    
+    def vectorized_similarity_computation(self, embeddings: np.ndarray, metric: str = 'cosine') -> np.ndarray:
         """
-        Vectorized similarity computation
+        Vectorized similarity computation with architecture-specific optimizations
         Replaces Python loops with NumPy operations
         """
+        # Architecture-specific optimization
+        if self.arch_optimizer:
+            embeddings = self.arch_optimizer.optimize_array_operations(embeddings)
+        
         if metric == 'cosine':
             # Normalize embeddings (vectorized)
             norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
@@ -51,6 +71,7 @@ class OptimizedMLOperations:
             normalized = embeddings / norms
             
             # Compute similarity matrix (vectorized matrix multiplication)
+            # NumPy will automatically use best available SIMD instructions
             similarity = np.dot(normalized, normalized.T)
             return similarity
         
@@ -87,10 +108,9 @@ class OptimizedMLOperations:
         
         return unique_indices, duplicate_indices
     
-    @staticmethod
-    def parallel_embedding_computation(texts: List[str], embed_func, n_jobs: Optional[int] = None, batch_size: int = 32):
+    def parallel_embedding_computation(self, texts: List[str], embed_func, n_jobs: Optional[int] = None, batch_size: int = 32):
         """
-        Parallel embedding computation with batching
+        Parallel embedding computation with architecture-optimized batching
         """
         if not PARALLEL_AVAILABLE:
             # Fallback to sequential with batching
@@ -101,8 +121,17 @@ class OptimizedMLOperations:
                 results.extend(batch_results)
             return results
         
+        # Architecture-specific thread count
         if n_jobs is None:
-            n_jobs = min(cpu_count(), len(texts) // batch_size + 1)
+            if self.arch_optimizer:
+                n_jobs = self.arch_optimizer.get_optimal_thread_count()
+            else:
+                n_jobs = min(cpu_count(), len(texts) // batch_size + 1)
+        
+        # Architecture-optimized batch size
+        if self.arch_optimizer:
+            optimal_chunk = self.arch_optimizer.get_optimal_chunk_size(len(texts))
+            batch_size = max(batch_size, optimal_chunk // 10)  # Adjust batch size
         
         # Create batches
         batches = [texts[i:i + batch_size] for i in range(0, len(texts), batch_size)]
