@@ -56,7 +56,7 @@ def analyze_performance_results(results_file: str = 'data_processing_performance
             
             # Format throughput
             if throughput == float('inf') or throughput > 1000000:
-                throughput_str = "∞"
+                throughput_str = "inf"
             else:
                 throughput_str = f"{throughput:.1f}"
             
@@ -96,7 +96,7 @@ def analyze_performance_results(results_file: str = 'data_processing_performance
                 avg_throughput = sum(data['throughputs']) / len(data['throughputs'])
                 
                 if avg_throughput == float('inf') or avg_throughput > 1000000:
-                    throughput_str = "∞"
+                    throughput_str = "inf"
                 else:
                     throughput_str = f"{avg_throughput:.1f}"
                 
