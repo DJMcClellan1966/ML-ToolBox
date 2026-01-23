@@ -651,6 +651,20 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import development workflow: {e}")
         
+        # Model & Data Optimization
+        try:
+            from model_data_optimization import (
+                KnowledgeDistillation, ModelPruning, SpecializedModelBuilder,
+                RetrievalAugmentedGeneration, ModelOptimizationPipeline
+            )
+            self.components['KnowledgeDistillation'] = KnowledgeDistillation
+            self.components['ModelPruning'] = ModelPruning
+            self.components['SpecializedModelBuilder'] = SpecializedModelBuilder
+            self.components['RetrievalAugmentedGeneration'] = RetrievalAugmentedGeneration
+            self.components['ModelOptimizationPipeline'] = ModelOptimizationPipeline
+        except ImportError as e:
+            print(f"Warning: Could not import model data optimization: {e}")
+        
         # Interactive Dashboard
         try:
             from interactive_dashboard import InteractiveDashboard
@@ -2585,6 +2599,42 @@ class AlgorithmsCompartment:
             return self.components['ReleaseManager'](version_file)
         else:
             raise ImportError("ReleaseManager not available")
+    
+    # Model & Data Optimization
+    def get_knowledge_distillation(self, temperature: float = 3.0, alpha: float = 0.5):
+        """Get Knowledge Distillation"""
+        if 'KnowledgeDistillation' in self.components:
+            return self.components['KnowledgeDistillation'](temperature, alpha)
+        else:
+            raise ImportError("KnowledgeDistillation not available")
+    
+    def get_model_pruning(self, pruning_method: str = 'magnitude'):
+        """Get Model Pruning"""
+        if 'ModelPruning' in self.components:
+            return self.components['ModelPruning'](pruning_method)
+        else:
+            raise ImportError("ModelPruning not available")
+    
+    def get_specialized_model_builder(self, target_size: str = 'small'):
+        """Get Specialized Model Builder"""
+        if 'SpecializedModelBuilder' in self.components:
+            return self.components['SpecializedModelBuilder'](target_size)
+        else:
+            raise ImportError("SpecializedModelBuilder not available")
+    
+    def get_retrieval_augmented_generation(self, embedding_model: Optional[Any] = None):
+        """Get Retrieval-Augmented Generation (RAG)"""
+        if 'RetrievalAugmentedGeneration' in self.components:
+            return self.components['RetrievalAugmentedGeneration'](embedding_model)
+        else:
+            raise ImportError("RetrievalAugmentedGeneration not available")
+    
+    def get_model_optimization_pipeline(self):
+        """Get Model Optimization Pipeline"""
+        if 'ModelOptimizationPipeline' in self.components:
+            return self.components['ModelOptimizationPipeline']()
+        else:
+            raise ImportError("ModelOptimizationPipeline not available")
     
     def list_components(self):
         """List all available components in this compartment"""
