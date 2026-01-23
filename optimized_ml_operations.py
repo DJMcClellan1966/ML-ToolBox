@@ -269,4 +269,4 @@ if __name__ == '__main__':
     print(f"Vectorized feature selection: {selection_time:.4f}s")
     print(f"Selected features: {selected_features}")
     
-    print("\n✅ Optimized ML Operations ready!")
+    print("\n[OK] Optimized ML Operations ready!")
