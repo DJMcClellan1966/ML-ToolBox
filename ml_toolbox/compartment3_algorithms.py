@@ -2464,6 +2464,128 @@ class AlgorithmsCompartment:
         else:
             raise ImportError("IncrementalFeatureSelection not available")
     
+    # Code Quality Tools (Priority 1)
+    def get_code_linter(self, linter: str = 'pylint'):
+        """Get Code Linter"""
+        if 'CodeLinter' in self.components:
+            return self.components['CodeLinter'](linter)
+        else:
+            raise ImportError("CodeLinter not available")
+    
+    def get_code_formatter(self, formatter: str = 'black'):
+        """Get Code Formatter"""
+        if 'CodeFormatter' in self.components:
+            return self.components['CodeFormatter'](formatter)
+        else:
+            raise ImportError("CodeFormatter not available")
+    
+    def get_type_checker(self, checker: str = 'mypy'):
+        """Get Type Checker"""
+        if 'TypeChecker' in self.components:
+            return self.components['TypeChecker'](checker)
+        else:
+            raise ImportError("TypeChecker not available")
+    
+    def get_documentation_generator(self, generator: str = 'sphinx'):
+        """Get Documentation Generator"""
+        if 'DocumentationGenerator' in self.components:
+            return self.components['DocumentationGenerator'](generator)
+        else:
+            raise ImportError("DocumentationGenerator not available")
+    
+    def get_coverage_reporter(self, tool: str = 'coverage'):
+        """Get Coverage Reporter"""
+        if 'CoverageReporter' in self.components:
+            return self.components['CoverageReporter'](tool)
+        else:
+            raise ImportError("CoverageReporter not available")
+    
+    def get_performance_profiler(self):
+        """Get Performance Profiler"""
+        if 'PerformanceProfiler' in self.components:
+            return self.components['PerformanceProfiler']()
+        else:
+            raise ImportError("PerformanceProfiler not available")
+    
+    def get_code_quality_suite(self):
+        """Get Code Quality Suite"""
+        if 'CodeQualitySuite' in self.components:
+            return self.components['CodeQualitySuite']()
+        else:
+            raise ImportError("CodeQualitySuite not available")
+    
+    # Reed/Zelle Patterns (Priority 2)
+    def get_problem_decomposition(self):
+        """Get Problem Decomposition"""
+        if 'ProblemDecomposition' in self.components:
+            return self.components['ProblemDecomposition']
+        else:
+            raise ImportError("ProblemDecomposition not available")
+    
+    def get_algorithm_patterns(self):
+        """Get Algorithm Patterns"""
+        if 'AlgorithmPatterns' in self.components:
+            return self.components['AlgorithmPatterns']
+        else:
+            raise ImportError("AlgorithmPatterns not available")
+    
+    def get_data_structure_optimizer(self):
+        """Get Data Structure Optimizer"""
+        if 'DataStructureOptimizer' in self.components:
+            return self.components['DataStructureOptimizer']
+        else:
+            raise ImportError("DataStructureOptimizer not available")
+    
+    def get_code_organizer(self):
+        """Get Code Organizer"""
+        if 'CodeOrganizer' in self.components:
+            return self.components['CodeOrganizer']
+        else:
+            raise ImportError("CodeOrganizer not available")
+    
+    def get_recursive_solutions(self):
+        """Get Recursive Solutions"""
+        if 'RecursiveSolutions' in self.components:
+            return self.components['RecursiveSolutions']
+        else:
+            raise ImportError("RecursiveSolutions not available")
+    
+    def get_iterative_refinement(self):
+        """Get Iterative Refinement"""
+        if 'IterativeRefinement' in self.components:
+            return self.components['IterativeRefinement']
+        else:
+            raise ImportError("IterativeRefinement not available")
+    
+    # Development Workflow (Priority 3)
+    def get_pre_commit_hooks(self, hooks_dir: str = '.git/hooks'):
+        """Get Pre-commit Hooks"""
+        if 'PreCommitHooks' in self.components:
+            return self.components['PreCommitHooks'](hooks_dir)
+        else:
+            raise ImportError("PreCommitHooks not available")
+    
+    def get_cicd_pipeline(self):
+        """Get CI/CD Pipeline"""
+        if 'CICDPipeline' in self.components:
+            return self.components['CICDPipeline']()
+        else:
+            raise ImportError("CICDPipeline not available")
+    
+    def get_code_review_automation(self):
+        """Get Code Review Automation"""
+        if 'CodeReviewAutomation' in self.components:
+            return self.components['CodeReviewAutomation']()
+        else:
+            raise ImportError("CodeReviewAutomation not available")
+    
+    def get_release_manager(self, version_file: str = 'VERSION'):
+        """Get Release Manager"""
+        if 'ReleaseManager' in self.components:
+            return self.components['ReleaseManager'](version_file)
+        else:
+            raise ImportError("ReleaseManager not available")
+    
     def list_components(self):
         """List all available components in this compartment"""
         print("="*80)
