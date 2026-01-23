@@ -5,7 +5,6 @@ Tracks CPU/memory usage and identifies slowest parts of ML pipeline
 import sys
 from pathlib import Path
 import time
-import psutil
 import threading
 from typing import Dict, List, Any, Optional, Callable
 from collections import defaultdict
@@ -13,6 +12,14 @@ from contextlib import contextmanager
 import warnings
 
 sys.path.insert(0, str(Path(__file__).parent))
+
+# Try to import psutil
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
+    warnings.warn("psutil not available. Install with: pip install psutil")
 
 try:
     import cProfile
@@ -98,6 +105,9 @@ class PipelineBottleneckMonitor:
     
     def _monitor_loop(self):
         """Background monitoring loop"""
+        if not PSUTIL_AVAILABLE:
+            return
+        
         process = psutil.Process()
         
         while self.monitoring:
@@ -118,15 +128,27 @@ class PipelineBottleneckMonitor:
     def monitor_function(self, function_name: str):
         """Context manager to monitor a function"""
         start_time = time.time()
-        start_cpu = psutil.Process().cpu_percent(interval=None)
-        start_memory = psutil.Process().memory_info().rss / 1024 / 1024
+        
+        if PSUTIL_AVAILABLE:
+            process = psutil.Process()
+            start_cpu = process.cpu_percent(interval=None)
+            start_memory = process.memory_info().rss / 1024 / 1024
+        else:
+            start_cpu = 0
+            start_memory = 0
         
         try:
             yield
         finally:
             end_time = time.time()
-            end_cpu = psutil.Process().cpu_percent(interval=None)
-            end_memory = psutil.Process().memory_info().rss / 1024 / 1024
+            
+            if PSUTIL_AVAILABLE:
+                process = psutil.Process()
+                end_cpu = process.cpu_percent(interval=None)
+                end_memory = process.memory_info().rss / 1024 / 1024
+            else:
+                end_cpu = 0
+                end_memory = 0
             
             duration = end_time - start_time
             
@@ -144,6 +166,17 @@ class PipelineBottleneckMonitor:
     @contextmanager
     def monitor_pipeline_stage(self, stage_name: str):
         """Context manager to monitor a pipeline stage"""
+        if not PSUTIL_AVAILABLE:
+            # Fallback: just track time
+            stage = self.pipeline_stages[stage_name]
+            stage['start_time'] = time.time()
+            try:
+                yield
+            finally:
+                stage['end_time'] = time.time()
+                stage['duration'] = stage['end_time'] - stage['start_time']
+            return
+        
         process = psutil.Process()
         stage = self.pipeline_stages[stage_name]
         
@@ -271,11 +304,13 @@ class PipelineBottleneckMonitor:
     
     def get_resource_usage_summary(self) -> Dict[str, Any]:
         """Get overall resource usage summary"""
-        process = psutil.Process()
-        
-        # Current usage
-        current_cpu = process.cpu_percent(interval=0.1)
-        current_memory = process.memory_info().rss / 1024 / 1024
+        if PSUTIL_AVAILABLE:
+            process = psutil.Process()
+            current_cpu = process.cpu_percent(interval=0.1)
+            current_memory = process.memory_info().rss / 1024 / 1024
+        else:
+            current_cpu = 0
+            current_memory = 0
         
         # Function metrics summary
         total_function_time = sum(m['total_time'] for m in self.function_metrics.values())
