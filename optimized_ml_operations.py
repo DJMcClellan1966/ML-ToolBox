@@ -87,7 +87,7 @@ class OptimizedMLOperations:
         
         else:
             # Fallback to cosine
-            return OptimizedMLOperations.vectorized_similarity_computation(embeddings, 'cosine')
+            return self.vectorized_similarity_computation(embeddings, 'cosine')
     
     def vectorized_deduplication(self, embeddings: np.ndarray, threshold: float = 0.9) -> Tuple[np.ndarray, np.ndarray]:
         """
