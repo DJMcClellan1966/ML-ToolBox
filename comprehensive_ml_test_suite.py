@@ -955,21 +955,21 @@ class ComprehensiveMLTestSuite:
                 if isinstance(test_results, dict):
                     # Check if it's a test result (has toolbox or sklearn key)
                     if 'toolbox' in test_results or 'sklearn' in test_results or 'baseline' in test_results:
-                    summary['total_tests'] += 1
-                    category_stats['total'] += 1
-                    
-                    # Compare results
-                    toolbox_result = test_results.get('toolbox', {})
-                    sklearn_result = test_results.get('sklearn', test_results.get('baseline', {}))
-                    
-                    if 'error' in toolbox_result:
-                        summary['toolbox_errors'] += 1
-                    if 'error' in sklearn_result:
-                        summary['sklearn_errors'] += 1
-                    
-                    # Skip if both have errors
-                    if 'error' in toolbox_result and 'error' in sklearn_result:
-                        continue
+                        summary['total_tests'] += 1
+                        category_stats['total'] += 1
+                        
+                        # Compare results
+                        toolbox_result = test_results.get('toolbox', {})
+                        sklearn_result = test_results.get('sklearn', test_results.get('baseline', {}))
+                        
+                        if 'error' in toolbox_result:
+                            summary['toolbox_errors'] += 1
+                        if 'error' in sklearn_result:
+                            summary['sklearn_errors'] += 1
+                        
+                        # Skip if both have errors
+                        if 'error' in toolbox_result and 'error' in sklearn_result:
+                            continue
                     
                     # Compare accuracy/performance
                     if toolbox_result.get('success') and sklearn_result.get('success'):

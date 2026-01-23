@@ -15,22 +15,22 @@ Comprehensive test suite comparing ML Toolbox against scikit-learn across:
 ## 📊 **Overall Statistics**
 
 ### **Win/Loss Summary:**
-- **Total Tests:** 14 successful comparisons
-- **ML Toolbox Wins:** 2 (14.3%)
-- **scikit-learn Wins:** 7 (50.0%)
-- **Ties:** 3 (21.4%)
-- **Toolbox Errors:** 2
+- **Total Tests:** 19 successful comparisons
+- **ML Toolbox Wins:** 2 (10.5%)
+- **scikit-learn Wins:** 8 (42.1%)
+- **Ties:** 4 (21.1%)
+- **Toolbox Errors:** 0
 - **sklearn Errors:** 0
 
 ### **Performance Metrics:**
-- **Average Toolbox Accuracy/R²:** 0.9652
-- **Average sklearn Accuracy/R²:** 0.9896
-- **Performance Gap:** -2.44% (sklearn leads)
+- **Average Toolbox Accuracy/R²:** 0.9270
+- **Average sklearn Accuracy/R²:** 0.9479
+- **Performance Gap:** -2.09% (sklearn leads)
 
 ### **Speed Comparison:**
-- **Average Toolbox Time:** 0.1410s
-- **Average sklearn Time:** 0.0170s
-- **Speed Ratio:** sklearn is **8.3x faster** (0.12x ratio)
+- **Average Toolbox Time:** 0.3298s
+- **Average sklearn Time:** 0.0216s
+- **Speed Ratio:** sklearn is **15.3x faster** (0.07x ratio)
 
 ---
 
@@ -58,10 +58,10 @@ Comprehensive test suite comparing ML Toolbox against scikit-learn across:
    - sklearn: 0.9937 R² (0.009s)
    - **Winner:** sklearn (slightly better, much faster)
 
-4. **Basic Clustering:** sklearn WINS (toolbox error)
-   - Toolbox: ERROR
-   - sklearn: 0.436 silhouette (2.568s)
-   - **Winner:** sklearn
+4. **Basic Clustering:** TIE
+   - Toolbox: 0.436 silhouette (2.298s)
+   - sklearn: 0.436 silhouette (0.025s)
+   - **Winner:** Tie (equal accuracy, sklearn faster)
 
 ---
 
@@ -124,10 +124,10 @@ Comprehensive test suite comparing ML Toolbox against scikit-learn across:
    - sklearn: 0.985 (0.011s)
    - **Winner:** sklearn (better robustness)
 
-5. **Ensemble Learning:** sklearn WINS (toolbox error)
-   - Toolbox: ERROR
-   - sklearn: 1.0 (0.026s)
-   - **Winner:** sklearn
+5. **Ensemble Learning:** sklearn WINS
+   - Toolbox: 0.9967 (0.169s)
+   - sklearn: 1.0 (0.031s)
+   - **Winner:** sklearn (slightly better accuracy, faster)
 
 ---
 
@@ -147,9 +147,9 @@ Comprehensive test suite comparing ML Toolbox against scikit-learn across:
 3. ✅ **Tie Performance:** Toolbox matches sklearn on several tests
 
 ### **Areas for Improvement:**
-1. ⚠️ **Speed:** Toolbox is 8.3x slower on average
-2. ⚠️ **Accuracy:** Slight accuracy gap in some tests
-3. ⚠️ **Error Handling:** 2 errors vs 0 for sklearn
+1. ⚠️ **Speed:** Toolbox is 15.3x slower on average
+2. ⚠️ **Accuracy:** 2.09% accuracy gap
+3. ⚠️ **Noisy Data:** Needs better robustness (90.5% vs 98.5%)
 
 ### **Performance Analysis:**
 - **Best Performance:** Non-linear patterns (100% accuracy)
