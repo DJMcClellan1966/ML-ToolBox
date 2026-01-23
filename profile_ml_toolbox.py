@@ -268,9 +268,9 @@ def run_comprehensive_profiling():
         try:
             profiler = profile_func()
             all_profilers[name] = profiler
-            print(f"✅ {name} profiling complete")
+            print(f"[OK] {name} profiling complete")
         except Exception as e:
-            print(f"❌ {name} profiling failed: {e}")
+            print(f"[ERROR] {name} profiling failed: {e}")
         print()
     
     # Combine all profiling data
@@ -300,7 +300,7 @@ def run_comprehensive_profiling():
     
     # Export data
     combined_profiler.export_data('ml_toolbox_profiling_data.json')
-    print("\n✅ Profiling data exported to ml_toolbox_profiling_data.json")
+    print("\n[OK] Profiling data exported to ml_toolbox_profiling_data.json")
     
     # Show top bottlenecks
     bottlenecks = combined_profiler.identify_bottlenecks()
