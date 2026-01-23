@@ -684,3 +684,47 @@ class MLToolbox:
             )
         except ImportError:
             raise ImportError("Virtual Quantum Computer not available. Install required dependencies.")
+    
+    # Phase 1 Integration: Testing
+    def get_test_suite(self):
+        """Get comprehensive test suite"""
+        if TESTING_AVAILABLE and self._test_suite is None:
+            from ml_toolbox.testing import ComprehensiveMLTestSuite
+            self._test_suite = ComprehensiveMLTestSuite()
+        return self._test_suite
+    
+    def get_benchmark_suite(self):
+        """Get benchmark suite"""
+        if TESTING_AVAILABLE and self._benchmark_suite is None:
+            from ml_toolbox.testing import MLBenchmarkSuite
+            self._benchmark_suite = MLBenchmarkSuite()
+        return self._benchmark_suite
+    
+    # Phase 1 Integration: Deployment
+    def get_model_persistence(self, storage_dir: str = "models", format: str = 'pickle', 
+                             compress: bool = False, include_metadata: bool = True):
+        """Get model persistence instance"""
+        if DEPLOYMENT_AVAILABLE:
+            from ml_toolbox.deployment import ModelPersistence
+            return ModelPersistence(
+                storage_dir=storage_dir,
+                format=format,
+                compress=compress,
+                include_metadata=include_metadata
+            )
+        return None
+    
+    # Phase 1 Integration: Optimization
+    def get_model_compression(self):
+        """Get model compression instance"""
+        if OPTIMIZATION_AVAILABLE and self._model_compression is None:
+            from ml_toolbox.optimization import ModelCompression
+            self._model_compression = ModelCompression()
+        return self._model_compression
+    
+    def get_model_calibration(self):
+        """Get model calibration instance"""
+        if OPTIMIZATION_AVAILABLE and self._model_calibration is None:
+            from ml_toolbox.optimization import ModelCalibration
+            self._model_calibration = ModelCalibration()
+        return self._model_calibration
