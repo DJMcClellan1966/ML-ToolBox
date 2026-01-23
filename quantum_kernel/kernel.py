@@ -421,8 +421,16 @@ class QuantumKernel:
             try:
                 from optimized_ml_operations import OptimizedMLOperations
                 
+                # Create optimizer instance (with architecture detection)
+                optimizer = OptimizedMLOperations()
+                
                 # Compute all embeddings at once (can be parallelized)
                 candidate_embeddings = np.array([self.embed(candidate) for candidate in candidates])
+                
+                # Architecture-optimize arrays
+                if optimizer.arch_optimizer:
+                    candidate_embeddings = optimizer.arch_optimizer.optimize_array_operations(candidate_embeddings)
+                    query_embed = optimizer.arch_optimizer.optimize_array_operations(query_embed.reshape(1, -1))[0]
                 
                 # Vectorized similarity computation
                 # Normalize query
@@ -433,7 +441,7 @@ class QuantumKernel:
                 candidate_norms = np.where(candidate_norms == 0, 1, candidate_norms)
                 candidate_normalized = candidate_embeddings / candidate_norms
                 
-                # Compute similarities (vectorized dot product)
+                # Compute similarities (vectorized dot product - uses best SIMD instructions)
                 similarities = np.abs(np.dot(candidate_normalized, query_norm))
                 
                 # Create results list

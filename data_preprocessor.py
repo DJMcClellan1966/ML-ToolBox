@@ -364,15 +364,25 @@ class AdvancedDataPreprocessor:
         try:
             from optimized_ml_operations import OptimizedMLOperations
             
+            # Create optimizer instance (with architecture detection)
+            optimizer = OptimizedMLOperations()
+            
             # Compute embeddings for all items and examples
             item_embeddings = np.array([self.quantum_kernel.embed(item) for item in data])
+            
+            # Architecture-optimize arrays
+            if optimizer.arch_optimizer:
+                item_embeddings = optimizer.arch_optimizer.optimize_array_operations(item_embeddings)
             
             # Compute category embeddings
             category_embeddings = {}
             for category, examples in category_examples.items():
                 example_embeddings = np.array([self.quantum_kernel.embed(ex) for ex in examples])
                 # Average embedding for category (vectorized)
-                category_embeddings[category] = np.mean(example_embeddings, axis=0)
+                category_emb = np.mean(example_embeddings, axis=0)
+                if optimizer.arch_optimizer:
+                    category_emb = optimizer.arch_optimizer.optimize_array_operations(category_emb.reshape(1, -1))[0]
+                category_embeddings[category] = category_emb
             
             # Compute similarities using vectorized operations
             for i, item in enumerate(data):
@@ -381,7 +391,7 @@ class AdvancedDataPreprocessor:
                 best_score = 0.0
                 
                 for category, cat_emb in category_embeddings.items():
-                    # Vectorized similarity computation
+                    # Vectorized similarity computation (architecture-optimized)
                     similarity = float(np.abs(np.dot(item_emb, cat_emb)))
                     
                     if similarity > best_score:

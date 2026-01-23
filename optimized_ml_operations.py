@@ -89,13 +89,16 @@ class OptimizedMLOperations:
             # Fallback to cosine
             return OptimizedMLOperations.vectorized_similarity_computation(embeddings, 'cosine')
     
-    @staticmethod
-    def vectorized_deduplication(embeddings: np.ndarray, threshold: float = 0.9) -> Tuple[np.ndarray, np.ndarray]:
+    def vectorized_deduplication(self, embeddings: np.ndarray, threshold: float = 0.9) -> Tuple[np.ndarray, np.ndarray]:
         """
         Vectorized deduplication using similarity matrix
         """
+        # Architecture-specific optimization
+        if self.arch_optimizer:
+            embeddings = self.arch_optimizer.optimize_array_operations(embeddings)
+        
         # Compute similarity matrix (vectorized)
-        similarity_matrix = OptimizedMLOperations.vectorized_similarity_computation(embeddings)
+        similarity_matrix = self.vectorized_similarity_computation(embeddings)
         
         # Find duplicates (vectorized)
         # Upper triangle to avoid comparing twice
@@ -158,8 +161,7 @@ class OptimizedMLOperations:
         # For now, return a placeholder
         return np.random.randn(256)  # Placeholder
     
-    @staticmethod
-    def vectorized_feature_selection(X: np.ndarray, y: np.ndarray, n_features: int = 10, method: str = 'variance') -> np.ndarray:
+    def vectorized_feature_selection(self, X: np.ndarray, y: np.ndarray, n_features: int = 10, method: str = 'variance') -> np.ndarray:
         """
         Vectorized feature selection
         """
@@ -194,10 +196,9 @@ class OptimizedMLOperations:
         
         else:
             # Default: variance
-            return OptimizedMLOperations.vectorized_feature_selection(X, y, n_features, 'variance')
+            return self.vectorized_feature_selection(X, y, n_features, 'variance')
     
-    @staticmethod
-    def vectorized_preprocessing(X: np.ndarray, operations: List[str] = ['normalize', 'standardize']) -> np.ndarray:
+    def vectorized_preprocessing(self, X: np.ndarray, operations: List[str] = ['normalize', 'standardize']) -> np.ndarray:
         """
         Vectorized preprocessing pipeline
         """
