@@ -689,6 +689,16 @@ class AlgorithmsCompartment:
         except ImportError as e:
             print(f"Warning: Could not import ML profiler: {e}")
         
+        # ML Monitor for Resource Tracking
+        try:
+            from ml_monitor import (
+                ResourceMonitor, MonitoredMLToolbox
+            )
+            self.components['ResourceMonitor'] = ResourceMonitor
+            self.components['MonitoredMLToolbox'] = MonitoredMLToolbox
+        except ImportError as e:
+            print(f"Warning: Could not import ML monitor: {e}")
+        
         # Interactive Dashboard
         try:
             from interactive_dashboard import InteractiveDashboard
@@ -2710,6 +2720,21 @@ class AlgorithmsCompartment:
             return self.components['profile_ml_pipeline'](pipeline_func, *args, **kwargs)
         else:
             raise ImportError("profile_ml_pipeline not available")
+    
+    # ML Monitor for Resource Tracking
+    def get_resource_monitor(self, sample_interval: float = 0.1, max_samples: int = 10000):
+        """Get Resource Monitor for CPU/memory tracking"""
+        if 'ResourceMonitor' in self.components:
+            return self.components['ResourceMonitor'](sample_interval=sample_interval, max_samples=max_samples)
+        else:
+            raise ImportError("ResourceMonitor not available")
+    
+    def get_monitored_toolbox(self, toolbox=None, enable_monitoring: bool = True):
+        """Get Monitored ML Toolbox wrapper"""
+        if 'MonitoredMLToolbox' in self.components:
+            return self.components['MonitoredMLToolbox'](toolbox=toolbox, enable_monitoring=enable_monitoring)
+        else:
+            raise ImportError("MonitoredMLToolbox not available")
     
     def list_components(self):
         """List all available components in this compartment"""
