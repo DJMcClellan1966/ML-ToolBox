@@ -66,7 +66,24 @@ class MLToolbox:
             auto_start_optimizer: Automatically start Medulla Toolbox Optimizer
             enable_caching: Enable model caching (50-90% faster for repeated operations)
             enable_ml_math: Enable ML Math Optimizer (15-20% faster operations)
+            check_dependencies: Check dependencies on startup (default: True)
+            verbose_errors: Show detailed error messages (default: False)
         """
+        # Initialize error handler first
+        if IMPROVEMENTS_AVAILABLE:
+            self.error_handler = get_error_handler(verbose=verbose_errors)
+        else:
+            self.error_handler = None
+        
+        # Check dependencies if requested
+        if check_dependencies and IMPROVEMENTS_AVAILABLE:
+            dep_manager = get_dependency_manager()
+            dep_status = dep_manager.check_all()
+            if not dep_status['summary']['all_core_available']:
+                print("\n⚠️  WARNING: Missing core dependencies!")
+                dep_manager.print_summary(dep_status)
+                print()
+        
         # Initialize model cache
         self.enable_caching = enable_caching
         if enable_caching:
