@@ -167,7 +167,7 @@ def compare_performance():
     elif len(improvements) == len(regressions):
         print("⚠️  Mixed results - some improvements, some regressions")
     else:
-        print("⚠️  More regressions than improvements - may need further optimization")
+        print("[WARNING] More regressions than improvements - may need further optimization")
 
 
 if __name__ == '__main__':
