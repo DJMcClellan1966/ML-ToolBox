@@ -43,6 +43,20 @@ except ImportError:
     ADVANCED_AVAILABLE = False
     AdvancedMLToolbox = None
 
+# Import Computational Kernels (Fortran/Julia-like performance)
+try:
+    from .computational_kernels import (
+        FortranLikeKernel,
+        JuliaLikeKernel,
+        UnifiedComputationalKernel
+    )
+    COMPUTATIONAL_KERNELS_AVAILABLE = True
+except ImportError:
+    COMPUTATIONAL_KERNELS_AVAILABLE = False
+    FortranLikeKernel = None
+    JuliaLikeKernel = None
+    UnifiedComputationalKernel = None
+
 # Import Phase 1 integrations
 try:
     from .testing import ComprehensiveMLTestSuite, MLBenchmarkSuite
