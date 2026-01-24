@@ -3,6 +3,13 @@ Super Power Agent - Main Orchestrator for Super Power Tool
 
 Provides natural language interface, multi-agent coordination, and
 end-to-end ML workflow automation.
+
+Enhanced with LLM Engineering best practices:
+- Prompt Engineering
+- RAG (Retrieval Augmented Generation)
+- Chain-of-Thought Reasoning
+- Few-Shot Learning
+- Safety Guardrails
 """
 import numpy as np
 from typing import Any, Dict, Optional, Union, List, Tuple
@@ -12,6 +19,23 @@ from enum import Enum
 import json
 
 logger = logging.getLogger(__name__)
+
+# Import LLM Engineering components
+try:
+    from ..llm_engineering import (
+        PromptEngineer, RAGSystem, ChainOfThoughtReasoner,
+        FewShotLearner, LLMOptimizer, LLMEvaluator, SafetyGuardrails
+    )
+    LLM_ENGINEERING_AVAILABLE = True
+except ImportError:
+    LLM_ENGINEERING_AVAILABLE = False
+    PromptEngineer = None
+    RAGSystem = None
+    ChainOfThoughtReasoner = None
+    FewShotLearner = None
+    LLMOptimizer = None
+    LLMEvaluator = None
+    SafetyGuardrails = None
 
 
 class TaskType(Enum):
@@ -519,7 +543,8 @@ class SuperPowerAgent:
             }
     
     def chat(self, user_input: str, data: Optional[np.ndarray] = None, 
-             target: Optional[np.ndarray] = None, context: Optional[Dict] = None, **kwargs) -> Dict:
+             target: Optional[np.ndarray] = None, context: Optional[Dict] = None, 
+             use_llm_engineering: bool = True, **kwargs) -> Dict:
         """
         Conversational interface with context management
         
@@ -541,6 +566,19 @@ class SuperPowerAgent:
         response : dict
             Agent response with results
         """
+        # Safety check
+        if self.llm_components.get('safety'):
+            safety_check = self.llm_components['safety'].check_prompt(user_input)
+            if not safety_check['is_safe']:
+                return {
+                    'message': f"Safety check failed: {', '.join(safety_check['issues'])}",
+                    'safety_check': safety_check,
+                    'suggestions': ['Please rephrase your request', 'Remove sensitive information']
+                }
+            # Sanitize if needed
+            if safety_check['severity'] == 'medium':
+                user_input = self.llm_components['safety'].sanitize_prompt(user_input)
+        
         # Store conversation with context
         conversation_entry = {
             'user': user_input,
@@ -551,6 +589,19 @@ class SuperPowerAgent:
         
         # Enhance intent understanding with context
         intent = self.understand_intent(user_input, context=context)
+        
+        # Use LLM Engineering if enabled
+        if use_llm_engineering and self.llm_components:
+            # Use Chain-of-Thought for complex tasks
+            if intent.task_type != TaskType.UNKNOWN and len(intent.requirements) > 1:
+                if self.llm_components.get('cot'):
+                    reasoning_steps = self.llm_components['cot'].break_down_task(intent.goal)
+                    logger.info(f"[SuperPowerAgent] Using Chain-of-Thought: {len(reasoning_steps)} steps")
+            
+            # Use Few-Shot Learning
+            if self.llm_components.get('few_shot'):
+                task_type_str = intent.task_type.value if intent.task_type != TaskType.UNKNOWN else 'general'
+                # Few-shot examples will be used in prompt generation if LLM is called
         
         # Use context to improve task execution
         if context:
@@ -688,7 +739,7 @@ class SuperPowerAgent:
         return suggestions
     
     def learn_from_interaction(self, intent: UserIntent, result: Dict, user_feedback: Optional[str] = None):
-        """Learn from user interactions"""
+        """Learn from user interactions with enhanced pattern learning"""
         # Store successful patterns
         if result.get('status') == 'success':
             pattern_key = f"{intent.task_type.value}_{intent.goal[:50]}"
@@ -696,10 +747,14 @@ class SuperPowerAgent:
                 self.learned_patterns[pattern_key] = {
                     'count': 0,
                     'success_rate': 0.0,
-                    'avg_metrics': {}
+                    'avg_metrics': {},
+                    'requirements': intent.requirements.copy() if intent.requirements else [],
+                    'constraints': intent.constraints.copy() if intent.constraints else []
                 }
             
             self.learned_patterns[pattern_key]['count'] += 1
+            self.learned_patterns[pattern_key]['success_rate'] = 1.0  # Successful interaction
+            
             if 'metrics' in result:
                 # Update average metrics
                 for metric, value in result['metrics'].items():
@@ -710,3 +765,63 @@ class SuperPowerAgent:
                         current = self.learned_patterns[pattern_key]['avg_metrics'][metric]
                         count = self.learned_patterns[pattern_key]['count']
                         self.learned_patterns[pattern_key]['avg_metrics'][metric] = (current * (count - 1) + value) / count
+            
+            # Store user feedback if provided
+            if user_feedback:
+                if 'feedback' not in self.learned_patterns[pattern_key]:
+                    self.learned_patterns[pattern_key]['feedback'] = []
+                self.learned_patterns[pattern_key]['feedback'].append(user_feedback)
+        else:
+            # Learn from failures
+            pattern_key = f"{intent.task_type.value}_{intent.goal[:50]}"
+            if pattern_key not in self.learned_patterns:
+                self.learned_patterns[pattern_key] = {
+                    'count': 0,
+                    'success_rate': 0.0,
+                    'failures': []
+                }
+            
+            self.learned_patterns[pattern_key]['count'] += 1
+            if 'failures' not in self.learned_patterns[pattern_key]:
+                self.learned_patterns[pattern_key]['failures'] = []
+            self.learned_patterns[pattern_key]['failures'].append(result.get('error', 'Unknown error'))
+            
+            # Update success rate
+            total = self.learned_patterns[pattern_key]['count']
+            successes = total - len(self.learned_patterns[pattern_key]['failures'])
+            self.learned_patterns[pattern_key]['success_rate'] = successes / total if total > 0 else 0.0
+    
+    def get_learned_patterns(self) -> Dict:
+        """Get all learned patterns"""
+        return self.learned_patterns
+    
+    def suggest_best_approach(self, task_description: str) -> Dict:
+        """Suggest best approach based on learned patterns"""
+        # Find similar patterns
+        similar_patterns = []
+        for pattern_key, pattern_data in self.learned_patterns.items():
+            if task_description.lower() in pattern_key.lower() or pattern_key.lower() in task_description.lower():
+                if pattern_data.get('success_rate', 0) > 0.7:  # Only suggest successful patterns
+                    similar_patterns.append({
+                        'pattern': pattern_key,
+                        'success_rate': pattern_data.get('success_rate', 0),
+                        'avg_metrics': pattern_data.get('avg_metrics', {}),
+                        'requirements': pattern_data.get('requirements', [])
+                    })
+        
+        if similar_patterns:
+            # Sort by success rate
+            similar_patterns.sort(key=lambda x: x['success_rate'], reverse=True)
+            best_pattern = similar_patterns[0]
+            
+            return {
+                'suggestion': f"Based on previous success, try: {best_pattern['pattern']}",
+                'expected_metrics': best_pattern['avg_metrics'],
+                'recommended_requirements': best_pattern['requirements'],
+                'confidence': best_pattern['success_rate']
+            }
+        
+        return {
+            'suggestion': 'No similar patterns found. Trying standard approach.',
+            'confidence': 0.0
+        }
