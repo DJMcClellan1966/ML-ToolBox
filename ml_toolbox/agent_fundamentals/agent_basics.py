@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-class AgentState(Enum):
+class AgentStateEnum(Enum):
     """Agent execution states"""
     IDLE = "idle"
     THINKING = "thinking"
