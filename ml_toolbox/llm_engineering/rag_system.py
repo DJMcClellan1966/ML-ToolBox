@@ -33,6 +33,7 @@ class KnowledgeRetriever:
         self.knowledge_base = knowledge_base or {}
         self.embeddings = {}
         self.documents = []
+        self._vocabulary = set()  # Shared vocabulary for consistent embeddings
     
     def add_document(self, doc_id: str, content: str, embedding: Optional[np.ndarray] = None):
         """
@@ -59,11 +60,25 @@ class KnowledgeRetriever:
         """Simple embedding (TF-IDF-like)"""
         # In production, use sentence-transformers or similar
         words = text.lower().split()
-        unique_words = list(set(words))
-        embedding = np.zeros(len(unique_words))
+        
+        # Use fixed vocabulary size for consistency
+        if not hasattr(self, '_vocabulary'):
+            self._vocabulary = set()
+        
+        # Build vocabulary from all documents
+        self._vocabulary.update(words)
+        
+        # Create embedding with fixed size
+        if not self._vocabulary:
+            return np.zeros(100)  # Default size
+        
+        vocab_list = sorted(list(self._vocabulary))
+        embedding = np.zeros(len(vocab_list))
+        
         for word in words:
-            if word in unique_words:
-                embedding[unique_words.index(word)] += 1
+            if word in vocab_list:
+                embedding[vocab_list.index(word)] += 1
+        
         # Normalize
         norm = np.linalg.norm(embedding)
         return embedding / (norm + 1e-10)
@@ -87,7 +102,12 @@ class KnowledgeRetriever:
         if not self.documents:
             return []
         
-        # Embed query
+        # Build vocabulary from all documents first
+        for doc in self.documents:
+            words = doc['content'].lower().split()
+            self._vocabulary.update(words)
+        
+        # Embed query with consistent vocabulary
         query_embedding = self._simple_embedding(query)
         
         # Compute similarities
@@ -96,7 +116,16 @@ class KnowledgeRetriever:
             doc_id = doc['id']
             if doc_id in self.embeddings:
                 doc_embedding = self.embeddings[doc_id]
-                similarity = np.dot(query_embedding, doc_embedding)
+                
+                # Ensure same dimension
+                min_dim = min(len(query_embedding), len(doc_embedding))
+                if min_dim > 0:
+                    query_vec = query_embedding[:min_dim]
+                    doc_vec = doc_embedding[:min_dim]
+                    similarity = np.dot(query_vec, doc_vec)
+                else:
+                    similarity = 0.0
+                
                 similarities.append({
                     'doc_id': doc_id,
                     'content': doc['content'],
@@ -126,6 +155,10 @@ class RAGSystem:
         """
         self.retriever = knowledge_retriever or KnowledgeRetriever()
         self.retrieval_history = []
+        
+        # Initialize vocabulary for consistent embeddings
+        if not hasattr(self.retriever, '_vocabulary'):
+            self.retriever._vocabulary = set()
     
     def augment_prompt(self, prompt: str, query: str, top_k: int = 3) -> str:
         """
