@@ -9,7 +9,7 @@ Implements:
 - Autoencoders
 """
 import numpy as np
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import logging
 
 logger = logging.getLogger(__name__)
