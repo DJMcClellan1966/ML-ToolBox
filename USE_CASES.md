@@ -37,12 +37,17 @@ documents = [
     "Clustering algorithms for unsupervised learning"
 ]
 
-# Access quantum kernel through infrastructure compartment
-infrastructure = toolbox.infrastructure
-quantum_kernel = infrastructure.quantum_kernel if hasattr(infrastructure, 'quantum_kernel') else None
-
-if quantum_kernel is None:
-    # Alternative: Import directly
+# Access quantum kernel - Option 1: Through infrastructure compartment
+try:
+    infrastructure = toolbox.infrastructure
+    # Get QuantumKernel class from infrastructure
+    QuantumKernel = infrastructure.components.get('QuantumKernel')
+    if QuantumKernel:
+        quantum_kernel = QuantumKernel()
+    else:
+        raise AttributeError("QuantumKernel not in components")
+except:
+    # Option 2: Import directly
     from quantum_kernel.kernel import QuantumKernel
     quantum_kernel = QuantumKernel()
 
