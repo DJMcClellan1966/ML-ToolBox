@@ -24,12 +24,12 @@ class AgentState(Enum):
 @dataclass
 class AgentState:
     """Agent state container"""
-    current_state: AgentState = AgentState.IDLE
+    current_state: AgentStateEnum = AgentStateEnum.IDLE
     context: Dict[str, Any] = field(default_factory=dict)
     history: List[Dict] = field(default_factory=list)
     tools: List[str] = field(default_factory=list)
     
-    def update(self, state: AgentState, data: Optional[Dict] = None):
+    def update(self, state: AgentStateEnum, data: Optional[Dict] = None):
         """Update agent state"""
         self.current_state = state
         if data:

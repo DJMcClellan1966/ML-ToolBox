@@ -9,7 +9,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .agent_basics import SimpleAgent, AgentState
+from .agent_basics import SimpleAgent, AgentStateEnum
 
 
 class LoopType(Enum):
@@ -83,15 +83,15 @@ class ReActLoop(AgentLoop):
             self.iteration += 1
             
             # Think
-            self.agent.state.update(AgentState.THINKING, {'iteration': self.iteration})
+            self.agent.state.update(AgentStateEnum.THINKING, {'iteration': self.iteration})
             thought = self._think(current_task, observations)
             
             # Act
-            self.agent.state.update(AgentState.ACTING, {'thought': thought})
+            self.agent.state.update(AgentStateEnum.ACTING, {'thought': thought})
             action_result = self._act(thought, current_task)
             
             # Observe
-            self.agent.state.update(AgentState.OBSERVING, {'action': action_result})
+            self.agent.state.update(AgentStateEnum.OBSERVING, {'action': action_result})
             observation = self._observe(action_result)
             observations.append(observation)
             
@@ -169,7 +169,7 @@ class PlanActLoop(AgentLoop):
             if self._check_stop_condition():
                 break
             
-            self.agent.state.update(AgentState.ACTING, {'step': step})
+            self.agent.state.update(AgentStateEnum.ACTING, {'step': step})
             result = self.agent.execute(step)
             results.append(result)
             
