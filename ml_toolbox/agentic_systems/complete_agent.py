@@ -173,12 +173,14 @@ class CompleteAgent:
         
         # Evaluate performance
         success = execution_result.get('steps_failed', 0) == 0
+        capabilities_used = [step.action for step in plan.steps] if plan.steps else []
+        
         self.evaluator.record_task(
             agent_id=self.core.agent_id,
             task_id=plan.plan_id,
             success=success,
             execution_time=execution_time,
-            capabilities_used=[step.action for step in plan.steps]
+            capabilities_used=capabilities_used
         )
         
         # Update state
@@ -187,12 +189,15 @@ class CompleteAgent:
         else:
             self.core.update_state(AgentStatus.ERROR, error='Plan execution failed')
         
+        # Get metrics (may be None if no tasks recorded yet)
+        metrics = self.evaluator.get_metrics(self.core.agent_id)
+        
         return {
             'success': success,
             'plan_id': plan.plan_id,
             'execution_result': execution_result,
             'execution_time': execution_time,
-            'metrics': self.evaluator.get_metrics(self.core.agent_id)
+            'metrics': metrics
         }
     
     def get_status(self) -> Dict:
