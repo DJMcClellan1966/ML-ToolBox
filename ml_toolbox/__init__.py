@@ -265,6 +265,39 @@ class MLToolbox:
                     self.error_handler.handle_import_error('computational_kernels', 'Computational Kernels', is_optional=True)
                 self._comp_kernel = None
         
+        # Initialize Optimization Kernels (8 unified kernels)
+        try:
+            from .optimization_kernels import (
+                AlgorithmKernel,
+                FeatureEngineeringKernel,
+                PipelineKernel,
+                EnsembleKernel,
+                TuningKernel,
+                CrossValidationKernel,
+                EvaluationKernel,
+                ServingKernel
+            )
+            self._algorithm_kernel = AlgorithmKernel(toolbox=self, parallel=True)
+            self._feature_kernel = FeatureEngineeringKernel(toolbox=self, parallel=True)
+            self._pipeline_kernel = PipelineKernel(toolbox=self)
+            self._ensemble_kernel = EnsembleKernel(toolbox=self, parallel=True)
+            self._tuning_kernel = TuningKernel(toolbox=self, parallel=True)
+            self._cv_kernel = CrossValidationKernel(toolbox=self, parallel=True)
+            self._eval_kernel = EvaluationKernel(parallel=True)
+            self._serving_kernel = ServingKernel(parallel=True)
+            print("[MLToolbox] Optimization Kernels enabled (8 unified kernels)")
+        except Exception as e:
+            if self.error_handler:
+                self.error_handler.handle_import_error('optimization_kernels', 'Optimization Kernels', is_optional=True)
+            self._algorithm_kernel = None
+            self._feature_kernel = None
+            self._pipeline_kernel = None
+            self._ensemble_kernel = None
+            self._tuning_kernel = None
+            self._cv_kernel = None
+            self._eval_kernel = None
+            self._serving_kernel = None
+        
         # Initialize compartments (pass medulla to infrastructure)
         self.data = DataCompartment()
         self.infrastructure = InfrastructureCompartment(medulla=self.medulla)
@@ -730,6 +763,46 @@ class MLToolbox:
     def computational_kernel(self):
         """Access to computational kernel for advanced operations"""
         return self._comp_kernel
+    
+    @property
+    def algorithm_kernel(self):
+        """Access to algorithm kernel"""
+        return self._algorithm_kernel
+    
+    @property
+    def feature_kernel(self):
+        """Access to feature engineering kernel"""
+        return self._feature_kernel
+    
+    @property
+    def pipeline_kernel(self):
+        """Access to pipeline kernel"""
+        return self._pipeline_kernel
+    
+    @property
+    def ensemble_kernel(self):
+        """Access to ensemble kernel"""
+        return self._ensemble_kernel
+    
+    @property
+    def tuning_kernel(self):
+        """Access to hyperparameter tuning kernel"""
+        return self._tuning_kernel
+    
+    @property
+    def cv_kernel(self):
+        """Access to cross-validation kernel"""
+        return self._cv_kernel
+    
+    @property
+    def eval_kernel(self):
+        """Access to evaluation kernel"""
+        return self._eval_kernel
+    
+    @property
+    def serving_kernel(self):
+        """Access to serving kernel"""
+        return self._serving_kernel
     
     def preprocess(self, X, method: str = 'standardize', use_kernels: bool = True):
         """
