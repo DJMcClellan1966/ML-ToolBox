@@ -16,7 +16,7 @@ from sklearn.datasets import make_classification, make_regression
 # Import ML Toolbox
 try:
     from ml_toolbox import MLToolbox
-    print("✅ ML Toolbox imported successfully")
+    print("[OK] ML Toolbox imported successfully")
 except ImportError as e:
     print(f"❌ Error importing ML Toolbox: {e}")
     print("\n💡 Try installing the package first:")
