@@ -249,6 +249,22 @@ class MLToolbox:
         # Keep legacy medulla reference for backward compatibility
         self.medulla = self.optimizer
         
+        # Initialize Computational Kernels (Fortran/Julia-like performance)
+        self._comp_kernel = None
+        if COMPUTATIONAL_KERNELS_AVAILABLE:
+            try:
+                self._comp_kernel = UnifiedComputationalKernel(
+                    mode='auto',
+                    use_blas=True,
+                    jit_enabled=True,
+                    parallel=True
+                )
+                print("[MLToolbox] Computational Kernels enabled (Fortran/Julia-like performance)")
+            except Exception as e:
+                if self.error_handler:
+                    self.error_handler.handle_import_error('computational_kernels', 'Computational Kernels', is_optional=True)
+                self._comp_kernel = None
+        
         # Initialize compartments (pass medulla to infrastructure)
         self.data = DataCompartment()
         self.infrastructure = InfrastructureCompartment(medulla=self.medulla)
@@ -564,8 +580,8 @@ class MLToolbox:
         except ImportError:
             raise ImportError("ML Math Optimizer not available. Install required dependencies.")
     
-    def fit(self, X, y, task_type: str = 'auto', model_type: str = 'auto', 
-            use_cache: bool = True, **kwargs):
+    def fit(self, X, y, task_type: str = 'auto', model_type: str = 'auto',
+            use_cache: bool = True, use_kernels: bool = True, preprocess: bool = True, **kwargs):
         """
         Unified fit method - auto-detects task and trains model
         
@@ -603,6 +619,15 @@ class MLToolbox:
                 task_type = 'classification'
             else:
                 task_type = 'regression'
+        
+        # Preprocess with computational kernels if enabled
+        if preprocess and use_kernels and self._comp_kernel is not None:
+            try:
+                X = self._comp_kernel.standardize(X)
+            except Exception as e:
+                # Fallback to regular preprocessing if kernel fails
+                if self.error_handler:
+                    self.error_handler.handle_error(e, "Kernel preprocessing", is_optional=True)
         
         # Check cache first
         if use_cache and self.model_cache:
