@@ -1,0 +1,47 @@
+{
+  "resnet18-imagenet": {
+    "model_id": "resnet18-imagenet",
+    "name": "ResNet-18 (ImageNet)",
+    "description": "ResNet-18 pre-trained on ImageNet",
+    "model_type": "cnn",
+    "download_url": "pytorch/vision:resnet18",
+    "local_path": null,
+    "metadata": {
+      "dataset": "ImageNet",
+      "accuracy": "69.8%",
+      "parameters": "11.7M"
+    },
+    "created_at": "2026-01-23T19:39:37.391519",
+    "download_count": 0
+  },
+  "bert-base-uncased": {
+    "model_id": "bert-base-uncased",
+    "name": "BERT Base Uncased",
+    "description": "BERT base model (uncased)",
+    "model_type": "transformer",
+    "download_url": "bert-base-uncased",
+    "local_path": null,
+    "metadata": {
+      "vocab_size": "30522",
+      "hidden_size": "768",
+      "num_layers": "12"
+    },
+    "created_at": "2026-01-23T19:39:37.391519",
+    "download_count": 0
+  },
+  "distilbert-base-uncased": {
+    "model_id": "distilbert-base-uncased",
+    "name": "DistilBERT Base Uncased",
+    "description": "DistilBERT base model (uncased) - smaller, faster",
+    "model_type": "transformer",
+    "download_url": "distilbert-base-uncased",
+    "local_path": null,
+    "metadata": {
+      "vocab_size": "30522",
+      "hidden_size": "768",
+      "num_layers": "6"
+    },
+    "created_at": "2026-01-23T19:39:37.391519",
+    "download_count": 0
+  }
+}

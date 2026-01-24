@@ -1,20 +1,16 @@
 """
-AI Agent for Code Generation
-Builds ML solutions using the ML Toolbox without external dependencies
+ML Toolbox AI Agent Module
 """
-from .knowledge_base import ToolboxKnowledgeBase
-from .code_generator import CodeGenerator
-from .code_sandbox import CodeSandbox
-from .agent import MLCodeAgent
-from .pattern_graph import PatternGraph, PatternNode
-from .pattern_composer import PatternComposer
+import sys
+from pathlib import Path
 
-__all__ = [
-    'ToolboxKnowledgeBase',
-    'CodeGenerator',
-    'CodeSandbox',
-    'MLCodeAgent',
-    'PatternGraph',
-    'PatternNode',
-    'PatternComposer'
-]
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+
+try:
+    from .agent import MLCodeAgent
+    from .proactive_agent import ProactiveAgent, get_proactive_agent
+    __all__ = ['MLCodeAgent', 'ProactiveAgent', 'get_proactive_agent']
+except ImportError as e:
+    __all__ = []
+    import warnings
+    warnings.warn(f"AI Agent module imports failed: {e}")
