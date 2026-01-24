@@ -14,6 +14,7 @@ try:
         DataAgent, FeatureAgent, ModelAgent,
         TuningAgent, DeployAgent, InsightAgent
     )
+    from .agent_orchestrator import AgentOrchestrator, WorkflowType
     __all__ = [
         'MLCodeAgent', 
         'ProactiveAgent', 
@@ -24,7 +25,9 @@ try:
         'ModelAgent',
         'TuningAgent',
         'DeployAgent',
-        'InsightAgent'
+        'InsightAgent',
+        'AgentOrchestrator',
+        'WorkflowType'
     ]
 except ImportError as e:
     __all__ = []
