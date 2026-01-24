@@ -1,0 +1,183 @@
+{
+  "timestamp": "2026-01-24T08:43:44.744054",
+  "benchmarks": [
+    {
+      "dataset": "Iris",
+      "samples": 150,
+      "features": 4,
+      "classes": 3,
+      "frameworks": {
+        "ML Toolbox": {
+          "accuracy": 1.0,
+          "fit_time": 0.2521336078643799,
+          "predict_time": 0.011590242385864258,
+          "total_time": 0.26372385025024414,
+          "status": "success"
+        },
+        "scikit-learn": {
+          "accuracy": 1.0,
+          "fit_time": 0.17271900177001953,
+          "predict_time": 0.0294339656829834,
+          "total_time": 0.20215296745300293,
+          "status": "success"
+        },
+        "PyTorch": {
+          "accuracy": 0.9666666666666667,
+          "fit_time": 0.25525355339050293,
+          "predict_time": 0.0,
+          "total_time": 0.25525355339050293,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "dataset": "Wine",
+      "samples": 178,
+      "features": 13,
+      "classes": 3,
+      "frameworks": {
+        "ML Toolbox": {
+          "accuracy": 0.9722222222222222,
+          "fit_time": 0.13383269309997559,
+          "predict_time": 0.012024641036987305,
+          "total_time": 0.1458573341369629,
+          "status": "success"
+        },
+        "scikit-learn": {
+          "accuracy": 1.0,
+          "fit_time": 0.14583230018615723,
+          "predict_time": 0.03163409233093262,
+          "total_time": 0.17746639251708984,
+          "status": "success"
+        },
+        "PyTorch": {
+          "accuracy": 0.2222222222222222,
+          "fit_time": 0.29250669479370117,
+          "predict_time": 0.0009996891021728516,
+          "total_time": 0.293506383895874,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "dataset": "Breast Cancer",
+      "samples": 569,
+      "features": 30,
+      "classes": 2,
+      "frameworks": {
+        "ML Toolbox": {
+          "accuracy": 0.9649122807017544,
+          "fit_time": 0.1649775505065918,
+          "predict_time": 0.005505800247192383,
+          "total_time": 0.17048335075378418,
+          "status": "success"
+        },
+        "scikit-learn": {
+          "accuracy": 0.9649122807017544,
+          "fit_time": 0.14828801155090332,
+          "predict_time": 0.028632402420043945,
+          "total_time": 0.17692041397094727,
+          "status": "success"
+        },
+        "PyTorch": {
+          "accuracy": 0.6228070175438597,
+          "fit_time": 0.38043808937072754,
+          "predict_time": 0.0,
+          "total_time": 0.38043808937072754,
+          "status": "success"
+        }
+      }
+    },
+    {
+      "dataset": "California Housing",
+      "samples": 20640,
+      "features": 8,
+      "task": "regression",
+      "frameworks": {
+        "ML Toolbox": {
+          "r2_score": 0.7970811227044026,
+          "mse": 0.26590671866271426,
+          "fit_time": 6.164482831954956,
+          "predict_time": 0.11651349067687988,
+          "total_time": 6.280996322631836,
+          "status": "success"
+        },
+        "scikit-learn": {
+          "r2_score": 0.8051230593157366,
+          "mse": 0.2553684927247781,
+          "fit_time": 1.6390876770019531,
+          "predict_time": 0.04555201530456543,
+          "total_time": 1.6846396923065186,
+          "status": "success"
+        },
+        "PyTorch": {
+          "r2_score": 0.09927386744792743,
+          "mse": 1.1803196110324385,
+          "fit_time": 0.5038127899169922,
+          "predict_time": 0.0,
+          "total_time": 0.5038127899169922,
+          "status": "success"
+        }
+      }
+    }
+  ],
+  "summary": {
+    "ml_toolbox": {
+      "accuracy": [
+        1.0,
+        0.9722222222222222,
+        0.9649122807017544
+      ],
+      "r2": [
+        0.7970811227044026
+      ],
+      "time": [
+        0.26372385025024414,
+        0.1458573341369629,
+        0.17048335075378418,
+        6.280996322631836
+      ],
+      "count": 4
+    },
+    "sklearn": {
+      "accuracy": [
+        1.0,
+        1.0,
+        0.9649122807017544
+      ],
+      "r2": [
+        0.8051230593157366
+      ],
+      "time": [
+        0.20215296745300293,
+        0.17746639251708984,
+        0.17692041397094727,
+        1.6846396923065186
+      ],
+      "count": 4
+    },
+    "pytorch": {
+      "accuracy": [
+        0.9666666666666667,
+        0.2222222222222222,
+        0.6228070175438597
+      ],
+      "r2": [
+        0.09927386744792743
+      ],
+      "time": [
+        0.25525355339050293,
+        0.293506383895874,
+        0.38043808937072754,
+        0.5038127899169922
+      ],
+      "count": 4
+    },
+    "tensorflow": {
+      "accuracy": [],
+      "r2": [],
+      "time": [],
+      "count": 0
+    }
+  }
+}
