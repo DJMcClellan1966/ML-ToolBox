@@ -19,7 +19,7 @@ try:
         AdvancedMultiAgentSystem, AgentHierarchy, HierarchyLevel,
         CoordinatorPattern, BlackboardPattern, ContractNetPattern,
         SwarmPattern, PipelinePattern, TaskDecomposer, AgentNegotiation,
-        DistributedExecutor, AgentMonitor
+        DistributedExecutor, ExecutionStrategy, AgentMonitor
     )
     from ml_toolbox.agentic_systems import CompleteAgent
     print("\n[OK] All imports successful")
