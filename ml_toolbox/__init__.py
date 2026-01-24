@@ -248,6 +248,13 @@ class MLToolbox:
         self._revolutionary_features_available = True
         print("[MLToolbox] Revolutionary Features available (lazy-loaded)")
         print("[MLToolbox] Fun & Daring Features available (lazy-loaded)")
+        
+        # Initialize Phase 1 integrations (lazy-loaded)
+        self._test_suite = None
+        self._benchmark_suite = None
+        self._model_persistence = None
+        self._model_compression = None
+        self._model_calibration = None
     
     def __repr__(self):
         mlops_info = f", mlops={len(self.mlops.components)}" if self.mlops else ""
