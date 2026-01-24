@@ -58,6 +58,27 @@ ml_toolbox/
 
 ## 🔧 **Language Options for Computational Code**
 
+### **0. Fortran & Julia (Not Recommended for Primary Use)**
+
+**Fortran:**
+- ✅ Excellent numerical performance (often faster than C for pure math)
+- ❌ Complex Python integration (f2py)
+- ❌ Slower development, harder maintenance
+- ❌ Cython/C++ can match performance with better integration
+- **Verdict:** Not recommended - use Cython/C++ instead
+
+**Julia:**
+- ✅ Excellent performance (often as fast as C)
+- ✅ Modern language, Python-like syntax
+- ⚠️ Runtime dependency (requires Julia installation)
+- ⚠️ Smaller ecosystem than Python/C/C++
+- ⚠️ Some overhead when calling from Python
+- **Verdict:** Consider for specific use cases, but Cython is better for primary implementation
+
+**See `FORTRAN_JULIA_ANALYSIS.md` for detailed analysis.**
+
+---
+
 ### **1. Cython (Recommended for ML Toolbox)**
 
 **Best For:** ML Toolbox (similar to scikit-learn)
