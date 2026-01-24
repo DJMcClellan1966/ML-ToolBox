@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional, Union, List
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from .kernel_optimizations import should_parallelize
+
 logger = logging.getLogger(__name__)
 
 
@@ -64,8 +66,14 @@ class CrossValidationKernel:
         # Create folds
         folds = self._create_folds(X, y, cv)
         
+        # Only parallelize if enough folds and data
+        should_parallel = (self.parallel and 
+                          should_parallelize(len(folds)) and 
+                          len(folds) > 1 and
+                          len(X) > 500)  # Only parallelize for larger datasets
+        
         # Evaluate folds
-        if self.parallel and len(folds) > 1:
+        if should_parallel:
             # Parallel fold processing
             with ThreadPoolExecutor(max_workers=min(4, len(folds))) as executor:
                 futures = {executor.submit(self._evaluate_fold, X, y, train_idx, val_idx, **kwargs): i 
@@ -79,7 +87,7 @@ class CrossValidationKernel:
                     except Exception as e:
                         logger.error(f"Failed to evaluate fold {fold_num}: {e}")
         else:
-            # Sequential fold processing
+            # Sequential fold processing (faster for small datasets)
             scores = [self._evaluate_fold(X, y, train_idx, val_idx, **kwargs) 
                      for train_idx, val_idx in folds]
         

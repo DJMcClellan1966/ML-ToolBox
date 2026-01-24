@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional, Union, List
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from .kernel_optimizations import should_parallelize
+
 logger = logging.getLogger(__name__)
 
 
@@ -68,8 +70,13 @@ class EnsembleKernel:
         
         logger.info(f"[EnsembleKernel] Creating {method} ensemble with {models}")
         
+        # Only parallelize if batch size is large enough
+        should_parallel = (self.parallel and 
+                          should_parallelize(len(models)) and 
+                          len(models) > 1)
+        
         # Train models
-        if self.parallel and len(models) > 1:
+        if should_parallel:
             # Parallel training
             with ThreadPoolExecutor(max_workers=min(4, len(models))) as executor:
                 futures = {executor.submit(self._train_model, X, y, model, **kwargs): model for model in models}
@@ -80,7 +87,7 @@ class EnsembleKernel:
                     except Exception as e:
                         logger.error(f"Failed to train {model_name}: {e}")
         else:
-            # Sequential training
+            # Sequential training (faster for small ensembles)
             for model in models:
                 self._models[model] = self._train_model(X, y, model, **kwargs)
         

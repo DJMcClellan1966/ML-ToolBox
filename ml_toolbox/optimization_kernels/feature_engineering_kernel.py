@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional, Union, List
 import logging
 from concurrent.futures import ThreadPoolExecutor
 
+from .kernel_optimizations import should_use_kernel, optimize_for_size
+
 logger = logging.getLogger(__name__)
 
 
@@ -58,6 +60,11 @@ class FeatureEngineeringKernel:
         """
         X = np.asarray(X)
         
+        # Check if kernel should be used (avoid overhead for small operations)
+        if not should_use_kernel(X):
+            # Use direct NumPy for small operations (faster due to no overhead)
+            return self._direct_transform(X, operations)
+        
         if operations is None:
             operations = ['standardize', 'normalize']
         
@@ -75,6 +82,27 @@ class FeatureEngineeringKernel:
                 result = self._polynomial_features(result, **kwargs)
             else:
                 logger.warning(f"Unknown operation: {op}")
+        
+        return result
+    
+    def _direct_transform(self, X: np.ndarray, operations: Optional[List[str]] = None) -> np.ndarray:
+        """Direct NumPy transformation for small operations (no kernel overhead)"""
+        if operations is None:
+            operations = ['standardize']
+        
+        result = X.copy()
+        for op in operations:
+            if op == 'standardize':
+                mean = np.mean(result, axis=0, keepdims=True)
+                std = np.std(result, axis=0, keepdims=True)
+                std = np.where(std < 1e-10, 1.0, std)
+                result = (result - mean) / std
+            elif op == 'normalize':
+                min_val = np.min(result, axis=0, keepdims=True)
+                max_val = np.max(result, axis=0, keepdims=True)
+                range_val = max_val - min_val
+                range_val = np.where(range_val < 1e-10, 1.0, range_val)
+                result = (result - min_val) / range_val
         
         return result
     
@@ -100,6 +128,11 @@ class FeatureEngineeringKernel:
         """
         X = np.asarray(X)
         y = np.asarray(y)
+        
+        # Check if kernel should be used
+        if not should_use_kernel(X):
+            # Use direct NumPy for small operations
+            return self._direct_transform(X, ['standardize'])
         
         logger.info(f"[FeatureEngineeringKernel] Auto-engineering features from {X.shape[1]} to {max_features or 'auto'}")
         

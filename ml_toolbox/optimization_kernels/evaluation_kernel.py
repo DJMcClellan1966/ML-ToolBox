@@ -8,6 +8,8 @@ from typing import Any, Dict, Optional, Union, List
 import logging
 from concurrent.futures import ThreadPoolExecutor
 
+from .kernel_optimizations import should_parallelize, accurate_timing
+
 logger = logging.getLogger(__name__)
 
 
@@ -61,8 +63,14 @@ class EvaluationKernel:
         
         results = {}
         
+        # Only parallelize if enough metrics and data
+        should_parallel = (self.parallel and 
+                          should_parallelize(len(metrics)) and 
+                          len(metrics) > 1 and
+                          len(y_true) > 100)  # Only parallelize for larger datasets
+        
         # Compute metrics
-        if self.parallel and len(metrics) > 1:
+        if should_parallel:
             # Parallel computation
             with ThreadPoolExecutor(max_workers=min(4, len(metrics))) as executor:
                 futures = {executor.submit(self._compute_metric, y_true, y_pred, metric): metric 
@@ -74,7 +82,7 @@ class EvaluationKernel:
                     except Exception as e:
                         logger.error(f"Failed to compute {metric}: {e}")
         else:
-            # Sequential computation
+            # Sequential computation (faster for small operations)
             for metric in metrics:
                 results[metric] = self._compute_metric(y_true, y_pred, metric)
         

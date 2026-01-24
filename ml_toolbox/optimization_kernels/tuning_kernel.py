@@ -10,6 +10,8 @@ import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import itertools
 
+from .kernel_optimizations import should_parallelize
+
 logger = logging.getLogger(__name__)
 
 
@@ -75,8 +77,13 @@ class TuningKernel:
             # Random search (limited)
             param_combinations = self._random_search_space(search_space, n=10)
         
+        # Only parallelize if enough combinations
+        should_parallel = (self.parallel and 
+                          should_parallelize(len(param_combinations)) and 
+                          len(param_combinations) > 1)
+        
         # Evaluate combinations
-        if self.parallel and len(param_combinations) > 1:
+        if should_parallel:
             # Parallel evaluation
             with ThreadPoolExecutor(max_workers=min(4, len(param_combinations))) as executor:
                 futures = {executor.submit(self._evaluate_params, model, X, y, params, **kwargs): params 
@@ -89,7 +96,7 @@ class TuningKernel:
                     except Exception as e:
                         logger.error(f"Failed to evaluate {params}: {e}")
         else:
-            # Sequential evaluation
+            # Sequential evaluation (faster for small search spaces)
             scores = {tuple(params.items()): self._evaluate_params(model, X, y, params, **kwargs) 
                      for params in param_combinations}
         

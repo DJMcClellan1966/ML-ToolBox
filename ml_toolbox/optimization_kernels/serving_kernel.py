@@ -9,6 +9,8 @@ from typing import Any, Dict, Optional, Union, List
 import logging
 from concurrent.futures import ThreadPoolExecutor
 
+from .kernel_optimizations import should_parallelize, optimize_for_size
+
 logger = logging.getLogger(__name__)
 
 
@@ -45,7 +47,7 @@ class ServingKernel:
         X : array-like
             Input features
         batch_size : int, optional
-            Batch size for processing
+            Batch size for processing (auto-determined if None)
         **kwargs
             Additional parameters
             
@@ -56,16 +58,22 @@ class ServingKernel:
         """
         X = np.asarray(X)
         
-        # Batch processing
-        if batch_size and len(X) > batch_size:
-            predictions = []
-            for i in range(0, len(X), batch_size):
-                batch = X[i:i+batch_size]
-                pred = self._predict(model, batch, **kwargs)
-                predictions.append(pred)
-            return np.concatenate(predictions, axis=0)
-        else:
+        # Auto-determine batch size if not provided
+        if batch_size is None:
+            config = optimize_for_size(X, operation_type='inference')
+            batch_size = config.get('batch_size')
+        
+        # For small batches, use direct prediction (no batching overhead)
+        if batch_size is None or len(X) <= batch_size:
             return self._predict(model, X, **kwargs)
+        
+        # Batch processing for larger datasets
+        predictions = []
+        for i in range(0, len(X), batch_size):
+            batch = X[i:i+batch_size]
+            pred = self._predict(model, batch, **kwargs)
+            predictions.append(pred)
+        return np.concatenate(predictions, axis=0)
     
     def batch_serve(self, models: List[Any], X: np.ndarray, **kwargs) -> List[np.ndarray]:
         """
@@ -87,13 +95,14 @@ class ServingKernel:
         """
         X = np.asarray(X)
         
-        if self.parallel and len(models) > 1:
+        # Only parallelize if batch size is large enough
+        if self.parallel and should_parallelize(len(models)) and len(models) > 1:
             # Parallel serving
             with ThreadPoolExecutor(max_workers=min(4, len(models))) as executor:
                 futures = [executor.submit(self._predict, model, X, **kwargs) for model in models]
                 return [f.result() for f in futures]
         else:
-            # Sequential serving
+            # Sequential serving (faster for small batches)
             return [self._predict(model, X, **kwargs) for model in models]
     
     def _predict(self, model: Any, X: np.ndarray, **kwargs) -> np.ndarray:
