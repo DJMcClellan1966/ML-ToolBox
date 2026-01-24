@@ -9,9 +9,19 @@ Installation:
 
 Usage:
     python examples/complete_workflow_example.py
+    
+    # For quieter output (suppress INFO messages):
+    QUIET=1 python examples/complete_workflow_example.py
 """
+import os
 import numpy as np
 from sklearn.datasets import make_classification, make_regression
+
+# Optional: Suppress INFO messages for quieter output
+if os.getenv('QUIET', '0') == '1':
+    import logging
+    logging.getLogger('ml_toolbox').setLevel(logging.WARNING)
+    print("[INFO] Quiet mode enabled - suppressing INFO messages")
 
 # Import ML Toolbox
 try:
