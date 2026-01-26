@@ -32,6 +32,10 @@ try:
         DataQualityAssessor, feature_informativeness, feature_redundancy,
         data_quality_score, missing_value_impact
     )
+    from .quantum_mechanics import (
+        HeisenbergUncertaintyRegularizer, SchrodingerWaveFunction,
+        BellInequality, BornRule, WaveParticleDuality
+    )
     __all__ = [
         'KnowledgeBase',
         'RuleBasedSystem',
@@ -64,7 +68,12 @@ try:
         'feature_informativeness',
         'feature_redundancy',
         'data_quality_score',
-        'missing_value_impact'
+        'missing_value_impact',
+        'HeisenbergUncertaintyRegularizer',
+        'SchrodingerWaveFunction',
+        'BellInequality',
+        'BornRule',
+        'WaveParticleDuality'
     ]
 except ImportError as e:
     import warnings

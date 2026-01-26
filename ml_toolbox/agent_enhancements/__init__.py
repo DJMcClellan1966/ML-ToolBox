@@ -17,6 +17,17 @@ try:
     from .agent_persistence import AgentCheckpoint, AgentPersistence
     from .agent_evaluation import AgentEvaluator, AgentMetrics
     from .agent_monitoring import AgentMonitor, CostTracker, RateLimiter
+    from .turing_test import (
+        TuringTestEvaluator, TuringTestResult,
+        ConversationalIntelligenceEvaluator, ConversationalIntelligenceMetrics,
+        ImitationGameFramework
+    )
+    from .jungian_psychology import (
+        JungianArchetype, PersonalityType,
+        JungianArchetypeAnalyzer, ArchetypeProfile,
+        PersonalityTypeAnalyzer, PersonalityProfile,
+        PersonalityBasedAgentSelector, SymbolicPatternRecognizer
+    )
     __all__ = [
         'AgentMemory',
         'ShortTermMemory',
@@ -30,7 +41,20 @@ try:
         'AgentMetrics',
         'AgentMonitor',
         'CostTracker',
-        'RateLimiter'
+        'RateLimiter',
+        'TuringTestEvaluator',
+        'TuringTestResult',
+        'ConversationalIntelligenceEvaluator',
+        'ConversationalIntelligenceMetrics',
+        'ImitationGameFramework',
+        'JungianArchetype',
+        'PersonalityType',
+        'JungianArchetypeAnalyzer',
+        'ArchetypeProfile',
+        'PersonalityTypeAnalyzer',
+        'PersonalityProfile',
+        'PersonalityBasedAgentSelector',
+        'SymbolicPatternRecognizer'
     ]
 except ImportError as e:
     import warnings
