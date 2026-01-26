@@ -1,0 +1,106 @@
+{
+  "problems": {
+    "tsp": {
+      "baseline_random": 716.8707367337644,
+      "toolbox_ga": 286.02241288463694,
+      "toolbox_sa": 630.3835860940084,
+      "ga_improvement": 60.101257000972886,
+      "sa_improvement": 12.064539143250885,
+      "best_method": "GA",
+      "best_distance": 286.02241288463694
+    },
+    "chaotic_timeseries": {
+      "baseline_lr_mse": 2.7632898582090502e-30,
+      "baseline_rf_mse": 0.056087568111935306,
+      "toolbox_precog_mse": 0.00648089224444789,
+      "best_baseline_mse": 2.7632898582090502e-30,
+      "improvement": 0
+    },
+    "adversarial_robustness": {
+      "baseline_clean": 0.915,
+      "baseline_noisy": {
+        "0.1": 0.93,
+        "0.2": 0.93,
+        "0.3": 0.915
+      },
+      "robust_clean": 0.935,
+      "robust_noisy": {
+        "0.1": 0.925,
+        "0.2": 0.95,
+        "0.3": 0.935
+      },
+      "improvements": {
+        "0.1": -0.5376344086021511,
+        "0.2": 2.150537634408592,
+        "0.3": 2.1857923497267775
+      }
+    },
+    "few_shot_learning": {
+      "baseline_results": {
+        "Logistic Regression": 0.63,
+        "SVM": 0.63375,
+        "Random Forest": 0.5525
+      },
+      "best_baseline": 0.63375,
+      "toolbox_active_learning": 0.69,
+      "toolbox_satisficing": 0.63375,
+      "best_toolbox": 0.69,
+      "improvement": 8.8757396449704
+    },
+    "high_dimensional_sparse": {
+      "baseline": 0.69,
+      "toolbox_network": 0.65,
+      "toolbox_evolutionary": 0.51,
+      "best_toolbox": 0.65,
+      "improvement": -5.797101449275352
+    },
+    "concept_drift": {
+      "baseline_static": 0.492,
+      "toolbox_streaming": 0.7,
+      "toolbox_adaptive": 1.0,
+      "best_toolbox": 1.0,
+      "improvement": 103.2520325203252
+    },
+    "imbalanced_classification": {
+      "baseline_f1": 0.9040217391304348,
+      "toolbox_multiverse_f1": 0.8961631261473905,
+      "improvement": -0.8692946909223044
+    },
+    "multi_objective": {
+      "baseline_obj1": 0.0,
+      "baseline_obj2": -0.0,
+      "baseline_violations": 0,
+      "toolbox_multi_obj1": 0.75,
+      "toolbox_multi_obj2": -1.5,
+      "toolbox_multi_violations": 0,
+      "toolbox_resolved_obj1": 0.0,
+      "toolbox_resolved_obj2": -0.0,
+      "toolbox_resolved_satisfied": true
+    },
+    "non_stationary": {
+      "baseline_avg": 0.5325,
+      "baseline_std": 0.12597122687344123,
+      "toolbox_adaptive_avg": 0.41000000000000003,
+      "toolbox_adaptive_std": 0.12767145334803703,
+      "improvement": -23.00469483568074
+    },
+    "transfer_learning": {
+      "baseline_target_only": 0.8333333333333334,
+      "toolbox_transfer": 0.56,
+      "improvement": -32.8
+    }
+  },
+  "toolbox_performance": {},
+  "baseline_performance": {},
+  "comparisons": {},
+  "summary": {
+    "problems_tested": 10,
+    "toolbox_wins": 2,
+    "baseline_wins": 4,
+    "ties": 1,
+    "average_improvement": 7.093811598488173,
+    "median_improvement": -0.8692946909223044,
+    "max_improvement": 103.2520325203252,
+    "min_improvement": -32.8
+  }
+}

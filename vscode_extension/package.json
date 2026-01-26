@@ -11,11 +11,6 @@
     "AI",
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:mlToolbox.trainModel",
-    "onCommand:mlToolbox.aiGenerate",
-    "onLanguage:python"
-  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [

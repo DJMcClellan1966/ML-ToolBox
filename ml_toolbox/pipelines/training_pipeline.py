@@ -207,11 +207,13 @@ class ModelRegistryStage(PipelineStage):
         
         if self.toolbox and hasattr(self.toolbox, 'model_registry') and self.toolbox.model_registry:
             try:
+                # Remove model_name from kwargs if present to avoid duplicate
+                register_kwargs = {k: v for k, v in kwargs.items() if k != 'model_name'}
                 model_id = self.toolbox.register_model(
                     model,
                     model_name=model_name,
                     metadata=metadata,
-                    **kwargs
+                    **register_kwargs
                 )
                 input_data['model_id'] = model_id
                 self.metadata['model_id'] = model_id

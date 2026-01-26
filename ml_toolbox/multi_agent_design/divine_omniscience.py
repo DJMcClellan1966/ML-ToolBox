@@ -1,25 +1,33 @@
 """
-Divine Omniscience - Global Knowledge System
+Preemptive Knowledge System - Pattern-Based Query Prediction
 
 Implements:
-- Omniscient Coordinator
-- Universal Knowledge Base
-- All-Knowing State Management
-- Divine Will (Central Decision-Making)
-- Providence (Foreknowledge)
+- Knowledge Coordinator (pattern-based query prediction)
+- Knowledge Base (cached query-answer pairs)
+- State Management (tracks system state)
+- Optimal Decision Making (based on available knowledge)
+- Predictive Responses (forecasts likely queries)
+
+Note: This is not true "omniscience" - it's a pattern-matching and caching system
+that learns from past queries to predict future ones. Effectiveness depends on
+query patterns and cache hit rates.
 """
 import numpy as np
 from typing import List, Dict, Any, Optional, Callable, Set
 import logging
 from collections import defaultdict
 import time
+import hashlib
 
 logger = logging.getLogger(__name__)
 
 
 class OmniscientKnowledgeBase:
     """
-    Universal Knowledge Base - Knows everything about the system
+    Knowledge Base - Stores system state and query-answer pairs
+    
+    Note: "Omniscient" is a conceptual name. This is a caching and
+    state management system, not true omniscience.
     """
     
     def __init__(self):
@@ -99,23 +107,39 @@ class OmniscientKnowledgeBase:
 
 class OmniscientCoordinator:
     """
-    Omniscient Coordinator - All-knowing orchestrator for multi-agent systems
+    Knowledge Coordinator - Pattern-based orchestrator for multi-agent systems
+    
+    Enhanced with preemptive responses: Uses pattern matching and caching to
+    provide answers for queries similar to ones seen before.
+    
+    Note: "Omniscient" is a conceptual name. This uses pattern matching,
+    not true omniscience. Effectiveness depends on query similarity and cache hits.
     """
     
     def __init__(
         self,
-        knowledge_base: Optional[OmniscientKnowledgeBase] = None
+        knowledge_base: Optional[OmniscientKnowledgeBase] = None,
+        enable_preemptive_responses: bool = True
     ):
         """
         Initialize omniscient coordinator
         
         Args:
             knowledge_base: Omniscient knowledge base
+            enable_preemptive_responses: Enable answering before questions are asked
         """
         self.knowledge_base = knowledge_base or OmniscientKnowledgeBase()
         self.agents = {}
         self.tasks = {}
         self.decisions = []
+        self.enable_preemptive = enable_preemptive_responses
+        
+        # Preemptive response system
+        self.query_patterns = defaultdict(list)  # Pattern -> queries
+        self.precomputed_answers = {}  # Query hash -> answer
+        self.question_predictions = {}  # Partial query -> predicted full query
+        self.anticipatory_cache = {}  # Context -> likely questions
+        self.query_history = []  # All past queries for pattern learning
     
     def register_agent(self, agent_id: str, agent: Any, capabilities: List[str]):
         """
@@ -164,7 +188,7 @@ class OmniscientCoordinator:
     
     def divine_will(self, task_id: str) -> Optional[str]:
         """
-        Divine Will: Optimal decision based on complete knowledge
+        Optimal Decision: Best assignment based on available knowledge
         
         Args:
             task_id: Task to assign
@@ -178,7 +202,7 @@ class OmniscientCoordinator:
         task = self.tasks[task_id]
         requirements = task['requirements']
         
-        # Omniscient knows all agents and their capabilities
+        # Coordinator has access to all registered agents and their capabilities
         best_agent = None
         best_score = -1
         
@@ -204,7 +228,7 @@ class OmniscientCoordinator:
             self.decisions.append({
                 'task_id': task_id,
                 'agent_id': best_agent,
-                'reason': f"Optimal assignment based on complete knowledge",
+                'reason': f"Optimal assignment based on available knowledge",
                 'timestamp': time.time()
             })
         
@@ -287,7 +311,7 @@ class OmniscientCoordinator:
     
     def omnipresence(self) -> Dict[str, Any]:
         """
-        Omnipresence: Know state of all entities simultaneously
+        System State: Get current state of all registered entities
         
         Returns:
             Complete system state
@@ -315,7 +339,10 @@ class OmniscientCoordinator:
     
     def omnipotence(self, action: str, target: str, parameters: Dict[str, Any] = None) -> bool:
         """
-        Omnipotence: Execute any action on any entity
+        Execute Action: Execute supported actions on registered entities
+        
+        Note: "Omnipotence" is a conceptual name. Only predefined actions
+        on registered entities are supported.
         
         Args:
             action: Action to perform
@@ -345,6 +372,304 @@ class OmniscientCoordinator:
                 return True
         
         return False
+    
+    def learn_query_pattern(self, query: str, answer: Any, context: Dict[str, Any] = None):
+        """
+        Learn from a query-answer pair to predict future queries
+        
+        Args:
+            query: User query
+            answer: Answer provided
+            context: Query context
+        """
+        context = context or {}
+        
+        # Store in history
+        self.query_history.append({
+            'query': query,
+            'answer': answer,
+            'context': context,
+            'timestamp': time.time()
+        })
+        
+        # Extract patterns (keywords, structure, intent)
+        query_lower = query.lower()
+        keywords = set(query_lower.split())
+        
+        # Store pattern
+        pattern_key = tuple(sorted(keywords))
+        self.query_patterns[pattern_key].append({
+            'query': query,
+            'answer': answer,
+            'context': context,
+            'timestamp': time.time()
+        })
+        
+        # Pre-compute answer for exact query
+        query_hash = hashlib.md5(query.encode()).hexdigest()
+        self.precomputed_answers[query_hash] = {
+            'answer': answer,
+            'query': query,
+            'timestamp': time.time()
+        }
+        
+        # Learn question completion patterns
+        words = query.split()
+        for i in range(1, len(words)):
+            partial = ' '.join(words[:i])
+            if partial not in self.question_predictions:
+                self.question_predictions[partial] = []
+            self.question_predictions[partial].append(query)
+        
+        # Update anticipatory cache based on context
+        context_key = str(sorted(context.items()))
+        if context_key not in self.anticipatory_cache:
+            self.anticipatory_cache[context_key] = []
+        self.anticipatory_cache[context_key].append({
+            'query': query,
+            'answer': answer
+        })
+    
+    def predict_question(self, partial_query: str, context: Dict[str, Any] = None) -> List[str]:
+        """
+        Predict the full question from a partial query
+        
+        Args:
+            partial_query: Incomplete query
+            context: Query context
+            
+        Returns:
+            List of predicted full questions
+        """
+        predictions = []
+        
+        # Direct match
+        if partial_query in self.question_predictions:
+            predictions.extend(self.question_predictions[partial_query])
+        
+        # Pattern-based prediction
+        partial_lower = partial_query.lower()
+        partial_keywords = set(partial_lower.split())
+        
+        for pattern, queries in self.query_patterns.items():
+            if partial_keywords.issubset(pattern):
+                predictions.extend([q['query'] for q in queries])
+        
+        # Context-based prediction
+        if context:
+            context_key = str(sorted(context.items()))
+            if context_key in self.anticipatory_cache:
+                predictions.extend([q['query'] for q in self.anticipatory_cache[context_key]])
+        
+        # Return unique predictions, sorted by frequency
+        from collections import Counter
+        prediction_counts = Counter(predictions)
+        return [q for q, _ in prediction_counts.most_common(5)]
+    
+    def get_preemptive_answer(self, query: str, context: Dict[str, Any] = None) -> Optional[Any]:
+        """
+        Get preemptive answer if a similar query was seen before
+        
+        Uses pattern matching and caching. Not truly "omniscient" - only works
+        for queries similar to ones in the cache.
+        
+        Args:
+            query: User query (can be partial)
+            context: Query context
+            
+        Returns:
+            Pre-computed answer if available, None otherwise
+        """
+        if not self.enable_preemptive:
+            return None
+        
+        # Check exact match
+        query_hash = hashlib.md5(query.encode()).hexdigest()
+        if query_hash in self.precomputed_answers:
+            result = self.precomputed_answers[query_hash]
+            logger.info(f"Preemptive answer found for: {query[:50]}...")
+            return result['answer']
+        
+        # Check partial match and predict
+        predicted_questions = self.predict_question(query, context)
+        for predicted_q in predicted_questions:
+            predicted_hash = hashlib.md5(predicted_q.encode()).hexdigest()
+            if predicted_hash in self.precomputed_answers:
+                result = self.precomputed_answers[predicted_hash]
+                logger.info(f"Preemptive answer found via prediction: {predicted_q[:50]}...")
+                return result['answer']
+        
+        # Pattern-based answer
+        query_lower = query.lower()
+        keywords = set(query_lower.split())
+        pattern_key = tuple(sorted(keywords))
+        
+        if pattern_key in self.query_patterns:
+            # Return most recent answer for this pattern
+            pattern_queries = self.query_patterns[pattern_key]
+            if pattern_queries:
+                # Return answer from most recent similar query
+                most_recent = max(pattern_queries, key=lambda x: x.get('timestamp', 0))
+                logger.info(f"Preemptive answer found via pattern matching")
+                return most_recent.get('answer')
+        
+        return None
+    
+    def anticipate_questions(self, context: Dict[str, Any], n_questions: int = 5) -> List[Dict[str, Any]]:
+        """
+        Anticipate questions that will be asked based on context
+        
+        Args:
+            context: Current context
+            n_questions: Number of questions to anticipate
+            
+        Returns:
+            List of anticipated questions with pre-computed answers
+        """
+        context_key = str(sorted(context.items()))
+        anticipated = []
+        
+        # Get from anticipatory cache
+        if context_key in self.anticipatory_cache:
+            cache_entries = self.anticipatory_cache[context_key]
+            for entry in cache_entries[:n_questions]:
+                anticipated.append({
+                    'question': entry['query'],
+                    'answer': entry['answer'],
+                    'confidence': 0.8  # High confidence for cached
+                })
+        
+        # Pattern-based anticipation
+        if len(anticipated) < n_questions:
+            # Find most common patterns in similar contexts
+            for pattern, queries in self.query_patterns.items():
+                if len(anticipated) >= n_questions:
+                    break
+                
+                # Check if pattern matches context
+                for query_entry in queries:
+                    if query_entry.get('context') == context:
+                        anticipated.append({
+                            'question': query_entry['query'],
+                            'answer': query_entry['answer'],
+                            'confidence': 0.6  # Medium confidence for pattern-based
+                        })
+                        if len(anticipated) >= n_questions:
+                            break
+        
+        return anticipated[:n_questions]
+    
+    def proactive_suggest(self, current_state: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Proactively suggest answers before questions are asked
+        
+        Args:
+            current_state: Current system/user state
+            
+        Returns:
+            List of proactive suggestions
+        """
+        suggestions = []
+        
+        # Analyze current state to predict needs
+        if 'current_task' in current_state:
+            task = current_state['current_task']
+            # Anticipate questions about this task
+            context = {'task': task, 'state': current_state.get('state', 'idle')}
+            anticipated = self.anticipate_questions(context, n_questions=3)
+            
+            for item in anticipated:
+                suggestions.append({
+                    'type': 'proactive_answer',
+                    'question': item['question'],
+                    'answer': item['answer'],
+                    'confidence': item['confidence'],
+                    'reason': f"Anticipated based on current task: {task}"
+                })
+        
+        # Suggest based on agent state
+        if 'agent_id' in current_state:
+            agent_id = current_state['agent_id']
+            agent_info = self.knowledge_base.know_agent(agent_id)
+            
+            if agent_info:
+                # Anticipate questions about agent capabilities
+                context = {'agent': agent_id, 'capabilities': agent_info.get('capabilities', [])}
+                anticipated = self.anticipate_questions(context, n_questions=2)
+                
+                for item in anticipated:
+                    suggestions.append({
+                        'type': 'proactive_answer',
+                        'question': item['question'],
+                        'answer': item['answer'],
+                        'confidence': item['confidence'],
+                        'reason': f"Anticipated based on agent: {agent_id}"
+                    })
+        
+        return suggestions
+    
+    def answer_before_question(self, partial_input: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
+        """
+        Attempt to answer before question is fully asked using pattern matching
+        
+        Uses cached answers and pattern matching. Success depends on cache hits
+        and query similarity. Not true omniscience.
+        
+        Args:
+            partial_input: Partial or complete query
+            context: Query context
+            
+        Returns:
+            Response with answer and metadata
+        """
+        context = context or {}
+        
+        # Try to get preemptive answer
+        answer = self.get_preemptive_answer(partial_input, context)
+        
+        if answer is not None:
+            return {
+                'answer': answer,
+                'answered_before_question': True,
+                'method': 'preemptive',
+                'confidence': 0.9,
+                'message': 'Answer known before question completion'
+            }
+        
+        # Predict full question
+        predicted_questions = self.predict_question(partial_input, context)
+        
+        if predicted_questions:
+            # Return predicted questions for user to select
+            return {
+                'answer': None,
+                'answered_before_question': False,
+                'predicted_questions': predicted_questions[:3],
+                'method': 'prediction',
+                'confidence': 0.7,
+                'message': 'Predicted likely questions - select one for instant answer'
+            }
+        
+        # Generate proactive suggestions
+        suggestions = self.proactive_suggest(context)
+        
+        if suggestions:
+            return {
+                'answer': None,
+                'answered_before_question': False,
+                'proactive_suggestions': suggestions,
+                'method': 'proactive',
+                'confidence': 0.6,
+                'message': 'Proactive suggestions based on context'
+            }
+        
+        return {
+            'answer': None,
+            'answered_before_question': False,
+            'method': 'none',
+            'confidence': 0.0,
+            'message': 'No preemptive answer available - question needed'
+        }
 
 
 class DivineOversight:

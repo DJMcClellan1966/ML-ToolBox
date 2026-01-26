@@ -280,17 +280,19 @@ class MLToolbox:
     
     def __init__(self, include_mlops: bool = True, auto_start_optimizer: bool = True, 
                  enable_caching: bool = True, enable_ml_math: bool = True,
-                 check_dependencies: bool = True, verbose_errors: bool = False):
+                 check_dependencies: bool = True, verbose_errors: bool = False,
+                 experimental_features: bool = False):
         """
         Initialize ML Toolbox
         
         Args:
             include_mlops: Include MLOps compartment
             auto_start_optimizer: Automatically start Medulla Toolbox Optimizer
-            enable_caching: Enable model caching (50-90% faster for repeated operations)
-            enable_ml_math: Enable ML Math Optimizer (15-20% faster operations)
+            enable_caching: Enable model caching (can be 50-90% faster for repeated operations with cache hits)
+            enable_ml_math: Enable ML Math Optimizer (typically 15-20% faster for mathematical operations)
             check_dependencies: Check dependencies on startup (default: True)
             verbose_errors: Show detailed error messages (default: False)
+            experimental_features: Enable experimental features (quantum, philosophy, sci-fi, etc.) - Default: False
         """
         # Initialize error handler first
         if IMPROVEMENTS_AVAILABLE:
@@ -327,7 +329,7 @@ class MLToolbox:
             try:
                 from ml_math_optimizer import get_ml_math_optimizer
                 self._ml_math_optimizer = get_ml_math_optimizer()
-                print("[MLToolbox] ML Math Optimizer enabled (15-20% faster operations)")
+                print("[MLToolbox] ML Math Optimizer enabled (typically 15-20% faster for mathematical operations)")
             except Exception as e:
                 print(f"[MLToolbox] Warning: ML Math Optimizer not available: {e}")
         
@@ -490,8 +492,11 @@ class MLToolbox:
                 self.error_handler.handle_import_error('ai_ensemble_feature_selector', 'AI Feature Selector', is_optional=True)
             self.ai_feature_selector = None
         
-        # Revolutionary Features (mindblowing upgrades) - LAZY LOADED
+        # Experimental Features - LAZY LOADED (DISABLED BY DEFAULT)
         # Features load on demand for faster startup
+        # Note: These are experimental and may not work as expected
+        # Set experimental_features=True to enable
+        self._experimental_features_enabled = experimental_features
         self._predictive_intelligence = None
         self._self_healing_code = None
         self._natural_language_pipeline = None
@@ -504,10 +509,10 @@ class MLToolbox:
         self._code_alchemy = None
         self._telepathic_code = None
         
-        # Mark as available (will load on first access)
-        self._revolutionary_features_available = True
-        print("[MLToolbox] Revolutionary Features available (lazy-loaded)")
-        print("[MLToolbox] Fun & Daring Features available (lazy-loaded)")
+        if experimental_features:
+            print("[MLToolbox] Experimental Features enabled (use with caution)")
+        else:
+            print("[MLToolbox] Experimental Features disabled (core ML only)")
         
         # Initialize Phase 1 integrations (lazy-loaded)
         self._test_suite = None
@@ -591,6 +596,8 @@ class MLToolbox:
     @property
     def predictive_intelligence(self):
         """Lazy-loaded Predictive Intelligence"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._predictive_intelligence is None:
             try:
                 from revolutionary_features import get_predictive_intelligence
@@ -604,6 +611,8 @@ class MLToolbox:
     @property
     def self_healing_code(self):
         """Lazy-loaded Self-Healing Code"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._self_healing_code is None:
             try:
                 from revolutionary_features import get_self_healing_code
@@ -617,6 +626,8 @@ class MLToolbox:
     @property
     def natural_language_pipeline(self):
         """Lazy-loaded Natural Language Pipeline"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._natural_language_pipeline is None:
             try:
                 from revolutionary_features import get_natural_language_pipeline
@@ -630,6 +641,8 @@ class MLToolbox:
     @property
     def collaborative_intelligence(self):
         """Lazy-loaded Collaborative Intelligence"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._collaborative_intelligence is None:
             try:
                 from revolutionary_features import get_collaborative_intelligence
@@ -643,6 +656,8 @@ class MLToolbox:
     @property
     def auto_optimizer(self):
         """Lazy-loaded Auto-Optimizer"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._auto_optimizer is None:
             try:
                 from revolutionary_features import get_auto_optimizer
@@ -656,6 +671,8 @@ class MLToolbox:
     @property
     def third_eye(self):
         """Lazy-loaded Third Eye"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._third_eye is None:
             try:
                 from revolutionary_features import get_third_eye
@@ -669,6 +686,8 @@ class MLToolbox:
     @property
     def code_personality(self):
         """Lazy-loaded Code Personality"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._code_personality is None:
             try:
                 from revolutionary_features import get_code_personality
@@ -682,6 +701,8 @@ class MLToolbox:
     @property
     def code_dreams(self):
         """Lazy-loaded Code Dreams"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._code_dreams is None:
             try:
                 from revolutionary_features import get_code_dreams
@@ -695,6 +716,8 @@ class MLToolbox:
     @property
     def parallel_universe_testing(self):
         """Lazy-loaded Parallel Universe Testing"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._parallel_universe_testing is None:
             try:
                 from revolutionary_features import get_parallel_universe_testing
@@ -708,6 +731,8 @@ class MLToolbox:
     @property
     def code_alchemy(self):
         """Lazy-loaded Code Alchemy"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._code_alchemy is None:
             try:
                 from revolutionary_features import get_code_alchemy
@@ -721,6 +746,8 @@ class MLToolbox:
     @property
     def telepathic_code(self):
         """Lazy-loaded Telepathic Code"""
+        if not self._experimental_features_enabled:
+            raise RuntimeError("Experimental features disabled. Set experimental_features=True to enable.")
         if self._telepathic_code is None:
             try:
                 from revolutionary_features import get_telepathic_code

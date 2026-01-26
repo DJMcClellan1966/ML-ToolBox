@@ -1,0 +1,182 @@
+{
+  "test_model:1.0.0": {
+    "model_id": "test_model:1.0.0",
+    "model_name": "test_model",
+    "version": "1.0.0",
+    "stage": "dev",
+    "created_at": "2026-01-25T11:42:34.528875",
+    "updated_at": "2026-01-25T11:42:34.528875",
+    "model_path": ".model_registry\\models\\test_model_1.0.0.pkl",
+    "metadata": {
+      "accuracy": 0.99,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 11.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 20.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 20.0
+        }
+      },
+      "model_type": "auto",
+      "precision": 1.0,
+      "recall": 0.98,
+      "val_accuracy": 0.85
+    },
+    "lineage": [],
+    "deployment_history": []
+  },
+  "unified_model:1.0.0": {
+    "model_id": "unified_model:1.0.0",
+    "model_name": "unified_model",
+    "version": "1.0.0",
+    "stage": "dev",
+    "created_at": "2026-01-25T11:42:34.888535",
+    "updated_at": "2026-01-25T11:42:34.888535",
+    "model_path": ".model_registry\\models\\unified_model_1.0.0.pkl",
+    "metadata": {
+      "accuracy": 1.0,
+      "classification_report": {
+        "0": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 9.0
+        },
+        "1": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 11.0
+        },
+        "accuracy": 1.0,
+        "macro avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 20.0
+        },
+        "weighted avg": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 20.0
+        }
+      },
+      "model_type": "auto",
+      "precision": 1.0,
+      "recall": 1.0,
+      "val_accuracy": 0.85
+    },
+    "lineage": [],
+    "deployment_history": []
+  },
+  "etl_model:1.0.0": {
+    "model_id": "etl_model:1.0.0",
+    "model_name": "etl_model",
+    "version": "1.0.0",
+    "stage": "dev",
+    "created_at": "2026-01-25T11:42:35.185769",
+    "updated_at": "2026-01-25T11:42:35.185769",
+    "model_path": ".model_registry\\models\\etl_model_1.0.0.pkl",
+    "metadata": {
+      "accuracy": 0.8,
+      "classification_report": {
+        "0": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 0.0
+        },
+        "1": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "accuracy": 0.0,
+        "macro avg": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "weighted avg": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        }
+      },
+      "model_type": "auto",
+      "precision": 1.0,
+      "recall": 0.6666666666666666,
+      "val_accuracy": 1.0
+    },
+    "lineage": [],
+    "deployment_history": []
+  },
+  "e2e_model:1.0.0": {
+    "model_id": "e2e_model:1.0.0",
+    "model_name": "e2e_model",
+    "version": "1.0.0",
+    "stage": "dev",
+    "created_at": "2026-01-25T11:42:35.582220",
+    "updated_at": "2026-01-25T11:42:35.582220",
+    "model_path": ".model_registry\\models\\e2e_model_1.0.0.pkl",
+    "metadata": {
+      "accuracy": 0.98,
+      "classification_report": {
+        "0": {
+          "precision": 0.8636363636363636,
+          "recall": 0.95,
+          "f1-score": 0.9047619047619048,
+          "support": 20.0
+        },
+        "1": {
+          "precision": 0.9444444444444444,
+          "recall": 0.85,
+          "f1-score": 0.8947368421052632,
+          "support": 20.0
+        },
+        "accuracy": 0.9,
+        "macro avg": {
+          "precision": 0.904040404040404,
+          "recall": 0.8999999999999999,
+          "f1-score": 0.899749373433584,
+          "support": 40.0
+        },
+        "weighted avg": {
+          "precision": 0.9040404040404042,
+          "recall": 0.9,
+          "f1-score": 0.8997493734335841,
+          "support": 40.0
+        }
+      },
+      "model_type": "auto",
+      "precision": 0.9897959183673469,
+      "recall": 0.97,
+      "val_accuracy": 0.875
+    },
+    "lineage": [],
+    "deployment_history": []
+  }
+}

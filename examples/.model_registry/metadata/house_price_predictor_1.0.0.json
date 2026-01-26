@@ -1,0 +1,14 @@
+{
+  "model_id": "house_price_predictor:1.0.0",
+  "model_name": "house_price_predictor",
+  "version": "1.0.0",
+  "stage": "dev",
+  "created_at": "2026-01-24T18:21:06.830913",
+  "updated_at": "2026-01-24T18:21:06.830913",
+  "model_path": ".model_registry\\models\\house_price_predictor_1.0.0.pkl",
+  "metadata": {
+    "r2_score": 0.8456169062969491
+  },
+  "lineage": [],
+  "deployment_history": []
+}

@@ -4,12 +4,12 @@
       "test_name": "Binary Classification",
       "toolbox": {
         "accuracy": 1.0,
-        "time": 0.11664795875549316,
+        "time": 0.11039352416992188,
         "success": true
       },
       "sklearn": {
         "accuracy": 1.0,
-        "time": 0.015760421752929688,
+        "time": 0.00921010971069336,
         "success": true
       }
     },
@@ -17,12 +17,12 @@
       "test_name": "Multi-class Classification",
       "toolbox": {
         "accuracy": 0.86,
-        "time": 0.16063594818115234,
+        "time": 0.107879638671875,
         "success": true
       },
       "sklearn": {
         "accuracy": 0.98,
-        "time": 0.006654262542724609,
+        "time": 0.018123149871826172,
         "success": true
       }
     },
@@ -30,12 +30,12 @@
       "test_name": "Simple Regression",
       "toolbox": {
         "r2_score": 0.9913052709870561,
-        "time": 0.09586286544799805,
+        "time": 0.08749938011169434,
         "success": true
       },
       "sklearn": {
         "r2_score": 0.993735216471442,
-        "time": 0.014536619186401367,
+        "time": 0.009389877319335938,
         "success": true
       }
     },
@@ -43,12 +43,12 @@
       "test_name": "Basic Clustering",
       "toolbox": {
         "silhouette_score": 0.43638008982817705,
-        "time": 1.9174723625183105,
+        "time": 2.6534500122070312,
         "success": true
       },
       "sklearn": {
         "silhouette_score": 0.43638008982817705,
-        "time": 0.025837421417236328,
+        "time": 0.043211936950683594,
         "success": true
       }
     }
@@ -58,12 +58,12 @@
       "test_name": "High-dimensional Classification",
       "toolbox": {
         "accuracy": 0.978,
-        "time": 0.23388242721557617,
+        "time": 0.25986385345458984,
         "success": true
       },
       "sklearn": {
         "accuracy": 0.992,
-        "time": 0.024012088775634766,
+        "time": 0.017852067947387695,
         "success": true
       }
     },
@@ -71,12 +71,12 @@
       "test_name": "Imbalanced Classification",
       "toolbox": {
         "accuracy": 0.9818181818181818,
-        "time": 0.11230993270874023,
+        "time": 0.09483456611633301,
         "success": true
       },
       "sklearn": {
         "accuracy": 0.9772727272727273,
-        "time": 0.01300191879272461,
+        "time": 0.013566732406616211,
         "success": true
       }
     },
@@ -84,12 +84,12 @@
       "test_name": "Time Series Regression",
       "toolbox": {
         "r2_score": 0.997824181861453,
-        "time": 0.1730661392211914,
+        "time": 0.07826924324035645,
         "success": true
       },
       "sklearn": {
         "r2_score": 0.9986033091054656,
-        "time": 0.004771709442138672,
+        "time": 0.009433984756469727,
         "success": true
       }
     },
@@ -97,12 +97,12 @@
       "test_name": "Multi-output Regression",
       "toolbox": {
         "r2_score": 0.973496325652276,
-        "time": 0.09305620193481445,
+        "time": 0.10221266746520996,
         "success": true
       },
       "sklearn": {
         "r2_score": 0.9788386919962642,
-        "time": 0.00867009162902832,
+        "time": 0.008157730102539062,
         "success": true
       }
     },
@@ -110,12 +110,12 @@
       "test_name": "Feature Selection",
       "toolbox": {
         "num_features": 5,
-        "time": 0.00858926773071289,
+        "time": 0.0057260990142822266,
         "success": true
       },
       "sklearn": {
         "num_features": "5",
-        "time": 0.0005180835723876953,
+        "time": 0.0046231746673583984,
         "success": true
       }
     }
@@ -125,12 +125,12 @@
       "test_name": "Very High-dimensional",
       "toolbox": {
         "accuracy": 0.93,
-        "time": 0.44805192947387695,
+        "time": 0.4698812961578369,
         "success": true
       },
       "sklearn": {
         "accuracy": 0.984,
-        "time": 0.05552411079406738,
+        "time": 0.051972389221191406,
         "success": true
       }
     },
@@ -138,12 +138,12 @@
       "test_name": "Non-linear Patterns",
       "toolbox": {
         "accuracy": 1.0,
-        "time": 0.08859634399414062,
+        "time": 0.09173583984375,
         "success": true
       },
       "sklearn": {
         "accuracy": 0.9966666666666667,
-        "time": 0.009741544723510742,
+        "time": 0.011379003524780273,
         "success": true
       }
     },
@@ -151,12 +151,12 @@
       "test_name": "Sparse Data",
       "toolbox": {
         "accuracy": 1.0,
-        "time": 0.09455418586730957,
+        "time": 0.0952305793762207,
         "success": true
       },
       "sklearn": {
         "accuracy": 1.0,
-        "time": 0.008666515350341797,
+        "time": 0.01751708984375,
         "success": true
       }
     },
@@ -164,12 +164,12 @@
       "test_name": "Noisy Data",
       "toolbox": {
         "accuracy": 0.905,
-        "time": 0.10267424583435059,
+        "time": 0.10040426254272461,
         "success": true
       },
       "sklearn": {
         "accuracy": 0.985,
-        "time": 0.007807016372680664,
+        "time": 0.011324644088745117,
         "success": true
       }
     },
@@ -177,12 +177,12 @@
       "test_name": "Ensemble Learning",
       "toolbox": {
         "accuracy": 0.9966666666666667,
-        "time": 0.1359388828277588,
+        "time": 0.13012218475341797,
         "success": true
       },
       "sklearn": {
         "accuracy": 1.0,
-        "time": 0.028513431549072266,
+        "time": 0.01730799674987793,
         "success": true
       }
     }
@@ -190,7 +190,7 @@
   "np_complete_tests": {
     "tsp": {
       "toolbox": {
-        "time": 0.0005290508270263672,
+        "time": 0.0,
         "distance": 465.0384155596449,
         "method": "heuristic"
       },
@@ -207,7 +207,7 @@
         "valid": true
       },
       "baseline": {
-        "time": 0.0011022090911865234,
+        "time": 0.0,
         "num_colors": 5,
         "valid": true
       }
@@ -242,12 +242,12 @@
     },
     "optimal_feature_selection": {
       "toolbox": {
-        "time": 0.014980792999267578,
+        "time": 0.0115509033203125,
         "num_features": 5,
         "score": 0.7690365309967215
       },
       "sklearn": {
-        "time": 0.008468151092529297,
+        "time": 0.01415562629699707,
         "num_features": 5,
         "score": 0.9798237092091626
       }
@@ -262,20 +262,20 @@
     "sklearn_errors": 0,
     "accuracy_comparison": {},
     "speed_comparison": {
-      "binary_classification": 0.13511099483502537,
-      "multiclass_classification": 0.0414244919525763,
-      "simple_regression": 0.15163973159436725,
-      "basic_clustering": 0.013474729504472635,
-      "high_dim_classification": 0.10266734898172633,
-      "imbalanced_classification": 0.11576820036428326,
-      "time_series_regression": 0.027571594672485714,
-      "multi_output_regression": 0.0931704867462965,
-      "feature_selection": 0.06031754843723977,
-      "very_high_dim": 0.12392338285266695,
-      "nonlinear_patterns": 0.10995425188374597,
-      "sparse_data": 0.0916566016707473,
-      "noisy_data": 0.07603675400037618,
-      "ensemble": 0.2097518455054554
+      "binary_classification": 0.08342980061508691,
+      "multiclass_classification": 0.16799416548797738,
+      "simple_regression": 0.10731364390638666,
+      "basic_clustering": 0.01628518975367532,
+      "high_dim_classification": 0.06869777273778199,
+      "imbalanced_classification": 0.14305683003783642,
+      "time_series_regression": 0.12053246416985242,
+      "multi_output_regression": 0.07981134143980444,
+      "feature_selection": 0.8073864346088188,
+      "very_high_dim": 0.1106074867124174,
+      "nonlinear_patterns": 0.12404098053892215,
+      "sparse_data": 0.18394395958200016,
+      "noisy_data": 0.11279047126038289,
+      "ensemble": 0.13301341952317086
     },
     "test_categories": {
       "simple_tests": {
