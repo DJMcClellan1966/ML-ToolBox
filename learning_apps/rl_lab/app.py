@@ -22,6 +22,11 @@ except Exception:
     def run_demo(demo_id): return {"ok": False, "output": "", "error": "Demos not available"}
 from flask import Flask, request, jsonify, render_template_string
 app = Flask(__name__)
+try:
+    from learning_apps.compass_api import register_compass_routes, get_compass_html_snippet
+    register_compass_routes(app)
+except Exception:
+    def get_compass_html_snippet(): return ""
 @app.route("/api/health"); def api_health(): return jsonify({"ok": True, "curriculum": CURRICULUM_AVAILABLE, "demos": DEMOS_AVAILABLE})
 @app.route("/api/curriculum")
 def api_curriculum():
@@ -62,7 +67,7 @@ def _html():
     r"""items.forEach(it=>{const bt=document.createElement('button');bt.textContent=it.title+' ('+it.level+')';bt.style.marginRight='8px';bt.style.marginTop='8px';bt.onclick=()=>{document.getElementById('topic-detail').style.display='block';document.getElementById('topic-title').textContent=it.title;document.getElementById('topic-learn').textContent=it.learn||'';document.getElementById('topic-code').textContent=it.try_code||'';document.getElementById('topic-try-btn').dataset.demoId=it.try_demo||'';document.getElementById('topic-try-out').textContent='';document.getElementById('topic-try-out').className='out';};document.getElementById('book-topics').appendChild(bt);});};document.getElementById('book-list').appendChild(btn);});"""
     r"""['basics','intermediate','advanced','expert'].forEach(lev=>{const btn=document.createElement('button');btn.textContent=lev;btn.onclick=()=>{const items=(curriculum.items||[]).filter(i=>i.level===lev);document.getElementById('level-topics').innerHTML='';items.forEach(it=>{const bt=document.createElement('button');bt.textContent=it.title;bt.style.marginRight='8px';bt.style.marginTop='8px';bt.onclick=()=>{document.getElementById('level-topic-detail').style.display='block';document.getElementById('level-topic-title').textContent=it.title;document.getElementById('level-topic-learn').textContent=it.learn||'';document.getElementById('level-topic-code').textContent=it.try_code||'';document.getElementById('level-topic-try-btn').dataset.demoId=it.try_demo||'';document.getElementById('level-topic-try-out').textContent='';document.getElementById('level-topic-try-out').className='out';};document.getElementById('level-topics').appendChild(bt);});};document.getElementById('level-tabs').appendChild(btn);});});"""
     r"""document.getElementById('topic-try-btn').onclick=async()=>{const id=document.getElementById('topic-try-btn').dataset.demoId;if(!id){showOut('topic-try-out','No demo.',true);return;}showOut('topic-try-out','Running…');try{const d=await api('/api/try/'+id);showOut('topic-try-out',d.error||d.output,!!d.error);}catch(e){showOut('topic-try-out',e.message,true);};};"""
-    r"""document.getElementById('level-topic-try-btn').onclick=async()=>{const id=document.getElementById('level-topic-try-btn').dataset.demoId;if(!id){showOut('level-topic-try-out','No demo.',true);return;}showOut('level-topic-try-out','Running…');try{const d=await api('/api/try/'+id);showOut('level-topic-try-out',d.error||d.output,!!d.error);}catch(e){showOut('level-topic-try-out',e.message,true);};};</script></body></html>""")
+    r"""document.getElementById('level-topic-try-btn').onclick=async()=>{const id=document.getElementById('level-topic-try-btn').dataset.demoId;if(!id){showOut('level-topic-try-out','No demo.',true);return;}showOut('level-topic-try-out','Running…');try{const d=await api('/api/try/'+id);showOut('level-topic-try-out',d.error||d.output,!!d.error);}catch(e){showOut('level-topic-try-out',e.message,true);};};</script>""" + get_compass_html_snippet() + "\n</body></html>""")
 @app.route("/")
 def index(): return render_template_string(_html())
 if __name__ == "__main__":

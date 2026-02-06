@@ -27,7 +27,11 @@ except Exception:
 
 from flask import Flask, request, jsonify, render_template_string
 app = Flask(__name__)
-
+try:
+    from learning_apps.compass_api import register_compass_routes, get_compass_html_snippet
+    register_compass_routes(app)
+except Exception:
+    def get_compass_html_snippet(): return ""
 @app.route("/api/health")
 def api_health():
     return jsonify({"ok": True, "curriculum": CURRICULUM_AVAILABLE, "demos": DEMOS_AVAILABLE})
@@ -103,7 +107,7 @@ def _html():
     r"""document.getElementById('level-topic-try-btn').onclick=async()=>{const id=document.getElementById('level-topic-try-btn').dataset.demoId;"""
     r"""if(!id){showOut('level-topic-try-out','No demo.',true);return;}showOut('level-topic-try-out','Running…');"""
     r"""try{const d=await api('/api/try/'+id);showOut('level-topic-try-out',d.error||d.output,!!d.error);}catch(e){showOut('level-topic-try-out',e.message,true);};};"""
-    r"""</script></body></html>""")
+    r"""</script>""" + get_compass_html_snippet() + "\n</body></html>""")
 
 @app.route("/")
 def index():
