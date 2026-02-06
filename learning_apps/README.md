@@ -14,6 +14,12 @@ Remaining books and areas in ML-ToolBox were turned into **separate learning app
 | **ai_concepts_lab** | 5004 | Russell & Norvig style (ml_toolbox.ai_concepts) | `python learning_apps/ai_concepts_lab/app.py` |
 | **cross_domain_lab** | 5005 | textbook_concepts: quantum, stat mech, linguistics, precognition, self-organization | `python learning_apps/cross_domain_lab/app.py` |
 | **python_practice_lab** | 5006 | Reed & Zelle (reed_zelle_patterns.py) | `python learning_apps/python_practice_lab/app.py` |
+| **sicp_lab** | 5007 | SICP (Abelson, Sussman — sicp_methods.py) | `python learning_apps/sicp_lab/app.py` |
+| **practical_ml_lab** | 5008 | Hands-On ML (Géron — practical_ml.py) | `python learning_apps/practical_ml_lab/app.py` |
+| **rl_lab** | 5009 | Sutton & Barto (Reinforcement Learning) | `python learning_apps/rl_lab/app.py` |
+| **probabilistic_ml_lab** | 5010 | Murphy (A Probabilistic Perspective) | `python learning_apps/probabilistic_ml_lab/app.py` |
+| **ml_theory_lab** | 5011 | Shalev-Shwartz & Ben-David (Understanding ML) | `python learning_apps/ml_theory_lab/app.py` |
+| **llm_engineers_lab** | 5012 | ML/LLM Engineers Handbook + Build Your Own LLM | `python learning_apps/llm_engineers_lab/app.py` |
 
 All run commands assume you are in the **repo root** (`ML-ToolBox`).
 
@@ -27,6 +33,12 @@ All run commands assume you are in the **repo root** (`ML-ToolBox`).
 - **ai_concepts_lab**: Game theory (Nash, cooperative games), search & planning, reinforcement learning, probabilistic reasoning, clustering; uses `ml_toolbox.ai_concepts`. Curriculum only (demos stub).
 - **cross_domain_lab**: “Unusual” cross-domain: quantum mechanics, statistical mechanics (e.g. simulated annealing), linguistics (parsing, grammar features), precognition (forecaster), self-organization (SOM, dissipative structures); uses `ml_toolbox.textbook_concepts`. Curriculum only (demos stub).
 - **python_practice_lab**: Reed & Zelle — problem decomposition, algorithm patterns (divide-and-conquer, greedy, recursive, iterative), data structure optimizer, code organizer; uses `reed_zelle_patterns.py`. Curriculum only (demos stub).
+- **sicp_lab**: SICP (Abelson, Sussman) — functional ML pipeline (map, filter, reduce, compose, pipe), streams, data abstraction (pairs, trees), symbolic computation; uses `sicp_methods.py`. Curriculum + runnable demos (map, compose, stream, pair, symbolic).
+- **practical_ml_lab**: Hands-On ML (Géron) — feature engineering, model selection, hyperparameter tuning, ensembles, cross-validation, production ML; uses `ml_toolbox.textbook_concepts.practical_ml`. Curriculum only (demos stub).
+- **rl_lab**: Sutton & Barto — MDPs, value functions, Bellman equations, TD learning, Q-learning, SARSA, policy gradient; uses `ml_toolbox.ai_concepts.reinforcement_learning`. Curriculum only (demos stub).
+- **probabilistic_ml_lab**: Murphy — graphical models, EM, variational inference, Bayesian learning; uses `ml_toolbox.textbook_concepts.probabilistic_ml`. Curriculum only (demos stub).
+- **ml_theory_lab**: Shalev-Shwartz & Ben-David — PAC learning, VC dimension, generalization bounds, stability, Rademacher complexity. Theory-focused curriculum (demos stub).
+- **llm_engineers_lab**: ML/LLM Engineers Handbook (RAG, prompt engineering, evaluation, safety, optimization) + Build Your Own LLM (transformer architecture, tokenization, training/finetuning, scaling, LLM apps). Uses `ml_toolbox.llm_engineering` and `ml_toolbox.agent_pipelines`. Curriculum + demos (RAG retrieve, prompt template).
 
 ---
 
@@ -34,10 +46,10 @@ All run commands assume you are in the **repo root** (`ML-ToolBox`).
 
 - **Paths**: From each lab’s `app.py`, repo root is `Path(__file__).resolve().parents[2]`; lab root is `Path(__file__).parent`. Same in each lab’s `demos.py` for REPO.
 - **Structure**: Each lab has `curriculum.py` (LEVELS, BOOKS, CURRICULUM + getters), `demos.py` (`run_demo`, DEMO_HANDLERS or stub), `app.py` (Flask, `/api/health`, `/api/curriculum`, `/api/curriculum/book/<id>`, `/api/curriculum/level/<level>`, `/api/try/<demo_id>`, `/`), and its own `README.md`.
-- **Ports**: 5001 (ml_learning_lab), 5002–5006 for the five labs under `learning_apps/`.
+- **Ports**: 5001 (ml_learning_lab), 5002–5012 for the labs under `learning_apps/` (clrs, deep_learning, ai_concepts, cross_domain, python_practice, sicp, practical_ml, rl, probabilistic_ml, ml_theory, llm_engineers).
 
 ---
 
 ## Adding demos
 
-Labs that currently have a demos stub (ai_concepts_lab, cross_domain_lab, python_practice_lab) can add runnable demos in their `demos.py`: implement `run_demo(demo_id)` and, if desired, wire `try_demo` in curriculum items to those demo IDs.
+Labs that currently have a demos stub (ai_concepts_lab, cross_domain_lab, python_practice_lab, practical_ml_lab, rl_lab, probabilistic_ml_lab, ml_theory_lab) can add runnable demos in their `demos.py`: implement `run_demo(demo_id)` and, if desired, wire `try_demo` in curriculum items to those demo IDs.
