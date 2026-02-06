@@ -49,6 +49,24 @@ python -m ML_Compass debate "I used an ensemble of three models."
 python -m ML_Compass capacity --signal 10 --noise 1
 ```
 
+### Guidance – avoid/encourage ML patterns
+
+```powershell
+python -m ML_Compass guidance
+```
+
+### Oracle (NL) – suggestion from natural language
+
+```powershell
+python -m ML_Compass oracle_nl "My model overfits the training data."
+```
+
+### Explain (RAG) – concept via theory corpus (requires quantum_kernel)
+
+```powershell
+python -m ML_Compass explain_rag entropy --top_k 3
+```
+
 ### Run all – oracle + explain + debate (defaults)
 
 ```powershell
@@ -73,7 +91,10 @@ Then open:
 **Endpoints:**
 
 - `POST /oracle` – body: `{"tabular": true, "classification": true, "n_samples": "medium"}`  
+- `POST /oracle/nl` – body: `{"description": "My model overfits"}` (natural language)  
 - `GET /explain/{concept}` – e.g. `/explain/entropy`  
+- `GET /explain/rag/{concept}?top_k=3` – RAG over theory corpus (needs quantum_kernel)  
+- `GET /guidance` – avoid/encourage ML patterns  
 - `POST /debate` – body: `"I used an ensemble."` (as string or JSON)  
 - `GET /capacity?signal_power=10&noise_power=1`
 
@@ -114,3 +135,9 @@ print(d["question"])
 - **Optional (serve):** `fastapi`, `uvicorn`
 
 No separate `requirements.txt` in ML_Compass; use the repo’s `requirements.txt` for core deps.
+
+---
+
+## Optional: Quantum Kernel + RAG enhancements
+
+The repo's **quantum_kernel** (semantic embeddings, similarity) can improve Oracle (NL problem input), Explainers (RAG over corpus), and Socratic (retrieve debate viewpoints). With **rag_enhancements** (query expansion + cross-encoder reranking) and **theory_corpus** (default ML theory chunks), RAG explain and debate retrieval use multi-query retrieval and reranking when `sentence_transformers` is available. See **QUANTUM_KERNEL_AND_ML_COMPASS.md** and **quantum_enhancements.py**. Compass runs without them.

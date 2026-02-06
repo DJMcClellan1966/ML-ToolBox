@@ -1,7 +1,8 @@
 """
 Algorithm Oracle: problem profile -> pattern, suggestion, why.
+Supports profile-based rules and NL description via pattern_guidance + quantum_enhancements.
 """
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 # Rule table: problem profile -> (pattern, suggestion, why)
 ORACLE_RULES: List[Dict[str, Any]] = [
@@ -72,4 +73,45 @@ def suggest(profile: Dict[str, Any]) -> Dict[str, Any]:
         "suggestion": DEFAULT_SUGGESTION,
         "why": DEFAULT_WHY,
         "profile_used": profile,
+    }
+
+
+def suggest_from_description(description: str) -> Dict[str, Any]:
+    """
+    Oracle path from natural language: match description to ML pattern guidance.
+    Uses quantum_enhancements.oracle_suggest_nl when kernel available; else keyword fallback.
+
+    Args:
+        description: e.g. "My model memorizes the training set" or "I have 1000 rows and a big neural net"
+
+    Returns:
+        {"ok": bool, "pattern": str, "suggestion": str, "why": str, "source": str}
+    """
+    from .pattern_guidance import get_rules_for_nl_oracle
+    rules = get_rules_for_nl_oracle()
+    try:
+        from .quantum_enhancements import oracle_suggest_nl
+        out = oracle_suggest_nl(description, rules)
+        if out is not None:
+            return {**out, "source": out.get("source", "nl_match")}
+    except Exception:
+        pass
+    # Keyword fallback: find first rule whose description words appear in description
+    desc_lower = description.lower()
+    for r in rules:
+        words = set(r["description"].lower().split())
+        if any(w in desc_lower for w in words if len(w) > 4):
+            return {
+                "ok": True,
+                "pattern": r["pattern"],
+                "suggestion": r["suggestion"],
+                "why": r["why"],
+                "source": "keyword_fallback",
+            }
+    return {
+        "ok": False,
+        "pattern": None,
+        "suggestion": DEFAULT_SUGGESTION,
+        "why": DEFAULT_WHY,
+        "source": "no_match",
     }

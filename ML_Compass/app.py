@@ -13,10 +13,13 @@ _REPO_ROOT = _REPO_ROOT.parent  # repo root
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from ML_Compass.oracle import suggest as oracle_suggest
+from ML_Compass.oracle import suggest as oracle_suggest, suggest_from_description
 from ML_Compass.explainers import explain_concept
 from ML_Compass.theory_channel import channel_capacity_bits, recommend_redundancy
 from ML_Compass.socratic import debate_and_question
+from ML_Compass.pattern_guidance import get_avoid_encourage
+from ML_Compass.theory_corpus import get_corpus
+from ML_Compass import quantum_enhancements
 
 
 def cmd_oracle(profile_dict: dict) -> None:
@@ -37,10 +40,37 @@ def cmd_explain(concept: str) -> None:
         print(f"[{view_name}]", text)
 
 
+def cmd_explain_rag(concept: str, top_k: int = 3) -> None:
+    """Print concept explanation via RAG over theory corpus (requires quantum_kernel)."""
+    corpus = get_corpus()
+    out = quantum_enhancements.explain_concept_rag(concept, corpus, top_k=top_k)
+    if out is None:
+        print("RAG not available (install quantum_kernel). Use: python -m ML_Compass explain", concept)
+        return
+    print("Concept:", out.get("concept"), "| source:", out.get("source", ""))
+    for i, text in enumerate(out.get("retrieved", []), 1):
+        print(f"[{i}]", text[:200] + "..." if len(text) > 200 else text)
+
+
 def cmd_debate(statement: str) -> None:
     """Print debate + Socratic question."""
     out = debate_and_question(statement)
     print(out.get("debate", out.get("question", "")))
+
+
+def cmd_guidance() -> None:
+    """Print avoid/encourage guidance."""
+    g = get_avoid_encourage(minimal=False)
+    print("Avoid:", [p["pattern"] for p in g["avoid"]])
+    print("Encourage:", [p["pattern"] for p in g["encourage"]])
+
+
+def cmd_oracle_nl(description: str) -> None:
+    """Print oracle suggestion from natural language description."""
+    out = suggest_from_description(description)
+    print("Pattern:", out.get("pattern"))
+    print("Suggestion:", out.get("suggestion"))
+    print("Why:", out.get("why"))
 
 
 def cmd_capacity(signal: float, noise: float) -> None:
@@ -103,6 +133,12 @@ Examples:
     p_explain.add_argument("concept", nargs="?", default="entropy")
     p_explain.set_defaults(func=lambda a: cmd_explain(a.concept))
 
+    # explain_rag
+    p_explain_rag = sub.add_parser("explain_rag", help="Explain concept via RAG over theory corpus (needs quantum_kernel)")
+    p_explain_rag.add_argument("concept", nargs="?", default="entropy")
+    p_explain_rag.add_argument("--top_k", type=int, default=3)
+    p_explain_rag.set_defaults(func=lambda a: cmd_explain_rag(a.concept, a.top_k))
+
     # debate
     p_debate = sub.add_parser("debate", help="Debate + Socratic question")
     p_debate.add_argument("statement", nargs="?", default="I used an ensemble of three models.")
@@ -113,6 +149,15 @@ Examples:
     p_cap.add_argument("--signal", type=float, default=10.0)
     p_cap.add_argument("--noise", type=float, default=1.0)
     p_cap.set_defaults(func=lambda a: cmd_capacity(a.signal, a.noise))
+
+    # guidance
+    p_guidance = sub.add_parser("guidance", help="Avoid/encourage ML patterns")
+    p_guidance.set_defaults(func=lambda a: cmd_guidance())
+
+    # oracle nl
+    p_oracle_nl = sub.add_parser("oracle_nl", help="Oracle suggestion from natural language description")
+    p_oracle_nl.add_argument("description", nargs="?", default="My model overfits the training data.")
+    p_oracle_nl.set_defaults(func=lambda a: cmd_oracle_nl(a.description))
 
     # run_all
     p_all = sub.add_parser("run_all", help="Run oracle + explain + debate with defaults")
@@ -191,6 +236,16 @@ def create_app():
     def api_explain(concept: str):
         return explain_concept(concept)
 
+    @app.get("/explain/rag/{concept}")
+    def api_explain_rag(concept: str, top_k: int = 3):
+        """Explain concept via RAG over default theory corpus (and optional quantum_kernel)."""
+        corpus = get_corpus()
+        if quantum_enhancements.is_available():
+            out = quantum_enhancements.explain_concept_rag(concept, corpus, top_k=top_k)
+            if out is not None:
+                return out
+        return {"ok": False, "concept": concept, "message": "RAG requires quantum_kernel. Use GET /explain/{concept} for built-in explainers."}
+
     @app.post("/debate")
     def api_debate(statement: str):
         return debate_and_question(statement)
@@ -203,6 +258,17 @@ def create_app():
             return {"channel_capacity_bits": C, "recommend_redundancy": rec}
         except ImportError as e:
             raise HTTPException(500, str(e))
+
+    @app.get("/guidance")
+    def api_guidance(minimal: bool = False):
+        """Return avoid/encourage patterns for ML (inspired by CodeLearn guidance API)."""
+        return get_avoid_encourage(minimal=minimal)
+
+    @app.post("/oracle/nl")
+    def api_oracle_nl(body: dict):
+        """Oracle suggestion from natural language. Body: {\"description\": \"your problem description\"}."""
+        description = body.get("description", "") if isinstance(body, dict) else ""
+        return suggest_from_description(description)
 
     return app
 
