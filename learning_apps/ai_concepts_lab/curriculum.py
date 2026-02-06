@@ -28,16 +28,16 @@ CURRICULUM: List[Dict[str, Any]] = [
      "try_demo": None},
     {"id": "rl_value", "book_id": "reinforcement", "level": "intermediate", "title": "Value Functions & Q-Learning",
      "learn": "V(s), Q(s,a). Bellman equation. Q-learning: off-policy TD control.",
-     "try_code": "from ml_toolbox.ai_concepts.reinforcement_learning import ...",
-     "try_demo": None},
+     "try_code": "from ml_toolbox.ai_concepts.reinforcement_learning import QLearning",
+     "try_demo": "rl_qlearning"},
     {"id": "prob_reasoning", "book_id": "probabilistic", "level": "intermediate", "title": "Probabilistic Reasoning",
      "learn": "Bayesian networks, inference. From ml_toolbox.ai_concepts.probabilistic_reasoning.",
      "try_code": "from ml_toolbox.ai_concepts.probabilistic_reasoning import ...",
      "try_demo": None},
     {"id": "clustering_ml", "book_id": "probabilistic", "level": "basics", "title": "Clustering (K-means, hierarchical)",
      "learn": "Unsupervised grouping. K-means, hierarchical clustering. From ai_concepts.clustering.",
-     "try_code": "from ml_toolbox.ai_concepts.clustering import ...",
-     "try_demo": None},
+     "try_code": "from ml_toolbox.ai_concepts.clustering import KMeans",
+     "try_demo": "ai_clustering"},
 ]
 
 

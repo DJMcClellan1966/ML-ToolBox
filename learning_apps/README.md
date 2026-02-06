@@ -1,6 +1,48 @@
-# Learning Apps — What Was Done
+# Learning Apps — World-Class Learning Platform
 
-Remaining books and areas in ML-ToolBox were turned into **separate learning apps**, with related topics **combined where it made sense**. Each app lives in its **own named folder** under `learning_apps/` and exposes a slim Flask UI (By Book / By Level, curriculum, optional demos).
+A comprehensive learning platform featuring **13 specialized labs** with **AI tutors** inspired by the greatest minds in computer science and machine learning. Each lab provides personalized, Socratic-style tutoring from virtual mentors like Richard Sutton, Ian Goodfellow, Stuart Russell, and more.
+
+---
+
+## 🎓 AI Tutors — Learn from the Masters
+
+Each lab features a unique AI tutor character based on famous CS/ML figures:
+
+| Lab | AI Tutor | Specialization |
+|-----|----------|----------------|
+| CLRS Algorithms | **Prof. Thomas Cormen** | Algorithm analysis, complexity |
+| Deep Learning | **Dr. Ian Goodfellow** | Neural networks, GANs |
+| RL Lab | **Prof. Richard Sutton** | Reinforcement learning |
+| AI Concepts | **Prof. Stuart Russell** | Search, planning, rationality |
+| ML Theory | **Prof. Shai Shalev-Shwartz** | PAC learning, VC dimension |
+| Probabilistic ML | **Prof. Kevin Murphy** | Bayesian methods, graphical models |
+| LLM Engineers | **Andrej Karpathy** | LLMs, transformers, prompting |
+| Math for ML | **Prof. Gilbert Strang** | Linear algebra, optimization |
+| Practical ML | **Aurélien Géron** | Hands-on ML, production |
+| Python Practice | **Prof. John Zelle** | Programming fundamentals |
+| SICP | **Prof. Hal Abelson** | Abstraction, recursion |
+| Cross-Domain | **Alan Turing** | Cross-disciplinary thinking |
+
+### Tutor Features:
+- **Socratic Method**: Guides understanding through thoughtful questions
+- **Adaptive Difficulty**: Adjusts to beginner/intermediate/advanced/expert
+- **Progressive Hints**: Scaffolded hints before giving answers
+- **LLM Integration**: Works with Ollama (local) or OpenAI
+
+**Keyboard Shortcut**: Press `Ctrl+T` to open the tutor chat in any lab.
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Start the Hub
+python learning_apps/hub.py
+# Open http://127.0.0.1:5000
+
+# Or start a specific lab
+python learning_apps/deep_learning_lab/app.py  # Port 5003
+```
 
 ---
 
