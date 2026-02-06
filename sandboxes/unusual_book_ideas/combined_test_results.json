@@ -1,0 +1,70 @@
+{
+  "summary": {
+    "top4": {
+      "oracle_ok": true,
+      "explainer_ok": true,
+      "socratic_ok": true,
+      "real_world_ok": true,
+      "corrected_acc": 1.0,
+      "best_single_acc": 1.0,
+      "ensemble_helps_or_equal": true,
+      "pass": true
+    },
+    "top8": {
+      "oracle_ok": true,
+      "explainer_ok": true,
+      "socratic_ok": true,
+      "warn_ok": true,
+      "curriculum_ok": true,
+      "linguistics_ok": true,
+      "dissipative_ok": true,
+      "real_world_ok": true,
+      "corrected_acc": 1.0,
+      "best_single_acc": 1.0,
+      "ensemble_helps_or_equal": true,
+      "warnings_count": 0,
+      "pass": true
+    }
+  },
+  "top4_real_world": {
+    "ok": true,
+    "dataset": "iris_binary",
+    "n_train": 105,
+    "n_test": 45,
+    "single_accs": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "corrected_acc": 1.0,
+    "best_single": 1.0,
+    "improvement_over_best": 0.0,
+    "ensemble_helps": true
+  },
+  "top8_real_world": {
+    "ok": true,
+    "dataset": "iris_binary",
+    "corrected_acc": 1.0,
+    "best_single": 1.0,
+    "ensemble_helps_or_equal": true
+  },
+  "top8_warn": {
+    "ok": true,
+    "informativeness_shape": [
+      4
+    ],
+    "warnings": [],
+    "missing_impact_ok": true
+  },
+  "digits": {
+    "single_accs": [
+      0.9711111111111111,
+      0.9777777777777777,
+      0.9822222222222222
+    ],
+    "corrected_acc": 0.9866666666666667,
+    "best_single": 0.9822222222222222,
+    "improvement": 0.004444444444444473,
+    "ensemble_helps": true
+  }
+}

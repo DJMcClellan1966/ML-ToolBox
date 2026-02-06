@@ -1,0 +1,81 @@
+{
+  "iris_binary": {
+    "dataset": "iris_binary",
+    "n_train": 112,
+    "n_test": 38,
+    "n_classes": 2,
+    "oracle_ok": true,
+    "explainer_ok": true,
+    "single_accs": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "corrected_acc": 1.0,
+    "best_single": 1.0,
+    "improvement": 0.0,
+    "ensemble_helps_or_equal": true
+  },
+  "digits": {
+    "dataset": "digits",
+    "n_train": 1347,
+    "n_test": 450,
+    "n_classes": 10,
+    "oracle_ok": true,
+    "explainer_ok": true,
+    "single_accs": [
+      0.9711111111111111,
+      0.9777777777777777,
+      0.9822222222222222
+    ],
+    "corrected_acc": 0.9866666666666667,
+    "best_single": 0.9822222222222222,
+    "improvement": 0.004444444444444473,
+    "ensemble_helps_or_equal": true
+  },
+  "wine": {
+    "dataset": "wine",
+    "n_train": 133,
+    "n_test": 45,
+    "n_classes": 3,
+    "oracle_ok": true,
+    "explainer_ok": true,
+    "single_accs": [
+      0.9777777777777777,
+      1.0,
+      0.9777777777777777
+    ],
+    "corrected_acc": 1.0,
+    "best_single": 1.0,
+    "improvement": 0.0,
+    "ensemble_helps_or_equal": true
+  },
+  "breast_cancer": {
+    "dataset": "breast_cancer",
+    "n_train": 426,
+    "n_test": 143,
+    "n_classes": 2,
+    "oracle_ok": true,
+    "explainer_ok": true,
+    "single_accs": [
+      0.9790209790209791,
+      0.965034965034965,
+      0.972027972027972
+    ],
+    "corrected_acc": 0.972027972027972,
+    "best_single": 0.9790209790209791,
+    "improvement": -0.006993006993007089,
+    "ensemble_helps_or_equal": false
+  },
+  "_summary": {
+    "all_pass": true,
+    "datasets": [
+      "iris_binary",
+      "digits",
+      "wine",
+      "breast_cancer"
+    ],
+    "ensemble_helps_or_equal_count": 3,
+    "total_datasets": 4
+  }
+}
