@@ -20,6 +20,7 @@ Remaining books and areas in ML-ToolBox were turned into **separate learning app
 | **probabilistic_ml_lab** | 5010 | Murphy (A Probabilistic Perspective) | `python learning_apps/probabilistic_ml_lab/app.py` |
 | **ml_theory_lab** | 5011 | Shalev-Shwartz & Ben-David (Understanding ML) | `python learning_apps/ml_theory_lab/app.py` |
 | **llm_engineers_lab** | 5012 | ML/LLM Engineers Handbook + Build Your Own LLM | `python learning_apps/llm_engineers_lab/app.py` |
+| **math_for_ml_lab** | 5013 | Basic math for ML (linear algebra, calculus, probability, optimization) | `python learning_apps/math_for_ml_lab/app.py` |
 
 All run commands assume you are in the **repo root** (`ML-ToolBox`).
 
@@ -39,6 +40,7 @@ All run commands assume you are in the **repo root** (`ML-ToolBox`).
 - **probabilistic_ml_lab**: Murphy — graphical models, EM, variational inference, Bayesian learning; uses `ml_toolbox.textbook_concepts.probabilistic_ml`. Curriculum only (demos stub).
 - **ml_theory_lab**: Shalev-Shwartz & Ben-David — PAC learning, VC dimension, generalization bounds, stability, Rademacher complexity. Theory-focused curriculum (demos stub).
 - **llm_engineers_lab**: ML/LLM Engineers Handbook (RAG, prompt engineering, evaluation, safety, optimization) + Build Your Own LLM (transformer architecture, tokenization, training/finetuning, scaling, LLM apps). Uses `ml_toolbox.llm_engineering` and `ml_toolbox.agent_pipelines`. Curriculum + demos (RAG retrieve, prompt template).
+- **math_for_ml_lab**: Basic math for ML — linear algebra (vectors, matrices, SVD, eigen), calculus (derivative, gradient, Jacobian, Hessian), probability & statistics (Gaussian, Bayes, MLE), optimization (gradient descent, SGD, Adam). Uses `ml_toolbox.math_foundations`. Curriculum + demos (dot, SVD, derivative, gradient, Gaussian, GD).
 
 ---
 
@@ -46,7 +48,7 @@ All run commands assume you are in the **repo root** (`ML-ToolBox`).
 
 - **Paths**: From each lab’s `app.py`, repo root is `Path(__file__).resolve().parents[2]`; lab root is `Path(__file__).parent`. Same in each lab’s `demos.py` for REPO.
 - **Structure**: Each lab has `curriculum.py` (LEVELS, BOOKS, CURRICULUM + getters), `demos.py` (`run_demo`, DEMO_HANDLERS or stub), `app.py` (Flask, `/api/health`, `/api/curriculum`, `/api/curriculum/book/<id>`, `/api/curriculum/level/<level>`, `/api/try/<demo_id>`, `/`), and its own `README.md`.
-- **Ports**: 5001 (ml_learning_lab), 5002–5012 for the labs under `learning_apps/` (clrs, deep_learning, ai_concepts, cross_domain, python_practice, sicp, practical_ml, rl, probabilistic_ml, ml_theory, llm_engineers).
+- **Ports**: 5001 (ml_learning_lab), 5002–5013 for the labs under `learning_apps/` (clrs, deep_learning, ai_concepts, cross_domain, python_practice, sicp, practical_ml, rl, probabilistic_ml, ml_theory, llm_engineers, math_for_ml).
 
 ---
 
