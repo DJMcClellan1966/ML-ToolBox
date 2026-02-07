@@ -38,6 +38,15 @@ If you have accessibility needs or suggestions, please open an issue or contact 
 
 A comprehensive learning platform featuring **13 specialized labs** with **AI tutors** inspired by the greatest minds in computer science and machine learning. Each lab provides personalized, Socratic-style tutoring from virtual mentors like Richard Sutton, Ian Goodfellow, Stuart Russell, and more.
 
+## ✨ New Platform Capabilities
+
+- **Unified Curriculum Brain**: cross-book search, synthesis, and adaptive learning paths.
+- **Misconception Diagnostics**: micro‑quizzes that detect misunderstandings and route learners to prerequisites.
+- **Intelligent Demos**: step‑by‑step explanations with pre/post analysis and practice prompts.
+- **Interactive Visualizations**: D3.js visualizations, concept maps, and DP/graph views.
+- **Deep Learning Experience**: neural network builder, training animations, backprop walkthroughs.
+- **Spaced Repetition & Code Playground**: retention and hands‑on practice from the Hub.
+
 ---
 
 ## 🎓 AI Tutors — Learn from the Masters
@@ -80,6 +89,11 @@ python learning_apps/hub.py
 python learning_apps/deep_learning_lab/app.py  # Port 5003
 ```
 
+### Hub Features (Running at http://127.0.0.1:5000)
+- **Unified Curriculum Brain** panel for search, synthesis, and adaptive paths
+- **Misconception Diagnostics** panel for quick quizzes and targeted fixes
+- **Spaced Repetition** and **Code Playground** widgets
+
 ---
 
 ## Overview
@@ -120,6 +134,11 @@ All run commands assume you are in the **repo root** (`ML-ToolBox`).
 - **llm_engineers_lab**: ML/LLM Engineers Handbook (RAG, prompt engineering, evaluation, safety, optimization) + Build Your Own LLM (transformer architecture, tokenization, training/finetuning, scaling, LLM apps). Uses `ml_toolbox.llm_engineering` and `ml_toolbox.agent_pipelines`. Curriculum + demos (RAG retrieve, prompt template).
 - **math_for_ml_lab**: Basic math for ML — linear algebra (vectors, matrices, SVD, eigen), calculus (derivative, gradient, Jacobian, Hessian), probability & statistics (Gaussian, Bayes, MLE), optimization (gradient descent, SGD, Adam). Uses `ml_toolbox.math_foundations`. Curriculum + demos (dot, SVD, derivative, gradient, Gaussian, GD).
 
+### Platform‑Wide Enhancements (All Labs)
+- **AI Tutor** persona per lab with Socratic guidance
+- **Misconception Diagnostics** quiz panel with prerequisite routing
+- **Progress Tracking** with completion and in‑progress state
+
 ---
 
 ## Conventions
@@ -133,6 +152,19 @@ All run commands assume you are in the **repo root** (`ML-ToolBox`).
 ## Adding demos
 
 Labs that currently have a demos stub (ai_concepts_lab, cross_domain_lab, python_practice_lab, practical_ml_lab, rl_lab, probabilistic_ml_lab, ml_theory_lab) can add runnable demos in their `demos.py`: implement `run_demo(demo_id)` and, if desired, wire `try_demo` in curriculum items to those demo IDs.
+
+## Unified Curriculum Brain (API)
+
+- POST /api/unified/index
+- GET /api/unified/search?q=...&top_k=...
+- GET /api/unified/graph
+- GET /api/unified/path?user_id=...&goal=...&limit=...
+- POST /api/unified/synthesize {{ question, top_k, use_llm }}
+
+## Misconception Diagnostics (API)
+
+- GET /api/diagnostic/quiz?goal=...&limit=...
+- POST /api/diagnostic/submit {{ user_id, answers }}
 
 # UI/UX Enhancements for Learning Paths
 

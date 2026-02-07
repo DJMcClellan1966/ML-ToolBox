@@ -122,6 +122,13 @@ def create_lab_app(
   except Exception:
     progress_module = None
 
+  # Try to register Misconception Diagnostics
+  try:
+    from learning_apps.misconception_engine import register_misconception_routes
+    register_misconception_routes(app)
+  except Exception:
+    pass
+
   # --- API Routes ---
 
   @app.route("/api/curriculum")
@@ -747,6 +754,60 @@ def _get_modern_html(title: str, description: str, lab_id: str, compass_html: st
       font-size: 0.9rem;
       white-space: pre-wrap;
     }}
+
+    /* Misconception Diagnostics */
+    .diag-panel {{
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 24px;
+    }}
+    .diag-panel h3 {{
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+    .diag-row {{
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }}
+    .diag-input {{
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }}
+    .diag-input:focus {{
+      outline: none;
+      border-color: var(--accent);
+    }}
+    .diag-results {{
+      background: var(--bg-primary);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      min-height: 80px;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      color: var(--text-secondary);
+    }}
+    .diag-question {{
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }}
+    .diag-choice {{
+      display: block;
+      margin-top: 6px;
+    }}
     
     /* Responsive */
     @media (max-width: 600px) {{
@@ -833,6 +894,22 @@ def _get_modern_html(title: str, description: str, lab_id: str, compass_html: st
           <button class="btn btn-success" id="compass-generate-btn">Generate Code</button>
         </div>
         <div id="compass-out"></div>
+      </div>
+
+      <!-- Misconception Diagnostics -->
+      <div class="diag-panel">
+        <h3>🧩 Misconception Diagnostics</h3>
+        <div class="diag-row">
+          <input type="text" class="diag-input" id="diag-goal" placeholder="Goal (e.g. RL, backprop, SVM)">
+          <button class="btn btn-primary" id="diag-load-btn">Load Quiz</button>
+          <button class="btn btn-outline" id="diag-submit-btn">Submit</button>
+        </div>
+        <div class="diag-row">
+          <div class="diag-results" id="diag-quiz">No quiz loaded.</div>
+        </div>
+        <div class="diag-row">
+          <div class="diag-results" id="diag-results">No results yet.</div>
+        </div>
       </div>
     </div>
   </main>
@@ -1197,6 +1274,56 @@ def _get_modern_html(title: str, description: str, lab_id: str, compass_html: st
         else showCompass(d.error || 'No code', true);
       }} catch (e) {{ showCompass(e.message, true); }}
     }};
+
+    // Misconception Diagnostics
+    let diagQuiz = [];
+    async function loadDiagnosticQuiz() {{
+      const goal = document.getElementById('diag-goal').value.trim();
+      const el = document.getElementById('diag-quiz');
+      el.textContent = 'Loading quiz...';
+      try {{
+        const r = await fetch('/api/diagnostic/quiz?goal=' + encodeURIComponent(goal) + '&limit=3');
+        const d = await r.json();
+        if (!d.ok) {{ el.textContent = 'Quiz unavailable.'; return; }}
+        diagQuiz = d.quiz || [];
+        if (!diagQuiz.length) {{ el.textContent = 'No questions found.'; return; }}
+        el.innerHTML = diagQuiz.map((q, idx) => {{
+          const choices = q.choices.map((c, i) =>
+            `<label class="diag-choice"><input type="radio" name="q_${{idx}}" value="${{i}}"> ${{c}}</label>`
+          ).join('');
+          return `<div class="diag-question"><b>${{q.prompt}}</b>${{choices}}</div>`;
+        }}).join('');
+      }} catch (e) {{ el.textContent = 'Error: ' + e.message; }}
+    }}
+
+    async function submitDiagnosticQuiz() {{
+      const el = document.getElementById('diag-results');
+      if (!diagQuiz.length) {{ el.textContent = 'Load the quiz first.'; return; }}
+      const answers = {{}};
+      diagQuiz.forEach((q, idx) => {{
+        const sel = document.querySelector(`input[name="q_${{idx}}"]:checked`);
+        if (sel) answers[q.id] = parseInt(sel.value, 10);
+      }});
+      el.textContent = 'Analyzing...';
+      try {{
+        const r = await fetch('/api/diagnostic/submit', {{
+          method: 'POST',
+          headers: {{ 'Content-Type': 'application/json' }},
+          body: JSON.stringify({{ user_id: 'default', answers }})
+        }});
+        const d = await r.json();
+        const mis = d.misconceptions || {{}};
+        const misHtml = Object.keys(mis).length
+          ? 'Detected misconceptions: ' + Object.entries(mis).map(([k,v]) => `${{k}} (${{v}})`).join(', ')
+          : 'No misconceptions detected.';
+        const recs = d.recommended_path?.recommendations || [];
+        const recHtml = recs.map(x => `${{x.title}} [${{x.level}}]`).join('\n') || 'No recommendations.';
+        el.textContent = misHtml + '\n\nNext best topics:\n' + recHtml;
+      }} catch (e) {{ el.textContent = 'Error: ' + e.message; }}
+    }}
+
+    document.getElementById('diag-load-btn').onclick = loadDiagnosticQuiz;
+    document.getElementById('diag-submit-btn').onclick = submitDiagnosticQuiz;
     
     // Init
     loadCurriculum();

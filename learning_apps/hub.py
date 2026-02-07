@@ -162,6 +162,14 @@ try:
 except Exception:
   pass
 
+# Misconception Diagnostics
+try:
+  from learning_apps.misconception_engine import register_misconception_routes
+  register_misconception_routes(app)
+  print("🧩 Misconception Diagnostics loaded")
+except Exception:
+  pass
+
 # Gamification system
 try:
     from learning_apps import gamification
@@ -817,6 +825,8 @@ HTML = r"""
       color: var(--text-secondary);
     }
     .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; background: rgba(59,130,246,0.15); color: var(--accent); margin-right: 6px; }
+    .diagnostic-question { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .diagnostic-choice { display: block; margin-top: 6px; }
     
     @media (max-width: 768px) {
       .header-inner { flex-direction: column; align-items: flex-start; }
@@ -905,6 +915,33 @@ HTML = r"""
             <button class="btn" onclick="runUnifiedPath()">Recommend</button>
           </div>
           <div class="unified-results" id="unified-path-results">No path yet.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Misconception Diagnostics -->
+    <div class="section-header" style="margin: 20px 0 12px;">
+      <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 10px;">
+        <span>🧩</span> Misconception Diagnostics
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+        A short diagnostic that finds misunderstandings and routes you to the right prerequisites.
+      </p>
+    </div>
+    <div class="unified-panel">
+      <div class="unified-grid">
+        <div class="unified-card">
+          <h4>⚡ Quick Diagnostic</h4>
+          <input class="unified-input" id="diag-goal" placeholder="Goal: deep learning, RL, SVM, etc.">
+          <div class="unified-actions">
+            <button class="btn" onclick="loadDiagnosticQuiz()">Load Quiz</button>
+            <button class="btn" onclick="submitDiagnosticQuiz()">Submit</button>
+          </div>
+          <div class="unified-results" id="diag-quiz">No quiz loaded.</div>
+        </div>
+        <div class="unified-card">
+          <h4>🧭 Recommended Fixes</h4>
+          <div class="unified-results" id="diag-results">No results yet.</div>
         </div>
       </div>
     </div>
@@ -1166,6 +1203,58 @@ HTML = r"""
              <div style="color:var(--text-muted);">${x.lab_id} • ${x.book_name || ''}</div>
            </div>`
         ).join('') || 'No recommendations.';
+      } catch (e) { el.textContent = 'Error: ' + e.message; }
+    }
+
+    // Misconception Diagnostics
+    let diagQuiz = [];
+    async function loadDiagnosticQuiz() {
+      const goal = document.getElementById('diag-goal').value.trim();
+      const el = document.getElementById('diag-quiz');
+      el.textContent = 'Loading quiz...';
+      try {
+        const r = await fetch('/api/diagnostic/quiz?goal=' + encodeURIComponent(goal) + '&limit=3');
+        const d = await r.json();
+        if (!d.ok) { el.textContent = 'Quiz unavailable.'; return; }
+        diagQuiz = d.quiz || [];
+        if (!diagQuiz.length) { el.textContent = 'No questions found.'; return; }
+        el.innerHTML = diagQuiz.map((q, idx) => {
+          const choices = q.choices.map((c, i) =>
+            `<label class="diagnostic-choice"><input type="radio" name="q_${idx}" value="${i}"> ${c}</label>`
+          ).join('');
+          return `<div class="diagnostic-question"><b>${q.prompt}</b>${choices}</div>`;
+        }).join('');
+      } catch (e) { el.textContent = 'Error: ' + e.message; }
+    }
+
+    async function submitDiagnosticQuiz() {
+      const el = document.getElementById('diag-results');
+      if (!diagQuiz.length) { el.textContent = 'Load the quiz first.'; return; }
+      const answers = {};
+      diagQuiz.forEach((q, idx) => {
+        const sel = document.querySelector(`input[name="q_${idx}"]:checked`);
+        if (sel) answers[q.id] = parseInt(sel.value, 10);
+      });
+      el.textContent = 'Analyzing...';
+      try {
+        const r = await fetch('/api/diagnostic/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user_id: 'default', answers })
+        });
+        const d = await r.json();
+        const mis = d.misconceptions || {};
+        const misHtml = Object.keys(mis).length
+          ? '<div><b>Detected misconceptions:</b> ' + Object.entries(mis).map(([k,v]) => `<span class="pill">${k} (${v})</span>`).join(' ') + '</div>'
+          : '<div><b>No misconceptions detected.</b></div>';
+        const recs = d.recommended_path?.recommendations || [];
+        const recHtml = recs.map(x =>
+          `<div style="margin-top:8px;">
+             <span class="pill">${x.level}</span><b>${x.title}</b>
+             <div style="color:var(--text-muted);">${x.lab_id} • ${x.book_name || ''}</div>
+           </div>`
+        ).join('') || '<div>No recommendations.</div>';
+        el.innerHTML = misHtml + '<div style="margin-top:10px;"><b>Next best topics:</b></div>' + recHtml;
       } catch (e) { el.textContent = 'Error: ' + e.message; }
     }
     
