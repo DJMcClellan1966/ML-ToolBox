@@ -1,0 +1,27 @@
+{
+  "bert_tiny": {
+    "model": "BERT-tiny",
+    "params": "4.4M",
+    "task": "IMDB sentiment",
+    "original_acc": 84.5,
+    "assembled_acc": 0.0,
+    "retention": 0.0,
+    "seed_size_kb": 108.58984375,
+    "compression": 157.78186265693012
+  },
+  "gpt2": {
+    "model": "GPT-2",
+    "params": "124M",
+    "task": "WikiText-2 generation",
+    "original_ppl": 3298.1746193984277,
+    "assembled_ppl": 3.320701020483503e+16,
+    "quality_ratio": 10068299601096.27,
+    "seed_size_kb": 3311.1015625,
+    "compression": 146.80703410166083
+  },
+  "verdict": {
+    "bert_preserves_knowledge": false,
+    "gpt2_preserves_knowledge": false,
+    "research_direction": "task_distillation"
+  }
+}

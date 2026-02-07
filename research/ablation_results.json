@@ -1,0 +1,39 @@
+{
+  "original": {
+    "accuracy": 45.3,
+    "seed_size_bytes": 17544712,
+    "compression": 1.0
+  },
+  "random_init": {
+    "accuracy_before": 100.0,
+    "accuracy_after": 100.0,
+    "retention": 220.75055187637972,
+    "seed_size_bytes": 0,
+    "compression": Infinity,
+    "time": 7.787903308868408
+  },
+  "minimal_seed": {
+    "accuracy_before": 100.0,
+    "accuracy_after": 100.0,
+    "retention": 220.75055187637972,
+    "seed_size_bytes": 175324176,
+    "compression": 0.10007012381452744,
+    "time": 17.36957573890686
+  },
+  "no_structure_seed": {
+    "accuracy_before": 0.0,
+    "accuracy_after": 100.0,
+    "retention": 220.75055187637972,
+    "seed_size_bytes": 3052,
+    "compression": 5748.59501965924,
+    "time": 8.436258316040039
+  },
+  "full_seed": {
+    "accuracy_before": 0.0,
+    "accuracy_after": 100.0,
+    "retention": 220.75055187637972,
+    "seed_size_bytes": 111196,
+    "compression": 157.78186265693012,
+    "time": 8.971565246582031
+  }
+}

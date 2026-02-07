@@ -1,0 +1,70 @@
+{
+  "data_efficiency": [
+    {
+      "n_samples": 10,
+      "n_steps": 100,
+      "accuracy": 100.0,
+      "time_s": 4.752333402633667,
+      "converged": true
+    }
+  ],
+  "iteration_efficiency": [
+    {
+      "n_samples": 250,
+      "n_steps": 10,
+      "accuracy": 100.0,
+      "time_s": 1.5483789443969727,
+      "converged": true
+    }
+  ],
+  "time_efficiency": {
+    "finetune_time_s": 15.095524787902832,
+    "finetune_accuracy": 100.0,
+    "model_size_mb": 17.5,
+    "comparisons": {
+      "Dialup (56 Kbps)": {
+        "download_time_s": 2500.0,
+        "finetune_time_s": 15.095524787902832,
+        "winner": "finetune",
+        "ratio": 165.6119966099778
+      },
+      "Slow DSL (1 Mbps)": {
+        "download_time_s": 140.0,
+        "finetune_time_s": 15.095524787902832,
+        "winner": "finetune",
+        "ratio": 9.274271810158758
+      },
+      "DSL (5 Mbps)": {
+        "download_time_s": 28.0,
+        "finetune_time_s": 15.095524787902832,
+        "winner": "finetune",
+        "ratio": 1.8548543620317517
+      },
+      "Cable (25 Mbps)": {
+        "download_time_s": 5.6,
+        "finetune_time_s": 15.095524787902832,
+        "winner": "download",
+        "ratio": 2.6956294264112204
+      },
+      "Fiber (100 Mbps)": {
+        "download_time_s": 1.4,
+        "finetune_time_s": 15.095524787902832,
+        "winner": "download",
+        "ratio": 10.782517705644882
+      },
+      "Gigabit (1 Gbps)": {
+        "download_time_s": 0.14,
+        "finetune_time_s": 15.095524787902832,
+        "winner": "download",
+        "ratio": 107.8251770564488
+      }
+    }
+  },
+  "criteria": {
+    "data_efficiency": true,
+    "iteration_efficiency": true,
+    "time_efficiency": true
+  },
+  "verdict": "proceed_phase_2.3",
+  "recommendation": "proceed_phase_2.3"
+}
