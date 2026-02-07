@@ -170,6 +170,62 @@ try:
 except Exception:
   pass
 
+# BUILD Mode — Project-Based Learning
+try:
+    from learning_apps.project_builder import register_project_routes
+    register_project_routes(app)
+    print("🏗️ BUILD Mode loaded")
+except Exception:
+    pass
+
+# TEACH Mode — Feynman Engine
+try:
+    from learning_apps.feynman_engine import register_feynman_routes
+    register_feynman_routes(app)
+    print("🎤 TEACH Mode loaded")
+except Exception:
+    pass
+
+# RESEARCH Mode — Paper Reproduction Lab
+try:
+    from learning_apps.research_lab import register_research_routes
+    register_research_routes(app)
+    print("📄 RESEARCH Mode loaded")
+except Exception:
+    pass
+
+# SIMULATE Mode — Consequence Sandboxes
+try:
+    from learning_apps.simulation_sandbox import register_simulation_routes
+    register_simulation_routes(app)
+    print("🧪 SIMULATE Mode loaded")
+except Exception:
+    pass
+
+# PORTFOLIO Mode — Exportable Proof of Work
+try:
+    from learning_apps.portfolio_engine import register_portfolio_routes
+    register_portfolio_routes(app)
+    print("📋 PORTFOLIO Mode loaded")
+except Exception:
+    pass
+
+# COMPETE Mode — Challenge Arena
+try:
+    from learning_apps.challenge_arena import register_arena_routes
+    register_arena_routes(app)
+    print("⚔️ COMPETE Mode loaded")
+except Exception:
+    pass
+
+# JOURNAL Mode — Metacognitive Layer
+try:
+    from learning_apps.learning_journal import register_journal_routes
+    register_journal_routes(app)
+    print("📓 JOURNAL Mode loaded")
+except Exception:
+    pass
+
 # Gamification system
 try:
     from learning_apps import gamification
@@ -827,6 +883,31 @@ HTML = r"""
     .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; background: rgba(59,130,246,0.15); color: var(--accent); margin-right: 6px; }
     .diagnostic-question { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
     .diagnostic-choice { display: block; margin-top: 6px; }
+    /* Mode tabs and panels */
+    .mode-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .mode-tab { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+    .mode-tab:hover, .mode-tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .mode-panel { display: none; }
+    .mode-panel.active { display: block; }
+    .chat-box { background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 12px; max-height: 300px; overflow-y: auto; margin-bottom: 10px; font-size: 0.9rem; }
+    .chat-msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; }
+    .chat-ai { background: var(--bg-tertiary); }
+    .chat-user { background: rgba(59,130,246,0.15); margin-left: 20px; }
+    .score-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .score-pill { font-size: 0.75rem; padding: 3px 10px; border-radius: 10px; font-weight: 600; }
+    .sim-control { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .sim-control label { font-size: 0.85rem; color: var(--text-secondary); }
+    .sim-control input, .sim-control select { background: var(--bg-primary); border: 1px solid var(--border); color: var(--text-primary); border-radius: 6px; padding: 6px 10px; font-size: 0.85rem; }
+    .arena-card { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 10px; cursor: pointer; transition: border-color 0.2s; }
+    .arena-card:hover { border-color: var(--accent); }
+    .arena-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
+    .diff-easy { color: #22c55e; } .diff-medium { color: #f59e0b; } .diff-hard { color: #ef4444; } .diff-expert { color: #a855f7; }
+    .journal-entry { background: var(--bg-tertiary); border-left: 3px solid var(--accent); padding: 12px 16px; margin-bottom: 10px; border-radius: 0 8px 8px 0; }
+    .journal-entry .meta { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; }
+    .journal-entry .insight { font-size: 0.85rem; color: var(--accent); font-style: italic; margin-top: 6px; }
+    .goal-card { background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+    .goal-card .progress-bar { background: var(--border); border-radius: 6px; height: 6px; margin-top: 8px; }
+    .goal-card .fill { background: var(--accent); height: 100%; border-radius: 6px; transition: width 0.3s; }
     
     @media (max-width: 768px) {
       .header-inner { flex-direction: column; align-items: flex-start; }
@@ -946,6 +1027,224 @@ HTML = r"""
       </div>
     </div>
     
+    <!-- Learning Modes — Beyond Read/Learn/Test/Repeat -->
+    <div class="section-header" style="margin: 32px 0 12px;">
+      <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 10px;">
+        <span>🚀</span> Learning Modes
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+        Go beyond reading — build, teach, research, simulate, compete, reflect, and export.
+      </p>
+    </div>
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="switchMode('build')">🏗️ Build</button>
+      <button class="mode-tab" onclick="switchMode('teach')">🎤 Teach</button>
+      <button class="mode-tab" onclick="switchMode('research')">📄 Research</button>
+      <button class="mode-tab" onclick="switchMode('simulate')">🧪 Simulate</button>
+      <button class="mode-tab" onclick="switchMode('compete')">⚔️ Compete</button>
+      <button class="mode-tab" onclick="switchMode('journal')">📓 Journal</button>
+      <button class="mode-tab" onclick="switchMode('portfolio')">📋 Portfolio</button>
+    </div>
+
+    <!-- BUILD Mode -->
+    <div class="mode-panel active" id="panel-build">
+      <div class="unified-panel">
+        <div class="unified-grid">
+          <div class="unified-card" style="grid-column: span 2;">
+            <h4>🏗️ Capstone Projects</h4>
+            <div id="project-catalog" class="unified-results">Loading projects...</div>
+          </div>
+          <div class="unified-card">
+            <h4>📝 Your Projects</h4>
+            <div id="project-status" class="unified-results">No projects started.</div>
+            <div id="milestone-area" style="margin-top:10px;display:none;">
+              <textarea class="unified-textarea" id="milestone-code" placeholder="Paste your code for this milestone..."></textarea>
+              <div class="unified-actions">
+                <button class="btn" onclick="submitMilestone()">Submit Milestone</button>
+              </div>
+              <div id="milestone-review" class="unified-results" style="margin-top:8px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEACH Mode -->
+    <div class="mode-panel" id="panel-teach">
+      <div class="unified-panel">
+        <div class="unified-grid">
+          <div class="unified-card">
+            <h4>🎤 Feynman Teach-Back</h4>
+            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;">Teach the AI. It plays dumb and asks probing questions.</p>
+            <input class="unified-input" id="feynman-topic" placeholder="Topic to teach (e.g., backpropagation)">
+            <div class="unified-actions">
+              <button class="btn" onclick="startTeachback()">Start Teaching</button>
+            </div>
+          </div>
+          <div class="unified-card" style="grid-column: span 2;">
+            <h4>💬 Teaching Session</h4>
+            <div class="chat-box" id="feynman-chat"><p style="color:var(--text-muted);">Start a session to begin.</p></div>
+            <textarea class="unified-textarea" id="feynman-input" placeholder="Explain the concept..." style="min-height:60px;"></textarea>
+            <div class="unified-actions">
+              <button class="btn" onclick="sendExplanation()">Send Explanation</button>
+            </div>
+            <div class="score-bar" id="feynman-scores"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESEARCH Mode -->
+    <div class="mode-panel" id="panel-research">
+      <div class="unified-panel">
+        <div class="unified-grid">
+          <div class="unified-card" style="grid-column: span 2;">
+            <h4>📄 Paper Reproduction Lab</h4>
+            <div id="paper-catalog" class="unified-results">Loading papers...</div>
+          </div>
+          <div class="unified-card">
+            <h4>📚 Your Paper Trail</h4>
+            <div id="paper-trail" class="unified-results">No papers started.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATE Mode -->
+    <div class="mode-panel" id="panel-simulate">
+      <div class="unified-panel">
+        <div class="unified-grid">
+          <div class="unified-card">
+            <h4>🧪 Consequence Sandbox</h4>
+            <div class="sim-control">
+              <label>Environment:</label>
+              <select id="sim-type" onchange="updateSimControls()">
+                <option value="gridworld">RL Gridworld</option>
+                <option value="gradient_descent">Gradient Descent</option>
+                <option value="neural_network">Neural Network</option>
+                <option value="sorting">Sorting Algorithms</option>
+                <option value="bayesian_update">Bayesian Update</option>
+              </select>
+            </div>
+            <div id="sim-controls">
+              <div class="sim-control"><label>γ (discount):</label><input type="range" id="sim-gamma" min="0" max="1" step="0.05" value="0.9"><span id="sim-gamma-val">0.9</span></div>
+              <div class="sim-control"><label>ε (explore):</label><input type="range" id="sim-epsilon" min="0" max="1" step="0.05" value="0.1"><span id="sim-epsilon-val">0.1</span></div>
+              <div class="sim-control"><label>Episodes:</label><input type="number" id="sim-episodes" value="100" min="10" max="500" style="width:80px;"></div>
+            </div>
+            <div class="unified-actions">
+              <button class="btn" onclick="runSimulation()">▶ Run Simulation</button>
+            </div>
+          </div>
+          <div class="unified-card" style="grid-column: span 2;">
+            <h4>📊 Results</h4>
+            <div id="sim-results" class="unified-results" style="max-height:400px;">Choose an environment and run it.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPETE Mode -->
+    <div class="mode-panel" id="panel-compete">
+      <div class="unified-panel">
+        <div class="unified-grid">
+          <div class="unified-card">
+            <h4>⚔️ Challenge Arena</h4>
+            <div class="sim-control">
+              <label>Category:</label>
+              <select id="arena-category" onchange="loadArenaChallenges()">
+                <option value="">All</option>
+                <option value="algorithms">Algorithms</option>
+                <option value="ml">ML Implementation</option>
+                <option value="debug">Debug This 🐛</option>
+                <option value="weekly">Weekly Challenge</option>
+              </select>
+            </div>
+            <div id="arena-list" class="unified-results" style="max-height:350px;">Loading challenges...</div>
+          </div>
+          <div class="unified-card" style="grid-column: span 2;">
+            <h4 id="arena-challenge-title">Select a Challenge</h4>
+            <p id="arena-challenge-desc" style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:10px;"></p>
+            <textarea class="unified-textarea" id="arena-code" placeholder="Write your solution..." style="min-height:120px;font-family:monospace;font-size:0.85rem;"></textarea>
+            <div class="unified-actions">
+              <button class="btn" onclick="submitArena()">✓ Submit</button>
+              <button class="btn" onclick="getArenaHint()">💡 Hint</button>
+            </div>
+            <div id="arena-results" class="unified-results" style="margin-top:8px;">Submit to see results.</div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <h4>🏆 Leaderboard</h4>
+          <div id="arena-leaderboard" class="unified-results">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JOURNAL Mode -->
+    <div class="mode-panel" id="panel-journal">
+      <div class="unified-panel">
+        <div class="unified-grid">
+          <div class="unified-card">
+            <h4>📓 New Entry</h4>
+            <div class="sim-control">
+              <label>Type:</label>
+              <select id="journal-type">
+                <option value="reflection">💭 Reflection</option>
+                <option value="aha_moment">💡 Aha Moment</option>
+                <option value="confusion">❓ Confusion</option>
+                <option value="synthesis">🔗 Synthesis</option>
+                <option value="question">🤔 Question</option>
+              </select>
+            </div>
+            <input class="unified-input" id="journal-topic" placeholder="Topic (e.g., backpropagation)">
+            <textarea class="unified-textarea" id="journal-content" placeholder="Write your reflection..." style="margin-top:8px;"></textarea>
+            <div class="unified-actions">
+              <button class="btn" onclick="addJournalEntry()">Save Entry</button>
+              <button class="btn" onclick="getSynthesisPrompt()">🎲 Prompt Me</button>
+            </div>
+            <div id="journal-prompt" style="margin-top:8px;color:var(--accent);font-style:italic;font-size:0.9rem;"></div>
+          </div>
+          <div class="unified-card">
+            <h4>📜 Recent Entries</h4>
+            <div id="journal-entries" class="unified-results" style="max-height:350px;">No entries yet.</div>
+          </div>
+          <div class="unified-card">
+            <h4>🎯 Learning Goals</h4>
+            <input class="unified-input" id="goal-text" placeholder="e.g., Master RL by March">
+            <div class="unified-actions" style="margin-top:8px;">
+              <button class="btn" onclick="addGoal()">Set Goal</button>
+            </div>
+            <div id="journal-goals" class="unified-results" style="margin-top:8px;">No goals yet.</div>
+            <div style="margin-top:12px;">
+              <h4>📊 Stats</h4>
+              <div id="journal-stats" style="color:var(--text-secondary);font-size:0.9rem;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PORTFOLIO Mode -->
+    <div class="mode-panel" id="panel-portfolio">
+      <div class="unified-panel">
+        <div class="unified-grid">
+          <div class="unified-card" style="grid-column: span 2;">
+            <h4>📋 Your Portfolio</h4>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">Export everything you've built, taught, researched, and learned as a standalone HTML page.</p>
+            <div class="unified-actions" style="margin-top:12px;">
+              <button class="btn" onclick="window.open('/api/portfolio/export?user_id=default','_blank')">🌐 Export Portfolio</button>
+              <button class="btn" onclick="loadPortfolioPreview()">👁️ Preview Data</button>
+            </div>
+            <div id="portfolio-preview" class="unified-results" style="margin-top:12px;">Click preview to see your data.</div>
+          </div>
+          <div class="unified-card">
+            <h4>🎓 Skill Certificates</h4>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">Earn certificates backed by evidence.</p>
+            <div id="portfolio-certs" class="unified-results">Complete projects and teach-backs to unlock.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Learning Paths Section -->
     <div class="section-header" style="margin: 32px 0 16px;">
       <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 10px;">
@@ -1258,6 +1557,351 @@ HTML = r"""
       } catch (e) { el.textContent = 'Error: ' + e.message; }
     }
     
+    // ======= LEARNING MODES =======
+    function switchMode(mode) {
+      document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('panel-' + mode).classList.add('active');
+      // Lazy-load data
+      if (mode === 'build') loadProjectCatalog();
+      if (mode === 'compete') { loadArenaChallenges(); loadArenaLeaderboard(); }
+      if (mode === 'journal') { loadJournalEntries(); loadJournalGoals(); loadJournalStats(); }
+      if (mode === 'research') { loadPaperCatalog(); loadPaperTrail(); }
+      if (mode === 'portfolio') loadPortfolioPreview();
+    }
+
+    // --- BUILD Mode ---
+    let currentProject = null, currentMilestone = null;
+    async function loadProjectCatalog() {
+      try {
+        const d = await api('/api/projects/catalog');
+        const el = document.getElementById('project-catalog');
+        if (!d.ok) { el.textContent = 'Error loading projects.'; return; }
+        el.innerHTML = d.projects.map(p =>
+          `<div class="arena-card" onclick="startProject('${p.id}')">
+            <h4>${p.title} <span class="diff-${p.difficulty}">[${p.difficulty}]</span></h4>
+            <p style="color:var(--text-secondary);font-size:0.85rem;">${p.desc}</p>
+            <div style="margin-top:6px;">${p.milestones.map(m => `<span class="pill">${m.title}</span>`).join(' ')}</div>
+            <div style="margin-top:4px;font-size:0.8rem;color:var(--text-muted);">~${p.estimated_hours}h • ${p.labs.map(l=>l.replace(/_/g,' ')).join(', ')}</div>
+          </div>`
+        ).join('');
+        loadUserProjects();
+      } catch (e) { document.getElementById('project-catalog').textContent = 'Error: ' + e.message; }
+    }
+    async function startProject(pid) {
+      const d = await fetch('/api/projects/start', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:'default',project_id:pid})}).then(r=>r.json());
+      currentProject = pid;
+      loadUserProjects();
+    }
+    async function loadUserProjects() {
+      const d = await api('/api/projects/status?user_id=default');
+      const el = document.getElementById('project-status');
+      if (!d.ok || !d.projects || !d.projects.length) { el.innerHTML = 'No projects started. Click a project above.'; return; }
+      el.innerHTML = d.projects.map(p => {
+        const ms = Object.entries(p.milestones).map(([mid,m]) =>
+          `<div style="cursor:pointer;padding:4px 0;" onclick="selectMilestone('${p.project_id}','${mid}')">
+            <span class="pill" style="background:${m.status==='completed'?'rgba(34,197,94,0.2);color:#22c55e':'rgba(245,158,11,0.2);color:#f59e0b'}">${m.status}</span> ${mid}
+          </div>`
+        ).join('');
+        return `<div><b>${p.project_id.replace(/_/g,' ')}</b> [${p.status}]${ms}</div>`;
+      }).join('<hr>');
+    }
+    function selectMilestone(pid, mid) {
+      currentProject = pid; currentMilestone = mid;
+      document.getElementById('milestone-area').style.display = 'block';
+      document.getElementById('milestone-review').textContent = 'Ready to submit ' + mid;
+    }
+    async function submitMilestone() {
+      if (!currentProject || !currentMilestone) return;
+      const code = document.getElementById('milestone-code').value;
+      const el = document.getElementById('milestone-review');
+      el.textContent = 'Reviewing...';
+      const d = await fetch('/api/projects/submit', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:'default',project_id:currentProject,milestone_id:currentMilestone,code})}).then(r=>r.json());
+      if (d.ok && d.review) {
+        const r = d.review;
+        el.innerHTML = `<b>${r.passes ? '✅ Passed' : '❌ Needs Revision'}</b><p>${r.summary}</p>` +
+          (r.issues||[]).map(i=>`<p style="color:#ef4444;">• ${i}</p>`).join('') +
+          (r.suggestions||[]).map(s=>`<p style="color:#f59e0b;">💡 ${s}</p>`).join('');
+      } else { el.textContent = 'Error submitting.'; }
+      loadUserProjects();
+    }
+    loadProjectCatalog();
+
+    // --- TEACH Mode ---
+    let feynmanSession = null;
+    async function startTeachback() {
+      const topic = document.getElementById('feynman-topic').value.trim();
+      if (!topic) return;
+      const d = await fetch('/api/feynman/start', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:'default',topic})}).then(r=>r.json());
+      if (d.ok) {
+        feynmanSession = d.session_id;
+        document.getElementById('feynman-chat').innerHTML = `<div class="chat-msg chat-ai">🤖 ${d.ai_message}</div>`;
+        document.getElementById('feynman-scores').innerHTML = '';
+      }
+    }
+    async function sendExplanation() {
+      if (!feynmanSession) return;
+      const text = document.getElementById('feynman-input').value.trim();
+      if (!text) return;
+      const chat = document.getElementById('feynman-chat');
+      chat.innerHTML += `<div class="chat-msg chat-user">${text}</div>`;
+      document.getElementById('feynman-input').value = '';
+      const d = await fetch('/api/feynman/respond', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({session_id:feynmanSession,explanation:text})}).then(r=>r.json());
+      if (d.ok) {
+        chat.innerHTML += `<div class="chat-msg chat-ai">🤖 ${d.ai_message}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+        if (d.scores) {
+          const sb = document.getElementById('feynman-scores');
+          sb.innerHTML = Object.entries(d.scores).map(([k,v]) =>
+            `<span class="score-pill" style="background:${v>0.6?'rgba(34,197,94,0.2);color:#22c55e':v>0.3?'rgba(245,158,11,0.2);color:#f59e0b':'rgba(239,68,68,0.2);color:#ef4444'}">${k}: ${(v*100).toFixed(0)}%</span>`
+          ).join('');
+        }
+        if (d.final_scores) {
+          chat.innerHTML += `<div class="chat-msg chat-ai" style="border:2px solid var(--accent);"><b>Final Feynman Score: ${(d.final_scores.overall*100).toFixed(0)}%</b></div>`;
+        }
+      }
+    }
+
+    // --- RESEARCH Mode ---
+    let currentPaper = null;
+    async function loadPaperCatalog() {
+      const d = await api('/api/research/papers');
+      const el = document.getElementById('paper-catalog');
+      if (!d.ok) { el.textContent = 'Error.'; return; }
+      el.innerHTML = d.papers.map(p =>
+        `<div class="arena-card" onclick="startPaper('${p.id}')">
+          <h4>${p.title} <span class="diff-${p.difficulty}">[${p.difficulty}]</span></h4>
+          <p style="color:var(--text-secondary);font-size:0.85rem;">${p.authors}</p>
+          <div style="margin-top:6px;">${(p.key_claims||[]).map(c=>`<div style="font-size:0.8rem;">• ${c}</div>`).join('')}</div>
+        </div>`
+      ).join('');
+    }
+    async function startPaper(pid) {
+      currentPaper = pid;
+      const d = await fetch('/api/research/start', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:'default',paper_id:pid})}).then(r=>r.json());
+      loadPaperTrail();
+    }
+    async function loadPaperTrail() {
+      const d = await api('/api/research/trail?user_id=default');
+      const el = document.getElementById('paper-trail');
+      if (!d.ok || !d.trail.length) { el.innerHTML = 'Click a paper above to start reproducing it.'; return; }
+      el.innerHTML = d.trail.map(e =>
+        `<div style="margin-bottom:8px;">
+          <b>${e.paper_title}</b> <span class="pill">${e.status}</span>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Claims verified: ${Object.values(e.claims_verified||{}).filter(v=>v===true).length}/${Object.keys(e.claims_verified||{}).length}</div>
+        </div>`
+      ).join('');
+    }
+
+    // --- SIMULATE Mode ---
+    function updateSimControls() {
+      const t = document.getElementById('sim-type').value;
+      const el = document.getElementById('sim-controls');
+      if (t === 'gridworld') {
+        el.innerHTML = `<div class="sim-control"><label>γ:</label><input type="range" id="sim-gamma" min="0" max="1" step="0.05" value="0.9" oninput="this.nextElementSibling.textContent=this.value"><span>0.9</span></div>
+          <div class="sim-control"><label>ε:</label><input type="range" id="sim-epsilon" min="0" max="1" step="0.05" value="0.1" oninput="this.nextElementSibling.textContent=this.value"><span>0.1</span></div>
+          <div class="sim-control"><label>Episodes:</label><input type="number" id="sim-episodes" value="100" min="10" max="500" style="width:80px;"></div>`;
+      } else if (t === 'gradient_descent') {
+        el.innerHTML = `<div class="sim-control"><label>Landscape:</label><select id="sim-landscape"><option>quadratic</option><option>rastrigin</option><option>saddle</option><option>rosenbrock</option></select></div>
+          <div class="sim-control"><label>LR:</label><input type="number" id="sim-lr" value="0.01" step="0.001" style="width:80px;"></div>
+          <div class="sim-control"><label>Momentum:</label><input type="range" id="sim-momentum" min="0" max="0.99" step="0.01" value="0" oninput="this.nextElementSibling.textContent=this.value"><span>0</span></div>
+          <div class="sim-control"><label>Steps:</label><input type="number" id="sim-steps" value="200" min="10" max="1000" style="width:80px;"></div>`;
+      } else if (t === 'neural_network') {
+        el.innerHTML = `<div class="sim-control"><label>Dataset:</label><select id="sim-dataset"><option>xor</option><option>circles</option><option>spiral</option></select></div>
+          <div class="sim-control"><label>Hidden:</label><input type="text" id="sim-hidden" value="4,4" style="width:80px;" placeholder="4,4"></div>
+          <div class="sim-control"><label>Activation:</label><select id="sim-activation"><option>relu</option><option>sigmoid</option><option>tanh</option></select></div>
+          <div class="sim-control"><label>LR:</label><input type="number" id="sim-nn-lr" value="0.1" step="0.01" style="width:80px;"></div>
+          <div class="sim-control"><label>Epochs:</label><input type="number" id="sim-epochs" value="200" min="10" max="1000" style="width:80px;"></div>`;
+      } else if (t === 'sorting') {
+        el.innerHTML = `<div class="sim-control"><label>Algorithm:</label><select id="sim-sort-algo"><option>bubble</option><option>quick</option><option>merge</option><option>insertion</option></select></div>
+          <div class="sim-control"><label>Size:</label><input type="number" id="sim-sort-size" value="12" min="3" max="30" style="width:80px;"></div>`;
+      } else if (t === 'bayesian_update') {
+        el.innerHTML = `<div class="sim-control"><label>Prior α:</label><input type="number" id="sim-alpha" value="1" step="0.5" min="0.1" style="width:80px;"></div>
+          <div class="sim-control"><label>Prior β:</label><input type="number" id="sim-beta" value="1" step="0.5" min="0.1" style="width:80px;"></div>
+          <div class="sim-control"><label>Successes:</label><input type="number" id="sim-successes" value="7" min="0" style="width:80px;"></div>
+          <div class="sim-control"><label>Trials:</label><input type="number" id="sim-trials" value="10" min="0" style="width:80px;"></div>`;
+      }
+    }
+    async function runSimulation() {
+      const t = document.getElementById('sim-type').value;
+      const el = document.getElementById('sim-results');
+      el.textContent = 'Running simulation...';
+      let params = {};
+      if (t === 'gridworld') {
+        params = {gamma:parseFloat(document.getElementById('sim-gamma')?.value||0.9), epsilon:parseFloat(document.getElementById('sim-epsilon')?.value||0.1), episodes:parseInt(document.getElementById('sim-episodes')?.value||100)};
+      } else if (t === 'gradient_descent') {
+        params = {landscape:document.getElementById('sim-landscape')?.value||'quadratic', learning_rate:parseFloat(document.getElementById('sim-lr')?.value||0.01), momentum:parseFloat(document.getElementById('sim-momentum')?.value||0), steps:parseInt(document.getElementById('sim-steps')?.value||200)};
+      } else if (t === 'neural_network') {
+        params = {dataset:document.getElementById('sim-dataset')?.value||'xor', hidden_sizes:(document.getElementById('sim-hidden')?.value||'4').split(',').map(Number), activation:document.getElementById('sim-activation')?.value||'relu', learning_rate:parseFloat(document.getElementById('sim-nn-lr')?.value||0.1), epochs:parseInt(document.getElementById('sim-epochs')?.value||200)};
+      } else if (t === 'sorting') {
+        params = {algorithm:document.getElementById('sim-sort-algo')?.value||'bubble', array_size:parseInt(document.getElementById('sim-sort-size')?.value||12)};
+      } else if (t === 'bayesian_update') {
+        params = {prior_alpha:parseFloat(document.getElementById('sim-alpha')?.value||1), prior_beta:parseFloat(document.getElementById('sim-beta')?.value||1), successes:parseInt(document.getElementById('sim-successes')?.value||7), trials:parseInt(document.getElementById('sim-trials')?.value||10)};
+      }
+      try {
+        const d = await fetch('/api/simulate/run', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({type:t,params})}).then(r=>r.json());
+        if (!d.ok) { el.textContent = 'Error: ' + (d.error||''); return; }
+        if (t === 'gridworld') {
+          el.innerHTML = `<b>Gridworld ${d.grid_size}x${d.grid_size}</b> | Mean reward: ${d.mean_reward.toFixed(2)}<br>` +
+            `<div style="display:grid;grid-template-columns:repeat(${d.grid_size},40px);gap:2px;margin-top:8px;">` +
+            Object.entries(d.policy).map(([k,v])=>{const icons={right:'→',left:'←',down:'↓',up:'↑',wall:'🧱',goal:'⭐'};return `<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--bg-tertiary);border-radius:4px;font-size:1.2rem;" title="${k}: ${v}">${icons[v]||v}</div>`;}).join('') + '</div>';
+        } else if (t === 'gradient_descent') {
+          const traj = d.trajectory;
+          el.innerHTML = `<b>${d.landscape}</b> | Final loss: ${d.final_loss} | Converged: ${d.converged ? '✅' : '❌'}<br>` +
+            `<div style="margin-top:8px;">Path: ${traj.slice(0,8).map(p=>`(${p.x.toFixed(2)},${p.y.toFixed(2)})`).join(' → ')}${traj.length>8?' → ...':''}</div>`;
+        } else if (t === 'neural_network') {
+          el.innerHTML = `<b>${d.dataset}</b> | Final acc: ${(d.final_accuracy*100).toFixed(1)}% | Loss: ${d.final_loss}<br>` +
+            `<div style="margin-top:8px;">Accuracy over training: ${d.accuracy_history.slice(-10).map(a=>(a*100).toFixed(0)+'%').join(' → ')}</div>`;
+        } else if (t === 'sorting') {
+          el.innerHTML = `<b>${d.algorithm} sort</b> | ${d.total_steps} steps | Sorted: ${d.is_sorted?'✅':'❌'}<br>` +
+            `<div style="margin-top:8px;">Original: [${d.original.join(', ')}]</div>` +
+            `<div>Final: [${d.final.join(', ')}]</div>` +
+            `<div style="margin-top:8px;max-height:200px;overflow-y:auto;font-size:0.8rem;">${d.steps.slice(0,30).map(s=>`Step ${s.step}: comparing [${s.comparing}] ${s.swapped?'↔ swapped':''} → [${s.array.join(',')}]`).join('<br>')}</div>`;
+        } else if (t === 'bayesian_update') {
+          el.innerHTML = `<b>Prior:</b> Beta(${d.prior.alpha}, ${d.prior.beta}) mean=${d.prior.mean}<br>` +
+            `<b>Data:</b> ${d.data.successes}/${d.data.trials} successes<br>` +
+            `<b>Posterior:</b> Beta(${d.posterior.alpha}, ${d.posterior.beta}) mean=${d.posterior.mean.toFixed(4)} | 95% CI: [${d.posterior.ci_95[0]}, ${d.posterior.ci_95[1]}]<br>` +
+            `<div style="margin-top:8px;height:100px;display:flex;align-items:flex-end;gap:1px;">` +
+            d.posterior_pdf.map((v,i)=>`<div style="width:3px;background:var(--accent);height:${Math.min(100,v*15)}px;opacity:0.8;" title="p=${(i/100).toFixed(2)}: ${v.toFixed(3)}"></div>`).join('') + '</div>' +
+            `<div style="font-size:0.8rem;color:var(--text-muted);">↑ Posterior distribution (0 to 1)</div>`;
+        } else {
+          el.textContent = JSON.stringify(d, null, 2);
+        }
+      } catch (e) { el.textContent = 'Error: ' + e.message; }
+    }
+
+    // --- COMPETE Mode ---
+    let arenaCurrentChallenge = null, arenaHintIdx = 0;
+    async function loadArenaChallenges() {
+      const cat = document.getElementById('arena-category')?.value || '';
+      const d = await api('/api/arena/challenges?category=' + cat);
+      const el = document.getElementById('arena-list');
+      if (!d.ok) { el.textContent = 'Error.'; return; }
+      el.innerHTML = d.challenges.map(c =>
+        `<div class="arena-card" onclick="selectArenaChallenge('${c.id}')">
+          <h4>${c.title} <span class="diff-${c.difficulty}">[${c.difficulty}]</span> <span class="pill">${c.points}pts</span></h4>
+          <div style="font-size:0.8rem;color:var(--text-muted);">${c.category} • ${c.test_count} tests • ${c.optimal_complexity||''}</div>
+        </div>`
+      ).join('');
+    }
+    async function selectArenaChallenge(cid) {
+      const d = await api('/api/arena/challenge/' + cid);
+      if (!d.ok) return;
+      arenaCurrentChallenge = cid;
+      arenaHintIdx = 0;
+      document.getElementById('arena-challenge-title').textContent = d.challenge.title;
+      document.getElementById('arena-challenge-desc').textContent = d.challenge.description;
+      document.getElementById('arena-code').value = d.challenge.starter_code;
+      document.getElementById('arena-results').textContent = 'Submit to see results.';
+    }
+    async function submitArena() {
+      if (!arenaCurrentChallenge) return;
+      const el = document.getElementById('arena-results');
+      el.textContent = 'Testing...';
+      const code = document.getElementById('arena-code').value;
+      const d = await fetch('/api/arena/submit', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:'default',challenge_id:arenaCurrentChallenge,code})}).then(r=>r.json());
+      if (d.ok) {
+        let h = `<b>${d.passed_count}/${d.total_count} passed</b> | ${d.execution_time_ms}ms`;
+        if (d.all_passed) h = '🎉 <b style="color:#22c55e;">All tests passed! +' + d.points_earned + 'pts</b><br>' + h;
+        h += '<div style="margin-top:8px;">' + (d.tests||[]).map(t => `<div style="color:${t.passed?'#22c55e':'#ef4444'}">${t.passed?'✅':'❌'} Test ${t.test}${t.got?' — got: '+t.got:''}</div>`).join('') + '</div>';
+        el.innerHTML = h;
+        loadArenaLeaderboard();
+      } else { el.textContent = 'Error: ' + (d.error||''); }
+    }
+    async function getArenaHint() {
+      if (!arenaCurrentChallenge) return;
+      const d = await api('/api/arena/hint?challenge_id=' + arenaCurrentChallenge + '&hint=' + arenaHintIdx);
+      if (d.ok) { alert('💡 ' + d.hint); arenaHintIdx++; }
+    }
+    async function loadArenaLeaderboard() {
+      const d = await api('/api/arena/leaderboard');
+      const el = document.getElementById('arena-leaderboard');
+      if (!d.ok || !d.leaderboard.length) { el.innerHTML = 'No scores yet. Be the first!'; return; }
+      el.innerHTML = '<table style="width:100%;font-size:0.9rem;"><tr><th>#</th><th>User</th><th>Points</th><th>Solved</th></tr>' +
+        d.leaderboard.map((e,i) => `<tr><td>${i+1}</td><td>${e.user_id}</td><td><b>${e.total_points}</b></td><td>${e.challenges_solved}</td></tr>`).join('') + '</table>';
+    }
+
+    // --- JOURNAL Mode ---
+    async function addJournalEntry() {
+      const type = document.getElementById('journal-type').value;
+      const topic = document.getElementById('journal-topic').value.trim();
+      const content = document.getElementById('journal-content').value.trim();
+      if (!content) return;
+      const d = await fetch('/api/journal/entry', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:'default',type,topic,content})}).then(r=>r.json());
+      if (d.ok) {
+        document.getElementById('journal-content').value = '';
+        document.getElementById('journal-topic').value = '';
+        loadJournalEntries();
+        loadJournalStats();
+      }
+    }
+    async function loadJournalEntries() {
+      const d = await api('/api/journal/entries?user_id=default&limit=15');
+      const el = document.getElementById('journal-entries');
+      if (!d.ok || !d.entries.length) { el.innerHTML = 'No entries yet. Write your first reflection!'; return; }
+      el.innerHTML = d.entries.reverse().map(e =>
+        `<div class="journal-entry">
+          <div><span class="pill">${e.type}</span> <b>${e.topic||'General'}</b></div>
+          <div style="margin-top:6px;">${e.content.slice(0,200)}${e.content.length>200?'...':''}</div>
+          ${e.ai_insight ? `<div class="insight">💡 ${e.ai_insight}</div>` : ''}
+          <div class="meta">${new Date(e.timestamp).toLocaleDateString()}</div>
+        </div>`
+      ).join('');
+    }
+    async function getSynthesisPrompt() {
+      const d = await api('/api/journal/prompt?user_id=default');
+      if (d.ok) document.getElementById('journal-prompt').textContent = '✨ ' + d.prompt;
+    }
+    async function addGoal() {
+      const goal = document.getElementById('goal-text').value.trim();
+      if (!goal) return;
+      await fetch('/api/journal/goal', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_id:'default',goal})}).then(r=>r.json());
+      document.getElementById('goal-text').value = '';
+      loadJournalGoals();
+    }
+    async function loadJournalGoals() {
+      const d = await api('/api/journal/goals?user_id=default');
+      const el = document.getElementById('journal-goals');
+      if (!d.ok || !d.goals.length) { el.innerHTML = 'No goals set yet.'; return; }
+      el.innerHTML = d.goals.map(g => {
+        const lastPct = g.check_ins?.length ? g.check_ins[g.check_ins.length-1].progress_pct : 0;
+        return `<div class="goal-card">
+          <b>${g.goal}</b> <span class="pill">${g.status}</span>
+          <div class="progress-bar"><div class="fill" style="width:${lastPct}%"></div></div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">${lastPct}% complete</div>
+        </div>`;
+      }).join('');
+    }
+    async function loadJournalStats() {
+      const d = await api('/api/journal/stats?user_id=default');
+      if (!d.ok) return;
+      const s = d.stats;
+      document.getElementById('journal-stats').innerHTML =
+        `<p>📝 ${s.total_entries} entries | 🔥 ${s.streak.current}-day streak (best: ${s.streak.best})</p>` +
+        `<p>🎯 ${s.active_goals} active goals | ✅ ${s.completed_goals} completed</p>`;
+    }
+
+    // --- PORTFOLIO Mode ---
+    async function loadPortfolioPreview() {
+      const d = await api('/api/portfolio/data?user_id=default');
+      const el = document.getElementById('portfolio-preview');
+      if (!d.ok) { el.textContent = 'Error loading.'; return; }
+      const p = d.portfolio;
+      el.innerHTML = `<b>Projects:</b> ${p.projects.length} | <b>Papers:</b> ${p.papers.length} | <b>Teach-backs:</b> ${p.teachbacks.length} | <b>Challenges:</b> ${p.challenges_won.length}<br>` +
+        `<b>Skills:</b> ${Object.entries(p.skills).map(([k,v])=>`<span class="pill">${k} (${v.length})</span>`).join(' ') || 'None yet'}<br>` +
+        `<b>Lab Progress:</b> ${Object.entries(p.progress).map(([k,v])=>`<span class="pill">${k.replace(/_/g,' ')}: ${v.pct}%</span>`).join(' ') || 'None yet'}`;
+      // Certificates
+      const certEl = document.getElementById('portfolio-certs');
+      if (Object.keys(p.skills).length) {
+        certEl.innerHTML = Object.entries(p.skills).map(([k,v]) =>
+          `<div class="arena-card" onclick="window.open('/api/portfolio/certificate?user_id=default&skill=${k}','_blank')">🎓 ${k.replace(/_/g,' ').toUpperCase()} — ${v.length} evidence items</div>`
+        ).join('');
+      } else {
+        certEl.innerHTML = 'Complete projects and teach-backs to unlock certificates.';
+      }
+    }
+
     loadStats();
     loadTutors();
     loadPaths();
