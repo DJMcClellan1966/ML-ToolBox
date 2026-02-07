@@ -84,6 +84,30 @@ def create_lab_blueprint(
             return jsonify({"ok": False, "error": "Demos not available"}), 503
         return jsonify(run_demo(demo_id))
     
+    @bp.route("/api/intelligent-try/<demo_id>", methods=["GET", "POST"])
+    def api_intelligent_try(demo_id):
+        """Run demo with full intelligent context (explanations, visualizations, etc.)"""
+        try:
+            from learning_apps.intelligent_demos import run_intelligent_demo
+            params = request.get_json(silent=True) if request.method == "POST" else {}
+            result = run_intelligent_demo(demo_id, params)
+            
+            # If intelligent demo not found, fall back to basic demo
+            if not result.get("ok") and demos_available:
+                basic_result = run_demo(demo_id)
+                return jsonify({
+                    **basic_result,
+                    "intelligent_available": False,
+                    "message": "Basic demo only - no enriched content available"
+                })
+            
+            return jsonify(result)
+        except Exception as e:
+            # Fall back to basic demo
+            if demos_available:
+                return jsonify({**run_demo(demo_id), "intelligent_available": False})
+            return jsonify({"ok": False, "error": str(e)}), 500
+    
     @bp.route("/api/curriculum/book/<book_id>")
     def api_book(book_id):
         if not curriculum_available:
@@ -233,17 +257,30 @@ def _get_lab_html(title: str, description: str, lab_id: str) -> str:
     .level-basics {{ background: #22c55e33; color: #22c55e; }}
     .level-intermediate {{ background: #f59e0b33; color: #f59e0b; }}
     .level-advanced {{ background: #ef444433; color: #ef4444; }}
+    .demo-actions {{
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }}
     .demo-btn {{
       background: var(--accent);
       border: none;
       color: white;
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 0.85rem;
-      margin-top: 12px;
+      transition: all 0.2s;
     }}
-    .demo-btn:hover {{ background: var(--accent-hover); }}
+    .demo-btn:hover {{ background: var(--accent-hover); transform: translateY(-1px); }}
+    .demo-btn.intelligent {{
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+    }}
+    .demo-btn.intelligent:hover {{
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.5);
+    }}
     .output {{
       background: var(--bg-tertiary);
       border-radius: 8px;
@@ -257,6 +294,196 @@ def _get_lab_html(title: str, description: str, lab_id: str) -> str:
     }}
     .loading {{ opacity: 0.6; }}
     .error {{ color: var(--error); }}
+    
+    /* Intelligent Demo Panel */
+    .intelligent-panel {{
+      margin-top: 16px;
+    }}
+    .intelligent-demo {{
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border: 1px solid #6366f1;
+      border-radius: 16px;
+      padding: 20px;
+    }}
+    .intelligent-demo .demo-header {{
+      border-bottom: 1px solid #334155;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }}
+    .intelligent-demo .demo-header h3 {{
+      color: #e2e8f0;
+      margin: 0 0 8px 0;
+      font-size: 1.3rem;
+    }}
+    .intelligent-demo .demo-meta {{
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }}
+    .intelligent-demo .book-tag, .intelligent-demo .complexity-tag {{
+      background: rgba(99, 102, 241, 0.2);
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+      color: #a5b4fc;
+    }}
+    .demo-section {{
+      margin-bottom: 20px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+    }}
+    .demo-section h4 {{
+      color: #6366f1;
+      margin: 0 0 12px 0;
+      font-size: 1rem;
+    }}
+    .prereq-list {{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }}
+    .prereq-tag {{
+      background: #22c55e33;
+      color: #22c55e;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+    }}
+    .markdown-content {{
+      color: #e2e8f0;
+      line-height: 1.7;
+    }}
+    .markdown-content h2, .markdown-content h3 {{
+      color: #f8fafc;
+      margin-top: 16px;
+    }}
+    .markdown-content code {{
+      background: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #e94560;
+    }}
+    .markdown-content table {{
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }}
+    .markdown-content th, .markdown-content td {{
+      border: 1px solid #334155;
+      padding: 8px 12px;
+      text-align: left;
+    }}
+    .markdown-content th {{
+      background: #1e293b;
+      color: #f8fafc;
+    }}
+    .steps-container {{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }}
+    .algo-step {{
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }}
+    .step-num {{
+      background: #6366f1;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }}
+    .step-content {{
+      flex: 1;
+    }}
+    .step-content strong {{
+      color: #f8fafc;
+    }}
+    .step-content p {{
+      color: #94a3b8;
+      margin: 4px 0;
+    }}
+    .step-content code {{
+      display: block;
+      background: #0f172a;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: #22c55e;
+      margin-top: 8px;
+    }}
+    .output-box {{
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: 'Fira Code', monospace;
+      color: #22c55e;
+    }}
+    .related-grid {{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }}
+    .related-concept {{
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid #6366f1;
+    }}
+    .related-concept strong {{
+      color: #f8fafc;
+      display: block;
+      margin-bottom: 4px;
+    }}
+    .views-available {{
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }}
+    .challenges-list {{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }}
+    .challenge-item {{
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 3px solid #f59e0b;
+    }}
+    .challenge-type {{
+      background: #f59e0b33;
+      color: #f59e0b;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }}
+    .challenge-item p {{
+      color: #e2e8f0;
+      margin: 8px 0 0 0;
+    }}
+    .socratic-question {{
+      background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 1.1rem;
+      font-style: italic;
+    }}
+    .loading-spinner {{
+      text-align: center;
+      padding: 40px;
+      color: #94a3b8;
+      font-size: 1.1rem;
+    }}
+    
     #theme-toggle {{
       background: transparent;
       border: 1px solid var(--border);
@@ -340,7 +567,12 @@ def _get_lab_html(title: str, description: str, lab_id: str) -> str:
     // Render topic card
     function renderTopic(item) {{
       const levelClass = 'level-' + (item.level || 'basics');
-      const hasDemo = item.try_demo ? `<button class="demo-btn" data-demo="${{item.try_demo}}">▶ Run Demo</button>` : '';
+      const hasDemo = item.try_demo ? `
+        <div class="demo-actions">
+          <button class="demo-btn" data-demo="${{item.try_demo}}">▶ Quick Run</button>
+          <button class="demo-btn intelligent" data-demo="${{item.try_demo}}" data-intelligent="true">🧠 Deep Learn</button>
+        </div>
+      ` : '';
       return `
         <div class="topic-card" data-id="${{item.id}}">
           <span class="level-badge ${{levelClass}}">${{item.level || 'basics'}}</span>
@@ -348,6 +580,7 @@ def _get_lab_html(title: str, description: str, lab_id: str) -> str:
           <p>${{item.learn || ''}}</p>
           ${{hasDemo}}
           <div class="output" style="display:none"></div>
+          <div class="intelligent-panel" style="display:none"></div>
         </div>
       `;
     }}
@@ -414,30 +647,180 @@ def _get_lab_html(title: str, description: str, lab_id: str) -> str:
     document.addEventListener('click', async (e) => {{
       if (e.target.classList.contains('demo-btn')) {{
         const demoId = e.target.dataset.demo;
-        const output = e.target.parentElement.querySelector('.output');
-        output.style.display = 'block';
-        output.textContent = 'Running...';
-        output.classList.add('loading');
+        const isIntelligent = e.target.dataset.intelligent === 'true';
+        const card = e.target.closest('.topic-card');
+        const output = card.querySelector('.output');
+        const intelligentPanel = card.querySelector('.intelligent-panel');
         
-        try {{
-          const data = await api('api/try/' + demoId, {{ method: 'POST' }});
-          output.classList.remove('loading');
-          if (data.error) {{
-            output.classList.add('error');
-            output.textContent = data.error;
-          }} else {{
-            output.classList.remove('error');
-            output.textContent = data.output || 'Done!';
+        if (isIntelligent) {{
+          // Intelligent demo with full educational context
+          intelligentPanel.style.display = 'block';
+          intelligentPanel.innerHTML = '<div class="loading-spinner">🧠 Loading deep learning experience...</div>';
+          
+          try {{
+            const data = await api('api/intelligent-try/' + demoId, {{ method: 'POST' }});
+            if (data.ok) {{
+              intelligentPanel.innerHTML = renderIntelligentDemo(data);
+            }} else {{
+              // Fall back to basic output
+              output.style.display = 'block';
+              output.textContent = data.output || data.error || 'Demo completed';
+              intelligentPanel.style.display = 'none';
+            }}
+          }} catch (err) {{
+            intelligentPanel.innerHTML = '<div class="error">Error: ' + err.message + '</div>';
           }}
-        }} catch (err) {{
-          output.classList.remove('loading');
-          output.classList.add('error');
-          output.textContent = 'Error: ' + err.message;
+        }} else {{
+          // Quick run - basic demo
+          output.style.display = 'block';
+          output.textContent = 'Running...';
+          output.classList.add('loading');
+          intelligentPanel.style.display = 'none';
+          
+          try {{
+            const data = await api('api/try/' + demoId, {{ method: 'POST' }});
+            output.classList.remove('loading');
+            if (data.error) {{
+              output.classList.add('error');
+              output.textContent = data.error;
+            }} else {{
+              output.classList.remove('error');
+              output.textContent = data.output || 'Done!';
+            }}
+          }} catch (err) {{
+            output.classList.remove('loading');
+            output.classList.add('error');
+            output.textContent = 'Error: ' + err.message;
+          }}
         }}
       }}
     }});
     
+    // Render intelligent demo with all educational content
+    function renderIntelligentDemo(data) {{
+      const prereqs = (data.prerequisites || []).map(p => `<span class="prereq-tag">${{p}}</span>`).join('');
+      const steps = (data.algorithm_steps || []).map((s, i) => `
+        <div class="algo-step">
+          <div class="step-num">${{i + 1}}</div>
+          <div class="step-content">
+            <strong>${{s.title}}</strong>
+            <p>${{s.description}}</p>
+            ${{s.state ? `<code>${{s.state}}</code>` : ''}}
+          </div>
+        </div>
+      `).join('');
+      
+      const related = (data.related_concepts || []).map(r => `
+        <div class="related-concept">
+          <strong>${{r.concept}}</strong>
+          ${{Object.keys(r.views || {{}}).length > 0 ? 
+            '<span class="views-available">📚 ' + Object.keys(r.views).join(', ') + '</span>' : ''}}
+        </div>
+      `).join('');
+      
+      const challenges = (data.practice_challenges || []).map(c => `
+        <div class="challenge-item">
+          <span class="challenge-type">${{c.type}}</span>
+          <p>${{c.prompt}}</p>
+        </div>
+      `).join('');
+      
+      return `
+        <div class="intelligent-demo">
+          <div class="demo-header">
+            <h3>🧠 ${{data.title || 'Demo'}}</h3>
+            <div class="demo-meta">
+              <span class="book-tag">📖 ${{data.book || ''}}</span>
+              <span class="complexity-tag">⏱️ ${{data.complexity?.time || ''}} | 💾 ${{data.complexity?.space || ''}}</span>
+            </div>
+          </div>
+          
+          <div class="demo-section prereqs">
+            <h4>📋 Prerequisites</h4>
+            <div class="prereq-list">${{prereqs || '<span class="none">None</span>'}}</div>
+          </div>
+          
+          <div class="demo-section pre-explanation">
+            <h4>🎯 What You're About to Learn</h4>
+            <div class="markdown-content">${{data.pre_explanation || ''}}</div>
+          </div>
+          
+          <div class="demo-section algorithm-steps">
+            <h4>📊 Step-by-Step Breakdown</h4>
+            <div class="steps-container">${{steps || '<p>No steps available</p>'}}</div>
+          </div>
+          
+          <div class="demo-section demo-output">
+            <h4>▶ Demo Result</h4>
+            <div class="output-box">${{data.demo_output || 'No output'}}</div>
+          </div>
+          
+          <div class="demo-section post-explanation">
+            <h4>📈 What Just Happened</h4>
+            <div class="markdown-content">${{data.post_explanation || ''}}</div>
+          </div>
+          
+          <div class="demo-section related-concepts">
+            <h4>🔗 Related Concepts</h4>
+            <div class="related-grid">${{related || '<p>None</p>'}}</div>
+          </div>
+          
+          <div class="demo-section practice">
+            <h4>💪 Practice Challenges</h4>
+            <div class="challenges-list">${{challenges || '<p>None</p>'}}</div>
+          </div>
+          
+          ${{data.socratic_question ? `
+            <div class="demo-section socratic">
+              <h4>🤔 Think About This</h4>
+              <div class="socratic-question">${{data.socratic_question}}</div>
+            </div>
+          ` : ''}}
+        </div>
+      `;
+    }}
+    
     loadCurriculum();
+  </script>
+  
+  <!-- SRS Widget -->
+  <style>
+    .srs-container {{ position: fixed; bottom: 80px; right: 24px; z-index: 100; }}
+    .srs-btn {{ 
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      color: white; border: none; padding: 12px 20px; 
+      border-radius: 24px; cursor: pointer; font-weight: 600;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+      display: flex; align-items: center; gap: 8px;
+    }}
+    .srs-btn:hover {{ transform: scale(1.05); }}
+    .srs-badge {{ background: #ef4444; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; }}
+    .playground-btn {{
+      position: fixed; bottom: 140px; right: 24px; z-index: 100;
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: white; border: none; padding: 12px 20px;
+      border-radius: 24px; cursor: pointer; font-weight: 600;
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    }}
+    .playground-btn:hover {{ transform: scale(1.05); }}
+  </style>
+  
+  <div class="srs-container">
+    <button class="srs-btn" onclick="window.location.href='/'">
+      📚 Review <span class="srs-badge" id="srs-count">0</span>
+    </button>
+  </div>
+  
+  <button class="playground-btn" onclick="window.location.href='/'">
+    💻 Playground
+  </button>
+  
+  <script>
+    // Load SRS count
+    fetch('/api/srs/cards?user=default&limit=100')
+      .then(r => r.json())
+      .then(d => {{ document.getElementById('srs-count').textContent = d.count || 0; }})
+      .catch(() => {{}});
   </script>
 </body>
 </html>

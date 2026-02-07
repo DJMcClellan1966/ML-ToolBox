@@ -116,6 +116,52 @@ try:
 except Exception:
     pass
 
+# Spaced Repetition System
+try:
+    from learning_apps.spaced_repetition import register_srs_routes
+    register_srs_routes(app)
+except Exception:
+    pass
+
+# Code Playground
+try:
+    from learning_apps.code_playground import register_playground_routes
+    register_playground_routes(app)
+except Exception:
+    pass
+
+# Intelligent Demo System
+try:
+    from learning_apps.intelligent_demos import register_intelligent_demo_routes
+    register_intelligent_demo_routes(app)
+    print("✨ Intelligent Demo System loaded")
+except Exception:
+    pass
+
+# D3.js Visualizations
+try:
+    from learning_apps.visualizations import register_visualization_routes
+    register_visualization_routes(app)
+    print("📊 D3.js Visualizations loaded")
+except Exception:
+    pass
+
+# Deep Learning Experience
+try:
+    from learning_apps.deep_learning_experience import register_deep_learning_routes
+    register_deep_learning_routes(app)
+    print("🧠 Deep Learning Experience loaded")
+except Exception:
+    pass
+
+# Unified Curriculum Brain
+try:
+  from learning_apps.unified_curriculum import register_unified_routes
+  register_unified_routes(app)
+  print("🧭 Unified Curriculum Brain loaded")
+except Exception:
+  pass
+
 # Gamification system
 try:
     from learning_apps import gamification
@@ -725,6 +771,52 @@ HTML = r"""
       border-radius: 12px;
       font-size: 0.75rem;
     }
+
+    /* Unified Curriculum Brain */
+    .unified-panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 32px;
+    }
+    .unified-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .unified-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .unified-card h4 { font-size: 1rem; margin-bottom: 10px; }
+    .unified-input, .unified-textarea {
+      width: 100%;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .unified-textarea { min-height: 90px; resize: vertical; }
+    .unified-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .unified-results {
+      margin-top: 12px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 260px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; background: rgba(59,130,246,0.15); color: var(--accent); margin-right: 6px; }
     
     @media (max-width: 768px) {
       .header-inner { flex-direction: column; align-items: flex-start; }
@@ -775,6 +867,45 @@ HTML = r"""
       <div class="stat-card warning">
         <h3 id="user-completed">0</h3>
         <p>Completed</p>
+      </div>
+    </div>
+
+    <!-- Unified Curriculum Brain -->
+    <div class="section-header" style="margin: 20px 0 12px;">
+      <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 10px;">
+        <span>🧭</span> Unified Curriculum Brain
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+        Search across all books, get a combined answer, and generate an adaptive path.
+      </p>
+    </div>
+    <div class="unified-panel">
+      <div class="unified-grid">
+        <div class="unified-card">
+          <h4>🔎 Unified Search</h4>
+          <input class="unified-input" id="unified-query" placeholder="Ask anything across all books...">
+          <div class="unified-actions">
+            <button class="btn" onclick="runUnifiedSearch()">Search</button>
+            <button class="btn" onclick="buildUnifiedIndex()">Build Index</button>
+          </div>
+          <div class="unified-results" id="unified-search-results">No results yet.</div>
+        </div>
+        <div class="unified-card">
+          <h4>🧠 Combined Answer</h4>
+          <textarea class="unified-textarea" id="unified-question" placeholder="Explain backprop and link it to optimization and information theory..."></textarea>
+          <div class="unified-actions">
+            <button class="btn" onclick="runUnifiedSynthesis()">Synthesize</button>
+          </div>
+          <div class="unified-results" id="unified-synthesis-results">No synthesis yet.</div>
+        </div>
+        <div class="unified-card">
+          <h4>🗺️ Adaptive Path</h4>
+          <input class="unified-input" id="unified-goal" placeholder="Goal: become strong in RL and optimization">
+          <div class="unified-actions">
+            <button class="btn" onclick="runUnifiedPath()">Recommend</button>
+          </div>
+          <div class="unified-results" id="unified-path-results">No path yet.</div>
+        </div>
       </div>
     </div>
     
@@ -975,10 +1106,252 @@ HTML = r"""
         }
       } catch {}
     }
+
+    // Unified Curriculum Brain
+    async function buildUnifiedIndex() {
+      const el = document.getElementById('unified-search-results');
+      el.textContent = 'Building index...';
+      try {
+        const r = await fetch('/api/unified/index', { method: 'POST' });
+        const d = await r.json();
+        el.textContent = d.ok ? ('Index ready. Chunks: ' + d.chunks) : 'Index build failed.';
+      } catch (e) { el.textContent = 'Error: ' + e.message; }
+    }
+
+    async function runUnifiedSearch() {
+      const q = document.getElementById('unified-query').value.trim();
+      const el = document.getElementById('unified-search-results');
+      if (!q) { el.textContent = 'Enter a query.'; return; }
+      el.textContent = 'Searching...';
+      try {
+        const r = await fetch('/api/unified/search?q=' + encodeURIComponent(q) + '&top_k=6');
+        const d = await r.json();
+        if (!d.ok) { el.textContent = 'Search failed.'; return; }
+        el.innerHTML = d.results.map(r =>
+          `<div style="margin-bottom:10px;">
+            <div><span class="pill">${r.meta?.kind || 'text'}</span><b>${r.title}</b></div>
+            <div>${(r.text || '').slice(0, 200)}...</div>
+          </div>`
+        ).join('') || 'No results.';
+      } catch (e) { el.textContent = 'Error: ' + e.message; }
+    }
+
+    async function runUnifiedSynthesis() {
+      const q = document.getElementById('unified-question').value.trim();
+      const el = document.getElementById('unified-synthesis-results');
+      if (!q) { el.textContent = 'Enter a question.'; return; }
+      el.textContent = 'Synthesizing...';
+      try {
+        const r = await fetch('/api/unified/synthesize', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: q, top_k: 6, use_llm: true })
+        });
+        const d = await r.json();
+        el.textContent = d.ok ? (d.answer || 'No answer.') : 'Synthesis failed.';
+      } catch (e) { el.textContent = 'Error: ' + e.message; }
+    }
+
+    async function runUnifiedPath() {
+      const goal = document.getElementById('unified-goal').value.trim();
+      const el = document.getElementById('unified-path-results');
+      el.textContent = 'Calculating path...';
+      try {
+        const r = await fetch('/api/unified/path?user_id=default&goal=' + encodeURIComponent(goal) + '&limit=8');
+        const d = await r.json();
+        if (!d.ok) { el.textContent = 'Path failed.'; return; }
+        el.innerHTML = (d.recommendations || []).map(x =>
+          `<div style="margin-bottom:8px;">
+             <span class="pill">${x.level}</span><b>${x.title}</b>
+             <div style="color:var(--text-muted);">${x.lab_id} • ${x.book_name || ''}</div>
+           </div>`
+        ).join('') || 'No recommendations.';
+      } catch (e) { el.textContent = 'Error: ' + e.message; }
+    }
     
     loadStats();
     loadTutors();
     loadPaths();
+  </script>
+  
+  <!-- SRS Widget Styles -->
+  <style>
+    .floating-widgets { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+    .widget-btn { 
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 20px; border-radius: 24px; border: none;
+      cursor: pointer; font-weight: 600; color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+    .widget-btn:hover { transform: scale(1.05); }
+    .srs-widget { background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); }
+    .playground-widget { background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); }
+    .widget-badge { background: #ef4444; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; }
+    .widget-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; padding: 24px; overflow-y: auto; }
+    .widget-modal.active { display: block; }
+    .modal-container { max-width: 600px; margin: 40px auto; background: var(--bg-secondary); border-radius: 16px; overflow: hidden; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--border); }
+    .modal-close { background: transparent; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
+    .modal-content { padding: 24px; }
+    .srs-card-display { text-align: center; padding: 32px; }
+    .srs-question { font-size: 1.3rem; margin-bottom: 24px; }
+    .srs-answer { background: var(--bg-tertiary); padding: 20px; border-radius: 12px; margin: 16px 0; display: none; }
+    .srs-answer.revealed { display: block; }
+    .srs-ratings { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
+    .srs-rating { padding: 10px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; color: white; }
+    .srs-rating.again { background: #ef4444; }
+    .srs-rating.hard { background: #f59e0b; }
+    .srs-rating.good { background: #22c55e; }
+    .srs-rating.easy { background: #3b82f6; }
+    .reveal-btn { background: var(--accent); color: white; border: none; padding: 12px 32px; border-radius: 8px; cursor: pointer; }
+    .playground-container { max-width: 1000px; margin: 40px auto; }
+    .playground-editor textarea { width: 100%; height: 250px; background: var(--bg-primary); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-family: 'Fira Code', Consolas, monospace; font-size: 14px; color: var(--text-primary); resize: vertical; }
+    .playground-output pre { background: var(--bg-primary); border-radius: 8px; padding: 12px; height: 200px; overflow-y: auto; font-family: monospace; font-size: 13px; margin: 0; white-space: pre-wrap; }
+    .run-btn { background: #22c55e; color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 12px; }
+    .challenge-select { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; }
+  </style>
+  
+  <!-- Floating Widget Buttons -->
+  <div class="floating-widgets">
+    <button class="widget-btn srs-widget" onclick="openSRS()">📚 Review <span class="widget-badge" id="srs-due">0</span></button>
+    <button class="widget-btn playground-widget" onclick="openPlayground()">💻 Code</button>
+  </div>
+  
+  <!-- SRS Modal -->
+  <div class="widget-modal" id="srs-modal">
+    <div class="modal-container">
+      <div class="modal-header"><h2>📚 Spaced Repetition Review</h2><button class="modal-close" onclick="closeSRS()">×</button></div>
+      <div class="modal-content srs-card-display">
+        <div id="srs-content">
+          <p id="srs-q" class="srs-question">Loading...</p>
+          <div id="srs-a" class="srs-answer"></div>
+          <button class="reveal-btn" id="reveal-btn" onclick="revealSRS()">Show Answer</button>
+          <div class="srs-ratings" id="srs-ratings" style="display:none;">
+            <button class="srs-rating again" onclick="rateSRS(1)">Again</button>
+            <button class="srs-rating hard" onclick="rateSRS(3)">Hard</button>
+            <button class="srs-rating good" onclick="rateSRS(4)">Good</button>
+            <button class="srs-rating easy" onclick="rateSRS(5)">Easy</button>
+          </div>
+        </div>
+        <p id="srs-empty" style="display:none;">🎉 All caught up! No cards due for review.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Playground Modal -->
+  <div class="widget-modal" id="playground-modal">
+    <div class="playground-container modal-container">
+      <div class="modal-header"><h2>💻 Code Playground</h2><button class="modal-close" onclick="closePlayground()">×</button></div>
+      <div class="modal-content">
+        <select class="challenge-select" id="challenge-sel" onchange="loadChallenge()"><option value="">Free Coding</option></select>
+        <p id="challenge-info" style="color:var(--text-secondary);margin-bottom:12px;"></p>
+        <textarea id="pg-code" placeholder="# Write Python code here..."></textarea>
+        <div style="display:flex;gap:12px;align-items:center;margin-top:12px;">
+          <button class="run-btn" onclick="runCode()">▶ Run</button>
+          <button class="run-btn" id="submit-btn" style="display:none;background:#6366f1;" onclick="submitCode()">✓ Submit</button>
+        </div>
+        <h4 style="margin-top:16px;">Output</h4>
+        <pre id="pg-output">Run code to see output...</pre>
+        <div id="test-results" style="margin-top:12px;"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // SRS
+    let srsCards = [], srsIdx = 0;
+    async function loadSRSCards() {
+      try {
+        const r = await fetch('/api/srs/cards?user=default&limit=50');
+        const d = await r.json();
+        srsCards = d.cards || [];
+        document.getElementById('srs-due').textContent = srsCards.length;
+      } catch {}
+    }
+    function openSRS() { document.getElementById('srs-modal').classList.add('active'); srsIdx = 0; showSRSCard(); }
+    function closeSRS() { document.getElementById('srs-modal').classList.remove('active'); }
+    function showSRSCard() {
+      if (srsIdx >= srsCards.length) {
+        document.getElementById('srs-content').style.display = 'none';
+        document.getElementById('srs-empty').style.display = 'block';
+        return;
+      }
+      document.getElementById('srs-content').style.display = 'block';
+      document.getElementById('srs-empty').style.display = 'none';
+      const c = srsCards[srsIdx];
+      document.getElementById('srs-q').textContent = c.question;
+      document.getElementById('srs-a').textContent = c.answer;
+      document.getElementById('srs-a').classList.remove('revealed');
+      document.getElementById('reveal-btn').style.display = 'inline-block';
+      document.getElementById('srs-ratings').style.display = 'none';
+    }
+    function revealSRS() {
+      document.getElementById('srs-a').classList.add('revealed');
+      document.getElementById('reveal-btn').style.display = 'none';
+      document.getElementById('srs-ratings').style.display = 'flex';
+    }
+    async function rateSRS(q) {
+      try { await fetch('/api/srs/review', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({card_id: srsCards[srsIdx].id, quality: q}) }); } catch {}
+      srsIdx++;
+      document.getElementById('srs-due').textContent = Math.max(0, srsCards.length - srsIdx);
+      showSRSCard();
+    }
+    loadSRSCards();
+    
+    // Playground
+    let currentChal = null;
+    async function loadChallenges() {
+      try {
+        const r = await fetch('/api/playground/challenges');
+        const d = await r.json();
+        const sel = document.getElementById('challenge-sel');
+        (d.challenges || []).forEach(c => {
+          const o = document.createElement('option');
+          o.value = c.id; o.textContent = '[' + c.difficulty + '] ' + c.title;
+          sel.appendChild(o);
+        });
+      } catch {}
+    }
+    async function loadChallenge() {
+      const id = document.getElementById('challenge-sel').value;
+      if (!id) { currentChal = null; document.getElementById('pg-code').value = ''; document.getElementById('challenge-info').textContent = ''; document.getElementById('submit-btn').style.display = 'none'; return; }
+      try {
+        const r = await fetch('/api/playground/challenge/' + id);
+        const d = await r.json();
+        currentChal = d.challenge;
+        document.getElementById('pg-code').value = currentChal.starter_code;
+        document.getElementById('challenge-info').textContent = currentChal.description;
+        document.getElementById('submit-btn').style.display = 'inline-block';
+      } catch {}
+    }
+    function openPlayground() { document.getElementById('playground-modal').classList.add('active'); loadChallenges(); }
+    function closePlayground() { document.getElementById('playground-modal').classList.remove('active'); }
+    async function runCode() {
+      const code = document.getElementById('pg-code').value;
+      const out = document.getElementById('pg-output');
+      out.textContent = 'Running...';
+      try {
+        const r = await fetch('/api/playground/run', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({code}) });
+        const d = await r.json();
+        out.textContent = d.ok ? (d.output || '(no output)') : d.error;
+        out.style.color = d.ok ? 'var(--text-primary)' : '#ef4444';
+        if (d.execution_time_ms) out.textContent += '\\n⏱ ' + d.execution_time_ms + 'ms';
+      } catch (e) { out.textContent = 'Error: ' + e.message; out.style.color = '#ef4444'; }
+    }
+    async function submitCode() {
+      if (!currentChal) return;
+      const res = document.getElementById('test-results');
+      res.innerHTML = 'Testing...';
+      try {
+        const r = await fetch('/api/playground/submit', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({challenge_id: currentChal.id, code: document.getElementById('pg-code').value}) });
+        const d = await r.json();
+        let h = '<p><b>' + d.passed_count + '/' + d.total_count + ' tests passed</b></p>';
+        (d.tests || []).forEach(t => { h += '<p style="color:' + (t.passed ? '#22c55e' : '#ef4444') + '">' + (t.passed ? '✅' : '❌') + ' Test ' + t.test + '</p>'; });
+        if (d.all_passed) h = '🎉 <b style="color:#22c55e">All tests passed!</b>' + h;
+        res.innerHTML = h;
+      } catch (e) { res.innerHTML = 'Error: ' + e.message; }
+    }
   </script>
 </body>
 </html>
