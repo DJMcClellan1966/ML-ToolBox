@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title if title else "Guided Learning" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+</head>
+<body>
+  <header class="header">
+    <div class="container header-inner">
+      <div>
+        <h1>Guided Learning</h1>
+        <p class="subtitle">Start simple. Learn the core ideas clearly.</p>
+      </div>
+      <form action="{{ url_for('reset_progress') }}" method="post">
+        <button type="submit" class="ghost">Reset Progress</button>
+      </form>
+    </div>
+  </header>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Your progress</h2>
+  <div class="progress">
+    <div class="progress-bar" style="width: {{ percent }}%"></div>
+  </div>
+  <p>{{ done }} / {{ total }} lessons completed ({{ percent }}%).</p>
+  {% if last_lesson %}
+    <a class="primary" href="{{ url_for('lesson', lesson_id=last_lesson) }}">Continue where you left off</a>
+  {% endif %}
+</section>
+
+<section class="lesson-list">
+  <h2>Learning path</h2>
+  {% for lesson in lessons %}
+    <div class="lesson-item {% if lesson.id in completed %}done{% endif %}">
+      <div>
+        <h3>{{ loop.index }}. {{ lesson.title }}</h3>
+        <p class="goal">Goal: {{ lesson.goal }}</p>
+      </div>
+      <div>
+        {% if lesson.id in completed %}
+          <span class="badge">Completed</span>
+        {% endif %}
+        <a class="secondary" href="{{ url_for('lesson', lesson_id=lesson.id) }}">Open</a>
+      </div>
+    </div>
+  {% endfor %}
+</section>
+{% endblock %}
