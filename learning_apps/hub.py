@@ -1,45 +1,168 @@
 """
-Learning Apps Hub — Single entry point listing all labs with links and global search.
+Learning Apps Hub — Single entry point for all labs using Flask Blueprints.
 Run from repo root: python learning_apps/hub.py
 Open http://127.0.0.1:5000
+All labs accessible at /lab/<lab_id>/
 """
 import sys
+import importlib
 from pathlib import Path
+from flask import Flask, render_template_string, request, jsonify
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from flask import Flask, render_template_string, request, jsonify
-import importlib
-
 app = Flask(__name__)
 
+# --- Register All Lab Blueprints ---
+from learning_apps.blueprint_factory import create_lab_blueprint
+
+def register_lab_blueprints():
+    """Register all labs as blueprints under /lab/<lab_id>/"""
+    lab_configs = [
+        {"id": "ml_learning_lab", "title": "ML Learning Lab", 
+         "desc": "Knuth, Skiena, Sedgewick, Bishop/Goodfellow/R&N, Info theory, Compass, Build Knuth Machine.",
+         "module_path": "ml_learning_lab"},
+        {"id": "clrs_algorithms_lab", "title": "CLRS Algorithms Lab",
+         "desc": "Introduction to Algorithms: DP, Greedy, Graph.",
+         "module_path": "learning_apps.clrs_algorithms_lab"},
+        {"id": "deep_learning_lab", "title": "Deep Learning Lab",
+         "desc": "Goodfellow, Bishop, ESL, Burkov.",
+         "module_path": "learning_apps.deep_learning_lab"},
+        {"id": "ai_concepts_lab", "title": "AI Concepts Lab",
+         "desc": "Russell & Norvig: game theory, search, RL, probabilistic reasoning.",
+         "module_path": "learning_apps.ai_concepts_lab"},
+        {"id": "cross_domain_lab", "title": "Cross-Domain Lab",
+         "desc": "Quantum, stat mech, linguistics, precognition, self-organization.",
+         "module_path": "learning_apps.cross_domain_lab"},
+        {"id": "python_practice_lab", "title": "Python Practice Lab",
+         "desc": "Reed & Zelle: problem decomposition, algorithms, code organization.",
+         "module_path": "learning_apps.python_practice_lab"},
+        {"id": "sicp_lab", "title": "SICP Lab",
+         "desc": "Structure and Interpretation of Computer Programs.",
+         "module_path": "learning_apps.sicp_lab"},
+        {"id": "practical_ml_lab", "title": "Practical ML Lab",
+         "desc": "Hands-On ML (Géron): features, tuning, ensembles, production.",
+         "module_path": "learning_apps.practical_ml_lab"},
+        {"id": "rl_lab", "title": "RL Lab",
+         "desc": "Sutton & Barto: MDPs, TD, Q-learning, policy gradient.",
+         "module_path": "learning_apps.rl_lab"},
+        {"id": "probabilistic_ml_lab", "title": "Probabilistic ML Lab",
+         "desc": "Murphy: graphical models, EM, variational inference, Bayesian.",
+         "module_path": "learning_apps.probabilistic_ml_lab"},
+        {"id": "ml_theory_lab", "title": "ML Theory Lab",
+         "desc": "Shalev-Shwartz & Ben-David: PAC, VC dimension, generalization.",
+         "module_path": "learning_apps.ml_theory_lab"},
+        {"id": "llm_engineers_lab", "title": "LLM Engineers Lab",
+         "desc": "Handbook + Build Your Own LLM: RAG, prompts, eval, safety.",
+         "module_path": "learning_apps.llm_engineers_lab"},
+        {"id": "math_for_ml_lab", "title": "Math for ML Lab",
+         "desc": "Linear algebra, calculus, probability, optimization.",
+         "module_path": "learning_apps.math_for_ml_lab"},
+    ]
+    
+    registered = []
+    for cfg in lab_configs:
+        try:
+            # Try to import curriculum and demos
+            curriculum_module = None
+            demos_module = None
+            try:
+                curriculum_module = importlib.import_module(f"{cfg['module_path']}.curriculum")
+            except:
+                pass
+            try:
+                demos_module = importlib.import_module(f"{cfg['module_path']}.demos")
+            except:
+                pass
+            
+            # Create and register blueprint
+            bp = create_lab_blueprint(
+                lab_id=cfg["id"],
+                title=cfg["title"],
+                description=cfg["desc"],
+                curriculum_module=curriculum_module,
+                demos_module=demos_module
+            )
+            app.register_blueprint(bp)
+            registered.append(cfg["id"])
+        except Exception as e:
+            print(f"Warning: Could not register {cfg['id']}: {e}")
+    
+    return registered
+
+REGISTERED_LABS = register_lab_blueprints()
+print(f"Registered {len(REGISTERED_LABS)} lab blueprints: {', '.join(REGISTERED_LABS)}")
+
+# Practice problem generator
+try:
+    from learning_apps.practice_llm import register_practice_routes
+    register_practice_routes(app)
+except Exception:
+    pass
+
+# Voice/video tutor placeholder
+try:
+    from learning_apps.voice_video import register_voice_video_routes
+    register_voice_video_routes(app)
+except Exception:
+    pass
+
+# Analytics dashboard
+try:
+    from learning_apps.analytics import register_analytics_routes
+    register_analytics_routes(app)
+except Exception:
+    pass
+
+# Gamification system
+try:
+    from learning_apps import gamification
+except Exception:
+    gamification = None
+
+@app.route("/api/gamification/badges")
+def api_gamification_badges():
+    user_id = request.args.get("user", "default")
+    if gamification:
+        badges = gamification.get_user_badges(user_id)
+        badge_info = [gamification.get_badge_info(b) for b in badges]
+        return jsonify({"ok": True, "badges": badge_info})
+    return jsonify({"ok": False, "error": "Gamification not available"})
+
+@app.route("/api/gamification/leaderboard")
+def api_gamification_leaderboard():
+    if gamification:
+        return jsonify({"ok": True, "leaderboard": gamification.get_leaderboard()})
+    return jsonify({"ok": False, "error": "Gamification not available"})
+
 LABS = [
-    {"name": "ML Learning Lab", "port": 5001, "path": "ml_learning_lab", "cmd": "python ml_learning_lab/app.py",
+    {"name": "ML Learning Lab", "path": "ml_learning_lab", "url": "/lab/ml_learning_lab/",
      "desc": "Knuth, Skiena, Sedgewick, Bishop/Goodfellow/R&N, Info theory, Compass, Build Knuth Machine.", "icon": "🧠"},
-    {"name": "CLRS Algorithms Lab", "port": 5002, "path": "clrs_algorithms_lab", "cmd": "python learning_apps/clrs_algorithms_lab/app.py",
+    {"name": "CLRS Algorithms Lab", "path": "clrs_algorithms_lab", "url": "/lab/clrs_algorithms_lab/",
      "desc": "Introduction to Algorithms: DP, Greedy, Graph.", "icon": "📊"},
-    {"name": "Deep Learning Lab", "port": 5003, "path": "deep_learning_lab", "cmd": "python learning_apps/deep_learning_lab/app.py",
+    {"name": "Deep Learning Lab", "path": "deep_learning_lab", "url": "/lab/deep_learning_lab/",
      "desc": "Goodfellow, Bishop, ESL, Burkov.", "icon": "🔮"},
-    {"name": "AI Concepts Lab", "port": 5004, "path": "ai_concepts_lab", "cmd": "python learning_apps/ai_concepts_lab/app.py",
+    {"name": "AI Concepts Lab", "path": "ai_concepts_lab", "url": "/lab/ai_concepts_lab/",
      "desc": "Russell & Norvig: game theory, search, RL, probabilistic reasoning.", "icon": "🤖"},
-    {"name": "Cross-Domain Lab", "port": 5005, "path": "cross_domain_lab", "cmd": "python learning_apps/cross_domain_lab/app.py",
+    {"name": "Cross-Domain Lab", "path": "cross_domain_lab", "url": "/lab/cross_domain_lab/",
      "desc": "Quantum, stat mech, linguistics, precognition, self-organization.", "icon": "🌐"},
-    {"name": "Python Practice Lab", "port": 5006, "path": "python_practice_lab", "cmd": "python learning_apps/python_practice_lab/app.py",
+    {"name": "Python Practice Lab", "path": "python_practice_lab", "url": "/lab/python_practice_lab/",
      "desc": "Reed & Zelle: problem decomposition, algorithms, code organization.", "icon": "🐍"},
-    {"name": "SICP Lab", "port": 5007, "path": "sicp_lab", "cmd": "python learning_apps/sicp_lab/app.py",
+    {"name": "SICP Lab", "path": "sicp_lab", "url": "/lab/sicp_lab/",
      "desc": "Structure and Interpretation of Computer Programs.", "icon": "📖"},
-    {"name": "Practical ML Lab", "port": 5008, "path": "practical_ml_lab", "cmd": "python learning_apps/practical_ml_lab/app.py",
+    {"name": "Practical ML Lab", "path": "practical_ml_lab", "url": "/lab/practical_ml_lab/",
      "desc": "Hands-On ML (Géron): features, tuning, ensembles, production.", "icon": "🛠️"},
-    {"name": "RL Lab", "port": 5009, "path": "rl_lab", "cmd": "python learning_apps/rl_lab/app.py",
+    {"name": "RL Lab", "path": "rl_lab", "url": "/lab/rl_lab/",
      "desc": "Sutton & Barto: MDPs, TD, Q-learning, policy gradient.", "icon": "🎮"},
-    {"name": "Probabilistic ML Lab", "port": 5010, "path": "probabilistic_ml_lab", "cmd": "python learning_apps/probabilistic_ml_lab/app.py",
+    {"name": "Probabilistic ML Lab", "path": "probabilistic_ml_lab", "url": "/lab/probabilistic_ml_lab/",
      "desc": "Murphy: graphical models, EM, variational inference, Bayesian.", "icon": "📈"},
-    {"name": "ML Theory Lab", "port": 5011, "path": "ml_theory_lab", "cmd": "python learning_apps/ml_theory_lab/app.py",
+    {"name": "ML Theory Lab", "path": "ml_theory_lab", "url": "/lab/ml_theory_lab/",
      "desc": "Shalev-Shwartz & Ben-David: PAC, VC dimension, generalization.", "icon": "📐"},
-    {"name": "LLM Engineers Lab", "port": 5012, "path": "llm_engineers_lab", "cmd": "python learning_apps/llm_engineers_lab/app.py",
+    {"name": "LLM Engineers Lab", "path": "llm_engineers_lab", "url": "/lab/llm_engineers_lab/",
      "desc": "Handbook + Build Your Own LLM: RAG, prompts, eval, safety.", "icon": "💬"},
-    {"name": "Math for ML Lab", "port": 5013, "path": "math_for_ml_lab", "cmd": "python learning_apps/math_for_ml_lab/app.py",
+    {"name": "Math for ML Lab", "path": "math_for_ml_lab", "url": "/lab/math_for_ml_lab/",
      "desc": "Linear algebra, calculus, probability, optimization.", "icon": "➗"},
 ]
 
@@ -56,7 +179,7 @@ def _load_all_curricula():
             items = mod.get_curriculum()
             for item in items:
                 item["lab_name"] = lab["name"]
-                item["lab_port"] = lab["port"]
+                item["lab_url"] = lab["url"]
                 item["lab_path"] = path
             all_items.extend(items)
         except Exception:
@@ -83,7 +206,7 @@ def api_search():
                 "learn": item.get("learn", "")[:150] + "..." if len(item.get("learn", "")) > 150 else item.get("learn", ""),
                 "level": item.get("level"),
                 "lab_name": item.get("lab_name"),
-                "lab_port": item.get("lab_port"),
+                "lab_url": item.get("lab_url"),
                 "lab_path": item.get("lab_path"),
                 "has_demo": bool(item.get("try_demo")),
             })
@@ -120,7 +243,7 @@ def api_tutors():
                 tutors.append({
                     "lab_id": lab_id,
                     "lab_name": lab["name"] if lab else lab_id,
-                    "lab_port": lab["port"] if lab else 5000,
+                    "lab_url": lab["url"] if lab else f"/lab/{lab_id}/",
                     "id": char["id"],
                     "name": char["name"],
                     "title": char["title"],
@@ -131,6 +254,126 @@ def api_tutors():
         return jsonify({"ok": True, "tutors": tutors})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e), "tutors": []})
+
+
+LEARNING_PATHS = [
+    {
+        "id": "beginner_to_expert",
+        "name": "Beginner to Expert",
+        "desc": "A complete journey from programming basics to advanced AI and ML.",
+        "labs": [
+            "python_practice_lab",
+            "math_for_ml_lab",
+            "clrs_algorithms_lab",
+            "practical_ml_lab",
+            "deep_learning_lab",
+            "ai_concepts_lab",
+            "rl_lab",
+            "llm_engineers_lab"
+        ]
+    },
+    {
+        "id": "ml_specialist",
+        "name": "ML Specialist",
+        "desc": "Focus on practical and theoretical machine learning skills.",
+        "labs": [
+            "practical_ml_lab",
+            "deep_learning_lab",
+            "probabilistic_ml_lab",
+            "ml_theory_lab"
+        ]
+    },
+    {
+        "id": "ai_foundations",
+        "name": "AI Foundations",
+        "desc": "Core AI concepts, algorithms, and reasoning.",
+        "labs": [
+            "ai_concepts_lab",
+            "clrs_algorithms_lab",
+            "math_for_ml_lab"
+        ]
+    },
+    {
+        "id": "career_prep",
+        "name": "Career & Interview Prep",
+        "desc": "Sharpen your skills for interviews and real-world projects.",
+        "labs": [
+            "python_practice_lab",
+            "clrs_algorithms_lab",
+            "ml_theory_lab"
+        ]
+    },
+    {
+        "id": "project_based",
+        "name": "Project-Based Learning",
+        "desc": "Build real projects across labs for hands-on experience.",
+        "labs": [
+            "practical_ml_lab",
+            "llm_engineers_lab",
+            "cross_domain_lab"
+        ]
+    },
+    {
+        "id": "knuth_taocp",
+        "name": "Donald Knuth: The Art of Computer Programming",
+        "desc": "Master algorithms through TAOCP: Random numbers, sorting, searching, combinatorics, and the Knuth Machine.",
+        "labs": [
+            "ml_learning_lab",
+            "clrs_algorithms_lab",
+            "sicp_lab",
+            "math_for_ml_lab"
+        ]
+    },
+    {
+        "id": "algorithms_master",
+        "name": "Algorithms Mastery",
+        "desc": "Deep dive into classical algorithms: CLRS, Knuth, Skiena, and Sedgewick.",
+        "labs": [
+            "clrs_algorithms_lab",
+            "ml_learning_lab",
+            "python_practice_lab",
+            "sicp_lab"
+        ]
+    },
+    {
+        "id": "rl_research",
+        "name": "Reinforcement Learning & Decision Making",
+        "desc": "Master RL from basics to advanced: MDPs, Q-learning, policy gradients, and real-world applications.",
+        "labs": [
+            "rl_lab",
+            "ai_concepts_lab",
+            "probabilistic_ml_lab",
+            "deep_learning_lab"
+        ]
+    },
+    {
+        "id": "probabilistic_ai",
+        "name": "Probabilistic AI & Uncertainty",
+        "desc": "Bayesian methods, graphical models, variational inference, and probabilistic reasoning.",
+        "labs": [
+            "probabilistic_ml_lab",
+            "ai_concepts_lab",
+            "math_for_ml_lab",
+            "ml_theory_lab"
+        ]
+    },
+    {
+        "id": "research_frontiers",
+        "name": "Research Frontiers",
+        "desc": "Explore cutting-edge topics: quantum ML, LLMs, cross-domain thinking, and emerging paradigms.",
+        "labs": [
+            "cross_domain_lab",
+            "llm_engineers_lab",
+            "deep_learning_lab",
+            "probabilistic_ml_lab"
+        ]
+    }
+]
+
+@app.route("/api/paths")
+def api_paths():
+    """List all guided learning paths."""
+    return jsonify({"ok": True, "paths": LEARNING_PATHS})
 
 
 HTML = r"""
@@ -308,6 +551,21 @@ HTML = r"""
       line-height: 1.5;
       margin-bottom: 16px;
     }
+    .lab-card .status {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .lab-card .status:hover { 
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
     .lab-card .cmd {
       background: var(--bg-primary);
       padding: 10px 14px;
@@ -374,41 +632,6 @@ HTML = r"""
       color: var(--accent);
       font-size: 0.8rem;
       margin-top: 6px;
-    }
-    
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 200;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: var(--bg-secondary);
-      border-radius: var(--radius);
-      max-width: 500px;
-      width: 100%;
-      padding: 24px;
-    }
-    .modal h2 { margin-bottom: 16px; }
-    .modal p { color: var(--text-secondary); margin-bottom: 12px; }
-    .modal .cmd-big {
-      background: var(--bg-primary);
-      padding: 16px;
-      border-radius: 8px;
-      font-family: 'Fira Code', Consolas, monospace;
-      font-size: 1rem;
-      margin-bottom: 16px;
-    }
-    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; }
-    .modal-actions .btn-primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: white;
     }
     
     /* Tutors Carousel */
@@ -555,6 +778,19 @@ HTML = r"""
       </div>
     </div>
     
+    <!-- Learning Paths Section -->
+    <div class="section-header" style="margin: 32px 0 16px;">
+      <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 10px;">
+        <span>🗺️</span> Guided Learning Paths
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 4px;">
+        Follow a recommended sequence of labs for your goals
+      </p>
+    </div>
+    <div class="labs-grid" id="paths-list" style="margin-bottom: 32px;">
+      <!-- Paths loaded dynamically -->
+    </div>
+
     <!-- AI Tutors Section -->
     <div class="section-header" style="margin: 32px 0 16px;">
       <h2 style="font-size: 1.4rem; display: flex; align-items: center; gap: 10px;">
@@ -583,36 +819,23 @@ HTML = r"""
     <!-- Labs Grid -->
     <div class="labs-grid">
       {% for lab in labs %}
-      <div class="lab-card" data-port="{{ lab.port }}" data-cmd="{{ lab.cmd }}" data-name="{{ lab.name }}">
+      <a href="{{ lab.url }}" class="lab-card">
         <div class="lab-header">
           <div class="lab-icon">{{ lab.icon }}</div>
           <div>
-            <h2>{{ lab.name }} <span class="port">:{{ lab.port }}</span></h2>
+            <h2>{{ lab.name }}</h2>
           </div>
         </div>
         <p class="desc">{{ lab.desc }}</p>
-        <div class="cmd">{{ lab.cmd }}</div>
-      </div>
+        <div class="status">Enter Lab →</div>
+      </a>
       {% endfor %}
     </div>
   </main>
   
-  <!-- Lab Modal -->
-  <div class="modal-overlay" id="lab-modal">
-    <div class="modal">
-      <h2 id="modal-lab-name"></h2>
-      <p>Run this command from the repo root, then click Open:</p>
-      <div class="cmd-big" id="modal-cmd"></div>
-      <div class="modal-actions">
-        <button class="btn" id="modal-close">Close</button>
-        <button class="btn btn-primary" id="modal-open">Open Lab →</button>
-      </div>
-    </div>
-  </div>
-  
   <script>
     const api = (path) => fetch(path).then(r => r.json());
-    let selectedLab = null;
+    const labs = {{ labs|tojson }};
     
     // Theme
     function initTheme() {
@@ -629,30 +852,6 @@ HTML = r"""
       updateThemeIcon();
     };
     initTheme();
-    
-    // Lab cards
-    document.querySelectorAll('.lab-card').forEach(card => {
-      card.onclick = () => {
-        selectedLab = {
-          port: card.dataset.port,
-          cmd: card.dataset.cmd,
-          name: card.dataset.name
-        };
-        document.getElementById('modal-lab-name').textContent = selectedLab.name;
-        document.getElementById('modal-cmd').textContent = selectedLab.cmd;
-        document.getElementById('lab-modal').classList.add('active');
-      };
-    });
-    
-    document.getElementById('modal-close').onclick = () => {
-      document.getElementById('lab-modal').classList.remove('active');
-    };
-    document.getElementById('modal-open').onclick = () => {
-      if (selectedLab) window.open('http://127.0.0.1:' + selectedLab.port, '_blank');
-    };
-    document.getElementById('lab-modal').onclick = (e) => {
-      if (e.target.id === 'lab-modal') document.getElementById('lab-modal').classList.remove('active');
-    };
     
     // Search
     let searchTimeout = null;
@@ -678,7 +877,7 @@ HTML = r"""
               <p>${r.learn}</p>
               <div class="lab-tag">📚 ${r.lab_name} ${r.has_demo ? '• ▶ Has Demo' : ''}</div>
             `;
-            div.onclick = () => window.open('http://127.0.0.1:' + r.lab_port, '_blank');
+            div.onclick = () => window.location.href = '/lab/' + r.lab_path + '/';
             list.appendChild(div);
           });
           document.getElementById('search-results').classList.add('active');
@@ -712,7 +911,7 @@ HTML = r"""
         const labs = {{ labs|tojson }};
         for (const lab of labs) {
           try {
-            const r = await fetch('http://127.0.0.1:' + lab.port + '/api/curriculum');
+            const r = await fetch(lab.url + 'api/curriculum');
             if (r.ok) {
               const d = await r.json();
               if (d.ok) total += (d.items || []).length;
@@ -747,7 +946,7 @@ HTML = r"""
                 ${(tutor.strengths || []).slice(0, 3).map(s => `<span class="strength-tag">${s}</span>`).join('')}
               </div>
             `;
-            card.onclick = () => window.open('http://127.0.0.1:' + tutor.lab_port, '_blank');
+            card.onclick = () => window.location.href = '/lab/' + tutor.lab_id + '/';
             card.title = 'Click to learn with ' + tutor.name + ' in ' + tutor.lab_name;
             scroll.appendChild(card);
           });
@@ -757,8 +956,29 @@ HTML = r"""
       }
     }
     
+    // Load Guided Learning Paths
+    async function loadPaths() {
+      try {
+        const data = await api('/api/paths');
+        if (data.ok && data.paths) {
+          const div = document.getElementById('paths-list');
+          div.innerHTML = '';
+          data.paths.forEach(path => {
+            const el = document.createElement('a');
+            el.href = '/lab/' + path.labs[0] + '/';
+            el.className = 'lab-card';
+            el.innerHTML = `<h3>${path.name}</h3><p>${path.desc}</p><div style="margin-top:8px;">` +
+              path.labs.map(lab => `<span class="level-badge" style="margin-right:6px;">${lab.replace(/_/g,' ').replace('lab','Lab')}</span>`).join('') +
+              `</div>`;
+            div.appendChild(el);
+          });
+        }
+      } catch {}
+    }
+    
     loadStats();
     loadTutors();
+    loadPaths();
   </script>
 </body>
 </html>

@@ -21,182 +21,188 @@ except ImportError:
 
 
 def create_lab_app(
-    title: str,
-    description: str,
-    port: int,
-    lab_id: str,
-    curriculum_module: Any,
-    demos_module: Any
+  title: str,
+  description: str,
+  port: int,
+  lab_id: str,
+  curriculum_module: Any,
+  demos_module: Any
 ) -> Flask:
-    """
-    Factory to create a learning lab Flask app.
+  """
+  Factory to create a learning lab Flask app.
     
-    Args:
-        title: App title (e.g. "Deep Learning Lab")
-        description: Short description
-        port: Port number
-        lab_id: Unique lab identifier (e.g. "deep_learning_lab")
-        curriculum_module: Module with get_curriculum, get_books, get_levels, get_by_book, get_by_level
-        demos_module: Module with run_demo function
+  Args:
+    title: App title (e.g. "Deep Learning Lab")
+    description: Short description
+    port: Port number
+    lab_id: Unique lab identifier (e.g. "deep_learning_lab")
+    curriculum_module: Module with get_curriculum, get_books, get_levels, get_by_book, get_by_level
+    demos_module: Module with run_demo function
     
-    Returns:
-        Configured Flask app
-    """
-    app = Flask(__name__)
-    app.config["APP_TITLE"] = title
-    app.config["APP_DESCRIPTION"] = description
-    app.config["LAB_ID"] = lab_id
-    app.config["PORT"] = port
-    
-    # Check curriculum availability
-    curriculum_available = False
-    get_curriculum = get_books = get_levels = get_by_book = get_by_level = get_item = None
-    if curriculum_module:
-        try:
-            get_curriculum = getattr(curriculum_module, "get_curriculum", None)
-            get_books = getattr(curriculum_module, "get_books", None)
-            get_levels = getattr(curriculum_module, "get_levels", None)
-            get_by_book = getattr(curriculum_module, "get_by_book", None)
-            get_by_level = getattr(curriculum_module, "get_by_level", None)
-            get_item = getattr(curriculum_module, "get_item", None)
-            curriculum_available = all([get_curriculum, get_books, get_levels])
-        except Exception:
-            pass
-    
-    # Check demos availability
-    demos_available = False
-    run_demo = None
-    if demos_module:
-        try:
-            run_demo = getattr(demos_module, "run_demo", None)
-            demos_available = run_demo is not None
-        except Exception:
-            pass
-    
+  Returns:
+    Configured Flask app
+  """
+  app = Flask(__name__)
+  app.config["APP_TITLE"] = title
+  app.config["APP_DESCRIPTION"] = description
+  app.config["LAB_ID"] = lab_id
+  app.config["PORT"] = port
+
+  # Add caching
+  try:
+    from flask_caching import Cache
+    cache = Cache(app, config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 300})
+  except Exception:
+    cache = None
+
+  # Centralized error handling
+  @app.errorhandler(Exception)
+  def handle_exception(e):
+    import traceback
+    return jsonify({
+      "ok": False,
+      "error": str(e),
+      "trace": traceback.format_exc()
+    }), 500
+
+  # Check curriculum availability
+  curriculum_available = False
+  get_curriculum = get_books = get_levels = get_by_book = get_by_level = get_item = None
+  if curriculum_module:
+    try:
+      get_curriculum = getattr(curriculum_module, "get_curriculum", None)
+      get_books = getattr(curriculum_module, "get_books", None)
+      get_levels = getattr(curriculum_module, "get_levels", None)
+      get_by_book = getattr(curriculum_module, "get_by_book", None)
+      get_by_level = getattr(curriculum_module, "get_by_level", None)
+      get_item = getattr(curriculum_module, "get_item", None)
+      curriculum_available = all([get_curriculum, get_books, get_levels])
+    except Exception:
+      pass
+
+  # Check demos availability
+  demos_available = False
+  run_demo = None
+  if demos_module:
+    try:
+      run_demo = getattr(demos_module, "run_demo", None)
+      demos_available = run_demo is not None
+    except Exception:
+      pass
+
+  if not demos_available:
+    def run_demo(demo_id):
+      return {"ok": False, "output": "", "error": "Demos not available"}
+
+  # Try to register Compass routes
+  compass_html = ""
+  try:
+    from learning_apps.compass_api import register_compass_routes, get_compass_html_snippet
+    register_compass_routes(app)
+    compass_html = get_compass_html_snippet()
+  except Exception:
+    pass
+
+  # Try to register AI Tutor routes
+  tutor_html = ""
+  tutor_available = False
+  try:
+    from learning_apps.ai_tutor import register_tutor_routes, get_tutor_html_snippet
+    register_tutor_routes(app, lab_id)
+    tutor_html = get_tutor_html_snippet()
+    tutor_available = True
+  except Exception:
+    pass
+
+  # Try to import progress tracking
+  progress_available = False
+  try:
+    from learning_apps import progress as progress_module
+    progress_available = True
+  except Exception:
+    progress_module = None
+
+  # --- API Routes ---
+
+  @app.route("/api/curriculum")
+  def api_curriculum():
+    if not curriculum_available:
+      return jsonify({"ok": False, "items": [], "books": [], "levels": []}), 503
+    items = get_curriculum()
+    # Attach progress status if available
+    user_id = request.args.get("user", "default")
+    if progress_available and progress_module:
+      lab_progress = progress_module.get_lab_progress(user_id, lab_id)
+      topic_statuses = lab_progress.get("topics", {})
+      for item in items:
+        item["progress_status"] = topic_statuses.get(item["id"], {}).get("status", "not-started")
+    return jsonify({
+      "ok": True,
+      "items": items,
+      "books": get_books(),
+      "levels": get_levels()
+    })
+
+  @app.route("/api/try/<demo_id>", methods=["GET", "POST"])
+  def api_try(demo_id):
     if not demos_available:
-        def run_demo(demo_id):
-            return {"ok": False, "output": "", "error": "Demos not available"}
-    
-    # Try to register Compass routes
-    compass_html = ""
-    try:
-        from learning_apps.compass_api import register_compass_routes, get_compass_html_snippet
-        register_compass_routes(app)
-        compass_html = get_compass_html_snippet()
-    except Exception:
-        pass
-    
-    # Try to register AI Tutor routes
-    tutor_html = ""
-    tutor_available = False
-    try:
-        from learning_apps.ai_tutor import register_tutor_routes, get_tutor_html_snippet
-        register_tutor_routes(app, lab_id)
-        tutor_html = get_tutor_html_snippet()
-        tutor_available = True
-    except Exception:
-        pass
-    
-    # Try to import progress tracking
-    progress_available = False
-    try:
-        from learning_apps import progress as progress_module
-        progress_available = True
-    except Exception:
-        progress_module = None
-    
-    # --- API Routes ---
-    
-    @app.route("/api/health")
-    def api_health():
-        return jsonify({
-            "ok": True,
-            "curriculum": curriculum_available,
-            "demos": demos_available,
-            "progress": progress_available,
-            "tutor": tutor_available,
-            "lab_id": lab_id
-        })
-    
-    @app.route("/api/curriculum")
-    def api_curriculum():
-        if not curriculum_available:
-            return jsonify({"ok": False, "items": [], "books": [], "levels": []}), 503
-        items = get_curriculum()
-        # Attach progress status if available
-        user_id = request.args.get("user", "default")
-        if progress_available and progress_module:
-            lab_progress = progress_module.get_lab_progress(user_id, lab_id)
-            topic_statuses = lab_progress.get("topics", {})
-            for item in items:
-                item["progress_status"] = topic_statuses.get(item["id"], {}).get("status", "not-started")
-        return jsonify({
-            "ok": True,
-            "items": items,
-            "books": get_books(),
-            "levels": get_levels()
-        })
-    
-    @app.route("/api/curriculum/book/<book_id>")
-    def api_book(book_id):
-        if not curriculum_available:
-            return jsonify({"ok": False, "items": []}), 503
-        return jsonify({"ok": True, "items": get_by_book(book_id)})
-    
-    @app.route("/api/curriculum/level/<level>")
-    def api_level(level):
-        if not curriculum_available:
-            return jsonify({"ok": False, "items": []}), 503
-        return jsonify({"ok": True, "items": get_by_level(level)})
-    
-    @app.route("/api/try/<demo_id>", methods=["GET", "POST"])
-    def api_try(demo_id):
-        if not demos_available:
-            return jsonify({"ok": False, "error": "Demos not available"}), 503
-        # Record demo run for progress
-        user_id = request.args.get("user", "default")
-        topic_id = request.args.get("topic", demo_id)
-        if progress_available and progress_module:
-            progress_module.record_demo_run(user_id, lab_id, topic_id)
-        return jsonify(run_demo(demo_id))
-    
-    # --- Progress Routes ---
-    
-    @app.route("/api/progress")
-    def api_progress():
-        user_id = request.args.get("user", "default")
-        if not progress_available:
-            return jsonify({"ok": False, "error": "Progress tracking not available"}), 503
-        return jsonify(progress_module.get_lab_progress(user_id, lab_id))
-    
-    @app.route("/api/progress/start/<topic_id>", methods=["POST"])
-    def api_start_topic(topic_id):
-        user_id = request.args.get("user", "default")
-        if not progress_available:
-            return jsonify({"ok": False}), 503
-        return jsonify(progress_module.mark_topic_started(user_id, lab_id, topic_id))
-    
-    @app.route("/api/progress/complete/<topic_id>", methods=["POST"])
-    def api_complete_topic(topic_id):
-        user_id = request.args.get("user", "default")
-        if not progress_available:
-            return jsonify({"ok": False}), 503
-        return jsonify(progress_module.mark_topic_completed(user_id, lab_id, topic_id))
-    
-    @app.route("/api/progress/reset", methods=["POST"])
-    def api_reset_progress():
-        user_id = request.args.get("user", "default")
-        if not progress_available:
-            return jsonify({"ok": False}), 503
-        return jsonify(progress_module.reset_progress(user_id, lab_id))
-    
-    # --- Main Route ---
-    
-    @app.route("/")
-    def index():
-        return render_template_string(_get_modern_html(title, description, lab_id, compass_html, tutor_html))
-    
-    return app
+      return jsonify({"ok": False, "error": "Demos not available"}), 503
+    # Record demo run for progress
+    user_id = request.args.get("user", "default")
+    topic_id = request.args.get("topic", demo_id)
+    if progress_available and progress_module:
+      progress_module.record_demo_run(user_id, lab_id, topic_id)
+    return jsonify(run_demo(demo_id))
+
+  @app.route("/api/curriculum/book/<book_id>")
+  def api_book(book_id):
+    if not curriculum_available:
+      return jsonify({"ok": False, "items": []}), 503
+    return jsonify({"ok": True, "items": get_by_book(book_id)})
+
+  @app.route("/api/curriculum/level/<level>")
+  def api_level(level):
+    if not curriculum_available:
+      return jsonify({"ok": False, "items": []}), 503
+    return jsonify({"ok": True, "items": get_by_level(level)})
+
+  # --- Progress Routes ---
+
+  @app.route("/api/progress")
+  def api_progress():
+    user_id = request.args.get("user", "default")
+    if not progress_available:
+      return jsonify({"ok": False, "error": "Progress tracking not available"}), 503
+    return jsonify(progress_module.get_lab_progress(user_id, lab_id))
+
+  @app.route("/api/progress/start/<topic_id>", methods=["POST"])
+  def api_start_topic(topic_id):
+    user_id = request.args.get("user", "default")
+    if not progress_available:
+      return jsonify({"ok": False}), 503
+    return jsonify(progress_module.mark_topic_started(user_id, lab_id, topic_id))
+
+  @app.route("/api/progress/complete/<topic_id>", methods=["POST"])
+  def api_complete_topic(topic_id):
+    user_id = request.args.get("user", "default")
+    if not progress_available:
+      return jsonify({"ok": False}), 503
+    return jsonify(progress_module.mark_topic_completed(user_id, lab_id, topic_id))
+
+  @app.route("/api/progress/reset", methods=["POST"])
+  def api_reset_progress():
+    user_id = request.args.get("user", "default")
+    if not progress_available:
+      return jsonify({"ok": False}), 503
+    return jsonify(progress_module.reset_progress(user_id, lab_id))
+
+  # --- Main Route ---
+
+  @app.route("/")
+  def index():
+    return render_template_string(_get_modern_html(title, description, lab_id, compass_html, tutor_html))
+
+  return app
 
 
 def _get_modern_html(title: str, description: str, lab_id: str, compass_html: str, tutor_html: str = "") -> str:
