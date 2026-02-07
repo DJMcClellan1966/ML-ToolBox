@@ -1,51 +1,34 @@
 """
-Curriculum: Python practice — Reed & Zelle style (problem decomposition, algorithms, data structures, code organization).
-From reed_zelle_patterns.py at repo root.
+Curriculum: Python practice — comprehensive Python programming covering fundamentals, OOP, functional programming,
+data processing (NumPy/Pandas), and best practices (testing, debugging, optimization).
 """
 from typing import Dict, Any, List
+import json
+from pathlib import Path
 
 LEVELS = ["basics", "intermediate", "advanced"]
 
 BOOKS = [
-    {"id": "decomposition", "name": "Problem Decomposition", "short": "Decomposition", "color": "#6366f1"},
-    {"id": "algorithms", "name": "Algorithm Patterns", "short": "Algorithms", "color": "#14b8a6"},
-    {"id": "data_structures", "name": "Data Structures & Code Org", "short": "Data & Code", "color": "#f97316"},
+    {"id": "fundamentals", "name": "Python Fundamentals", "short": "Fundamentals", "color": "#6366f1"},
+    {"id": "oop", "name": "Object-Oriented Programming", "short": "OOP", "color": "#14b8a6"},
+    {"id": "functional", "name": "Functional Programming", "short": "Functional", "color": "#f97316"},
+    {"id": "data_processing", "name": "Data Processing (NumPy/Pandas)", "short": "Data", "color": "#8b5cf6"},
+    {"id": "best_practices", "name": "Testing & Best Practices", "short": "Best Practices", "color": "#ec4899"},
 ]
 
-CURRICULUM: List[Dict[str, Any]] = [
-    {"id": "decomp_ml", "book_id": "decomposition", "level": "basics", "title": "ML Problem Decomposition",
-     "learn": "Break ML problems into: data collection, preprocessing, feature engineering, model selection, training, evaluation, deployment, monitoring.",
-     "try_code": "from reed_zelle_patterns import ProblemDecomposition; ProblemDecomposition.decompose_ml_problem('classify images')",
-     "try_demo": "decomp_ml"},
-    {"id": "decomp_algo", "book_id": "decomposition", "level": "intermediate", "title": "Algorithm Decomposition",
-     "learn": "Decompose a function into steps (def, if, for, while, return). Reed & Zelle style.",
-     "try_code": "from reed_zelle_patterns import ProblemDecomposition; ProblemDecomposition.decompose_algorithm(lambda x: x)",
-     "try_demo": None},
-    {"id": "div_conquer", "book_id": "algorithms", "level": "basics", "title": "Divide and Conquer",
-     "learn": "Split data, recurse on halves, combine with an operation. Classic pattern from Reed & Zelle.",
-     "try_code": "from reed_zelle_patterns import AlgorithmPatterns; AlgorithmPatterns.divide_and_conquer([1,2,3,4], lambda a,b: (a or 0)+(b or 0))",
-     "try_demo": "div_conquer"},
-    {"id": "greedy", "book_id": "algorithms", "level": "intermediate", "title": "Greedy Pattern",
-     "learn": "Make locally optimal choices. Reed & Zelle algorithm patterns.",
-     "try_code": "from reed_zelle_patterns import AlgorithmPatterns",
-     "try_demo": None},
-    {"id": "data_opt", "book_id": "data_structures", "level": "intermediate", "title": "Data Structure Optimizer",
-     "learn": "Choose and optimize data structures for the problem. Reed & Zelle.",
-     "try_code": "from reed_zelle_patterns import DataStructureOptimizer",
-     "try_demo": None},
-    {"id": "code_org", "book_id": "data_structures", "level": "basics", "title": "Code Organizer",
-     "learn": "Organize code into logical modules and functions. Reed & Zelle code organization.",
-     "try_code": "from reed_zelle_patterns import CodeOrganizer",
-     "try_demo": None},
-    {"id": "recursive", "book_id": "algorithms", "level": "intermediate", "title": "Recursive Solutions",
-     "learn": "Base case and recursive case. Reed & Zelle recursive patterns.",
-     "try_code": "from reed_zelle_patterns import RecursiveSolutions",
-     "try_demo": None},
-    {"id": "iterative", "book_id": "algorithms", "level": "basics", "title": "Iterative Refinement",
-     "learn": "Refine solution step by step. Reed & Zelle iterative refinement.",
-     "try_code": "from reed_zelle_patterns import IterativeRefinement",
-     "try_demo": None},
-]
+# Load curriculum from enriched JSON
+_enriched_file = Path(__file__).parent.parent.parent / '.cache' / 'python_practice_enriched.json'
+if _enriched_file.exists():
+    with open(_enriched_file, 'r', encoding='utf-8') as f:
+        CURRICULUM = json.load(f)
+else:
+    # Fallback minimal curriculum
+    CURRICULUM: List[Dict[str, Any]] = [
+        {"id": "py_basics", "book_id": "fundamentals", "level": "basics", "title": "Python Basics",
+         "learn": "Variables, types, control flow, loops",
+         "try_code": "x = 42; print(x)",
+         "try_demo": None, "prerequisites": []},
+    ]
 
 
 def get_curriculum(): return list(CURRICULUM)
